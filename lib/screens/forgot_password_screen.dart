@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/widgets/login_textfield.dart';
 import '../utils/validators.dart';
 
@@ -12,6 +14,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final AuthService _authService = AuthService();
 
   @override
   void dispose() {
@@ -19,13 +22,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     super.dispose();
   }
 
-  void _handleForgotPassword() {
+  Future<void> _handleForgotPassword() async {
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text.trim();
       print("Reset link sent to: $email");
 
-      // temporary navigation to reset password screen
-      Navigator.pushNamed(context, '/reset-password');
+      try {
+        await AuthService().sendPasswordResetEmail(email);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Reset link sent to $email')),
+        );
+      } on FirebaseAuthException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.message}')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Something went wrong')),
+        );
+      }
     }
   }
 
