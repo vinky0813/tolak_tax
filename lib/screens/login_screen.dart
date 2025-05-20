@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/utils/validators.dart';
 import 'package:tolak_tax/widgets/login_soclalbutton.dart';
 import 'package:tolak_tax/widgets/login_textfield.dart';
@@ -15,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
 
   @override
   void dispose() {
@@ -23,13 +26,48 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _handleLogin() {
+  Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text.trim();
       final password = _passwordController.text;
       print("Logging in with: $email / $password");
 
-      // handle login logic here
+      try {
+        final user = await AuthService().signInWithEmail(email, password);
+        if (user != null) {
+          Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Login failed. Please try again."),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } on FirebaseAuthException catch (e) {
+        String errorMessage;
+        if (e.code == 'user-not-found') {
+          errorMessage = 'No user found for that email.';
+        } else if (e.code == 'wrong-password') {
+          errorMessage = 'Wrong password provided.';
+        } else {
+          errorMessage = e.message ?? 'Login failed.';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("An unexpected error occurred."),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -188,8 +226,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           LoginSoclalbutton(assetPath:'assets/icons/icons8-google.svg',
-                            onTap: () {
-                              // handle Google login
+                            onTap: () async {
+                              final userCredential = await _authService.signInWithGoogle();
+                              if (userCredential != null) {
+                                Navigator.pushReplacementNamed(context, '/home');
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Google Sign-In failed")),
+                                );
+                              }
                             },),
                           const SizedBox(width: 16),
                           LoginSoclalbutton(assetPath:'assets/icons/icons8-facebook.svg',

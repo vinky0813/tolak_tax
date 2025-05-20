@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/widgets/login_textfield.dart';
 import 'package:tolak_tax/utils/validators.dart';
 
@@ -15,6 +17,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final AuthService _authService = AuthService();
 
   @override
   void dispose() {
@@ -25,13 +28,48 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  void _handleSignUp() {
+  Future<void> _handleSignUp() async {
     if (_formKey.currentState!.validate()) {
       final name = _fullNameController.text.trim();
       final email = _emailController.text.trim();
       final password = _passwordController.text;
 
-      print('Name: $name, Email: $email, Password: $password');
+      try {
+        final user = await AuthService().registerWithEmail(email, password);
+        if (user != null) {
+          Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Sign up failed. Please try again."),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } on FirebaseAuthException catch (e) {
+        String errorMessage;
+        if (e.code == 'email-already-in-use') {
+          errorMessage = 'This email is already registered.';
+        } else if (e.code == 'weak-password') {
+          errorMessage = 'Password is too weak.';
+        } else {
+          errorMessage = e.message ?? 'Sign up failed.';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("An unexpected error occurred."),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
