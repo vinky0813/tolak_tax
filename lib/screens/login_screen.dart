@@ -237,14 +237,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                             },),
                           const SizedBox(width: 16),
+                          LoginSoclalbutton(iconData: Icons.phone,
+                            onTap: () {
+                              Navigator.pushNamed(context, '/input-phone');
+                            },),
+                          const SizedBox(width: 16),
                           LoginSoclalbutton(assetPath:'assets/icons/icons8-facebook.svg',
                             onTap: () {
                               // handle Facebook login
-                            },),
-                          const SizedBox(width: 16),
-                          LoginSoclalbutton(assetPath:'assets/icons/icons8-twitter.svg',
-                            onTap: () {
-                              // handle Twitter login
                             },),
                         ],
                       ),

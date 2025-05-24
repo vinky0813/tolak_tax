@@ -6,6 +6,8 @@ class AuthService {
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
+  String? _verificationId;
+
   Future<User?> signInWithEmail(String email, String password) async {
     final userCredential = await _auth.signInWithEmailAndPassword(
       email: email,
@@ -59,6 +61,47 @@ class AuthService {
     await _auth.sendPasswordResetEmail(email: email);
   }
 
+  // THIS IS TEST ONLY, NOT REAL
+  // NEED TO SET BILLING ACCOUTN IF WANT A REAL ONE
+  // USE THE TEST PHONE NUMBER OR SET A NEW TEST PHONE NUMBER
+  Future<void> verifyPhoneNumber({
+    required String phoneNumber,
+    required Function(String verificationId) codeSent,
+    required Function(FirebaseAuthException e) verificationFailed,
+    required Function(PhoneAuthCredential credential) verificationCompleted,
+    required Function(String message) codeAutoRetrievalTimeout,
+  }) async {
+    await _auth.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      timeout: const Duration(seconds: 60),
+      verificationCompleted: verificationCompleted,
+      verificationFailed: verificationFailed,
+      codeSent: (String verificationId, int? resendToken) {
+        _verificationId = verificationId;
+        codeSent(verificationId);
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        _verificationId = verificationId;
+        codeAutoRetrievalTimeout("Code timeout. Try again.");
+      },
+    );
+  }
+
+  Future<UserCredential> signInWithOTP(String smsCode) async {
+    if (_verificationId == null) {
+      throw FirebaseAuthException(
+        code: 'invalid-verification-id',
+        message: 'Verification ID not set. Start verification first.',
+      );
+    }
+
+    final credential = PhoneAuthProvider.credential(
+      verificationId: _verificationId!,
+      smsCode: smsCode,
+    );
+
+    return await _auth.signInWithCredential(credential);
+  }
 
   Future<void> signOut() async {
     await _auth.signOut();
