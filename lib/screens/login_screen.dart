@@ -243,8 +243,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             },),
                           const SizedBox(width: 16),
                           LoginSoclalbutton(assetPath:'assets/icons/icons8-facebook.svg',
-                            onTap: () {
-                              // handle Facebook login
+                            onTap: () async {
+                              final userCredential = await _authService.signInWithFacebook();
+
+                              if (userCredential != null) {
+                                Navigator.pushReplacementNamed(context, '/home');
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Facebook Sign-In failed")),
+                                );
+                              }
                             },),
                         ],
                       ),
