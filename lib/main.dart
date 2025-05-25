@@ -9,6 +9,7 @@ import 'package:tolak_tax/screens/reset_password_screen.dart';
 import 'package:tolak_tax/screens/signup_screen.dart';
 import 'package:tolak_tax/screens/splash_screen.dart';
 import 'package:tolak_tax/themes/app_theme.dart';
+import 'package:tolak_tax/utils/transitions.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,25 +31,29 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/login':
-            return MaterialPageRoute(builder: (_) => const LoginScreen());
+            return fadeRoute(const LoginScreen());
           case '/signup':
-            return MaterialPageRoute(builder: (_) => const SignupScreen());
+            return fadeRoute(const SignupScreen());
           case '/forgot-password':
-            return MaterialPageRoute(builder: (_) => ForgotPasswordScreen());
+            return fadeRoute(ForgotPasswordScreen());
           case '/reset-password':
-            return MaterialPageRoute(builder: (_) => ResetPasswordScreen());
+            return fadeRoute(ResetPasswordScreen());
           case '/home':
-            return MaterialPageRoute(builder: (_) => const HomeScreen());
+            return fadeRoute(const HomeScreen());
           case '/input-phone':
-            return MaterialPageRoute(builder: (_) => const PhoneNumberInputScreen());
+            return fadeRoute(PhoneNumberInputScreen());
           case '/otp-verification':
             final args = settings.arguments as Map<String, dynamic>;
-            return MaterialPageRoute(
-              builder: (_) => OTPVerificationScreen(
+            return fadeRoute(OTPVerificationScreen(
                 phoneNumber: args['phoneNumber'],
                 verificationId: args['verificationId'],
               ),
             );
+
+          case '/splash-to-home':
+            return fadeThroughRoute(const HomeScreen());
+          case '/splash-to-login':
+            return fadeThroughRoute(const LoginScreen());
           default:
             // make a real 404 error page when free
             return MaterialPageRoute(

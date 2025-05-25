@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tolak_tax/services/auth_service.dart';
+import 'package:tolak_tax/widgets/back_button.dart';
 import 'package:tolak_tax/widgets/login_textfield.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
@@ -109,17 +110,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               ),
             ),
           ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8, top: 8),
-              child: IconButton(
-                icon: Icon(Icons.arrow_back,
-                    color: theme.colorScheme.primary, size: 28),
-                onPressed: () => Navigator.pop(context),
-                tooltip: "Back",
-              ),
-            ),
-          ),
+          BackButtonWidget(),
           Positioned(
             top: screenHeight * 0.12,
             left: 24,

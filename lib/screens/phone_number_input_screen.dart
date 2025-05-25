@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tolak_tax/services/auth_service.dart';
+import 'package:tolak_tax/widgets/back_button.dart';
 import 'package:tolak_tax/widgets/login_textfield.dart';
 import '../utils/validators.dart';
 
@@ -27,7 +28,8 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
 
   Future<void> _handleSendOTP() async {
     if (_formKey.currentState!.validate()) {
-      final phoneNumber = _phoneNumberController.text.trim();
+      final rawPhoneNumebr = _phoneNumberController.text.trim();
+      final phoneNumber = '+60$rawPhoneNumebr';
       print("Send OTP to: $phoneNumber");
 
       showDialog(
@@ -73,6 +75,7 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final screenHeight = MediaQuery.of(context).size.height;
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
       body: Stack(
@@ -88,16 +91,7 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
             ),
           ),
 
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8, top: 8),
-              child: IconButton(
-                icon: Icon(Icons.arrow_back, color: theme.colorScheme.primary, size: 28),
-                onPressed: () => Navigator.pop(context),
-                tooltip: "Back",
-              ),
-            ),
-          ),
+          BackButtonWidget(),
 
           Positioned(
             top: screenHeight * 0.12,
@@ -157,13 +151,49 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      LoginTextField(
+                      TextFormField(
                         controller: _phoneNumberController,
-                        label: "e.g. +60123456789",
-                        icon: Icons.phone,
                         keyboardType: TextInputType.phone,
                         validator: validatePhoneNumber,
+                        decoration: InputDecoration(
+                          labelText: "123456789",
+                          labelStyle: TextStyle(
+                            fontFamily: "DMSans",
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          prefixIcon: Container(
+                            width: 90,
+                            padding: const EdgeInsets.only(left: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.phone, color: colorScheme.primary),
+                                Container(
+                                  height: 24,
+                                  width: 1,
+                                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                                  color: colorScheme.outline,
+                                ),
+                                Text(
+                                  '+60',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[800],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: colorScheme.outline),
+                          ),
+                        ),
                       ),
+
+
                       const SizedBox(height: 32),
                       SizedBox(
                         width: double.infinity,
@@ -192,7 +222,7 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
                       Center(
                         child: TextButton(
                           onPressed: () {
-                            Navigator.pushReplacementNamed(context, '/login');
+                            Navigator.pop(context);
                           },
                           child: const Text("Back to Login"),
                         ),

@@ -21,7 +21,7 @@ String? validatePhoneNumber(String? value) {
     return 'Phone number is required';
   }
 
-  final pattern = RegExp(r'^\+601[0-46-9]\d{7,8}$');
+  final pattern = RegExp(r'^1[0-46-9]\d{7,8}$');
 
   if (!pattern.hasMatch(value.trim())) {
     return 'Enter a valid Malaysian phone number';
