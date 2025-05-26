@@ -156,7 +156,7 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
                         keyboardType: TextInputType.phone,
                         validator: validatePhoneNumber,
                         decoration: InputDecoration(
-                          labelText: "123456789",
+                          labelText: "Phone Number",
                           labelStyle: TextStyle(
                             fontFamily: "DMSans",
                           ),
