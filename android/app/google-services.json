@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "377691344063",
+    "project_id": "tolaktax",
+    "storage_bucket": "tolaktax.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:377691344063:android:1cce6005f280ed0c5eca0a",
+        "android_client_info": {
+          "package_name": "com.example.tolak_tax"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "377691344063-leg6ljakesn2hflih69bcco0f6tcfn6u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkC68wpnkg1torzLYa2awijktb_hHBP7s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "377691344063-leg6ljakesn2hflih69bcco0f6tcfn6u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
