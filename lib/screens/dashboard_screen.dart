@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tolak_tax/widgets/quick_actionbutton.dart';
+import 'package:tolak_tax/widgets/recent_receipts_list.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
+import 'package:tolak_tax/widgets/weekly_barchart.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -17,32 +19,26 @@ class DashboardScreen extends StatelessWidget {
     final double taxDue = 40.00;
 
     final recentReceipts = [
-      {'title': 'Starbucks Coffee', 'date': '2025-05-25', 'amount': 12.50},
-      {'title': 'Office Supplies', 'date': '2025-05-23', 'amount': 98.75},
-      {'title': 'Electricity Bill', 'date': '2025-05-20', 'amount': 150.00},
+      {'title': 'Starbucks Coffee', 'date': '2025-05-25', 'amount': 12.50, 'category': 'food'},
+      {'title': 'Office Supplies', 'date': '2025-05-23', 'amount': 98.75, 'category': 'shopping'},
+      {'title': 'Electricity Bill', 'date': '2025-05-20', 'amount': 150.00, 'category': 'utilities'},
+      {'title': 'Netflix Subscription', 'date': '2025-05-19', 'amount': 17.00, 'category': 'entertainment'},
+      {'title': 'Grab Ride', 'date': '2025-05-18', 'amount': 9.30, 'category': 'transport'},
+      {'title': 'Lunch at Nando\'s', 'date': '2025-05-17', 'amount': 35.00, 'category': 'food'},
+      {'title': 'Shopee Purchase', 'date': '2025-05-15', 'amount': 65.90, 'category': 'shopping'},
+      {'title': 'Celcom Postpaid', 'date': '2025-05-13', 'amount': 89.00, 'category': 'utilities'},
+      {'title': 'Cinema Tickets', 'date': '2025-05-12', 'amount': 28.00, 'category': 'entertainment'},
+      {'title': 'Petrol', 'date': '2025-05-10', 'amount': 120.00, 'category': 'transport'},
+      {'title': 'Grocery Shopping', 'date': '2025-05-08', 'amount': 210.40, 'category': 'food'},
+      {'title': 'Spotify Family Plan', 'date': '2025-05-05', 'amount': 22.40, 'category': 'entertainment'},
+      {'title': 'Parking Fee', 'date': '2025-05-04', 'amount': 3.50, 'category': 'transport'},
+      {'title': 'Electric Kettle', 'date': '2025-05-02', 'amount': 79.99, 'category': 'shopping'},
+      {'title': 'Water Bill', 'date': '2025-04-29', 'amount': 30.60, 'category': 'utilities'},
+      {'title': 'Dinner at Sushi King', 'date': '2025-04-28', 'amount': 47.25, 'category': 'food'},
+      {'title': 'Bookstore', 'date': '2025-04-27', 'amount': 54.90, 'category': 'shopping'},
     ];
 
-    final List<double> last7DaysExpenses = [50, 75, 30, 80, 65, 40, 90];
     final userName = 'John';
-
-    // Simple bar chart widget
-    Widget buildBar(double amount, double maxAmount) {
-      final barHeight = (amount / maxAmount) * 80;
-      return Container(
-        width: 20,
-        height: 80,
-        alignment: Alignment.bottomCenter,
-        child: Container(
-          height: barHeight,
-          decoration: BoxDecoration(
-            color: colorScheme.secondary,
-            borderRadius: BorderRadius.circular(6),
-          ),
-        ),
-      );
-    }
-
-    final maxExpense = last7DaysExpenses.reduce((a, b) => a > b ? a : b);
 
     return Scaffold(
       backgroundColor: colorScheme.primary,
@@ -53,6 +49,19 @@ class DashboardScreen extends StatelessWidget {
               pinned: true,
               expandedHeight: 260,
               backgroundColor: colorScheme.primary,
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 15, right: 10),
+                  child: IconButton(
+                    icon: const Icon(Icons.settings),
+                    color: colorScheme.onPrimary,
+                    onPressed: () {
+                      // handle go to settings
+                      print("Settings button tapped");
+                    },
+                  ),
+                ),
+              ],
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -67,8 +76,10 @@ class DashboardScreen extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 28,
-                              backgroundColor: colorScheme.primary.withOpacity(0.3),
-                              child: Icon(Icons.person, size: 32, color: colorScheme.onPrimary),
+                              backgroundColor:
+                                  colorScheme.onPrimary.withAlpha(40),
+                              child: Icon(Icons.person,
+                                  size: 32, color: colorScheme.onPrimary),
                             ),
                             const SizedBox(width: 16),
                             Column(
@@ -77,12 +88,14 @@ class DashboardScreen extends StatelessWidget {
                                 Text(
                                   'Welcome!',
                                   style: theme.textTheme.titleMedium?.copyWith(
-                                    color: colorScheme.onPrimary.withOpacity(0.9),
+                                    color:
+                                        colorScheme.onPrimary,
                                   ),
                                 ),
                                 Text(
                                   userName,
-                                  style: theme.textTheme.headlineSmall?.copyWith(
+                                  style:
+                                      theme.textTheme.headlineSmall?.copyWith(
                                     color: colorScheme.onPrimary,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -92,22 +105,7 @@ class DashboardScreen extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Expenses last 7 days',
-                              style: theme.textTheme.titleMedium?.copyWith(color: colorScheme.onPrimary),
-                            ),
-                            const SizedBox(height: 12),
-                            Container(
-                              child: Center(
-                                child: Text("GRAPH HERE!!!"),
-                              ),
-                            )
-                          ],
-                        ),
-
+                        const WeeklyBarChart(),
                         const SizedBox(height: 16),
                       ],
                     ),
@@ -118,7 +116,7 @@ class DashboardScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: Container(
                 decoration: BoxDecoration(
-                  color: colorScheme.surface,
+                  color: colorScheme.background,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
@@ -130,30 +128,43 @@ class DashboardScreen extends StatelessWidget {
                     children: [
                       // Summary Cards
                       Container(
+                        width: double.infinity,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 6,
+                              offset: Offset(0, 3),
+                            )
+                          ],
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        child: Wrap(
+                          alignment: WrapAlignment.spaceBetween,
+                          spacing: 12,
                           children: [
                             SummaryCard(
+                              width: 70,
                                 icon: Icons.receipt_long,
                                 label: 'Receipts',
                                 value: totalReceipts.toString(),
                                 color: colorScheme.primary),
                             SummaryCard(
+                                width: 70,
                                 icon: Icons.money_off,
                                 label: 'Expenses',
                                 value: 'RM ${totalExpenses.toStringAsFixed(2)}',
                                 color: Colors.redAccent),
                             SummaryCard(
+                                width: 70,
                                 icon: Icons.calculate,
                                 label: 'Tax Calculated',
                                 value: 'RM ${totalTax.toStringAsFixed(2)}',
                                 color: Colors.green),
                             SummaryCard(
+                                width: 70,
                                 icon: Icons.attach_money,
                                 label: 'Tax Due',
                                 value: 'RM ${taxDue.toStringAsFixed(2)}',
@@ -169,6 +180,13 @@ class DashboardScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            const BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 6,
+                              offset: Offset(0, 3),
+                            )
+                          ],
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,27 +236,15 @@ class DashboardScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Recent Receipts',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            ...recentReceipts.map(
-                                  (receipt) => ListTile(
-                                leading: const Icon(Icons.receipt),
-                                title: Text("${receipt['title']!}"),
-                                subtitle: Text("${receipt['date']!}"),
-                                trailing: Text('RM ${receipt['amount']!.toString()}'),
-                              ),
-                            ),
+                          boxShadow: [
+                            const BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 6,
+                              offset: Offset(0, 3),
+                            )
                           ],
                         ),
+                        child: RecentReceiptsList(receipts: recentReceipts,),
                       ),
                     ],
                   ),

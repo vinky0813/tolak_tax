@@ -13,6 +13,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final PageController _pageController = PageController();
   int _selectedIndex = 0;
 
   final List<Widget> _screens = const [
@@ -23,9 +24,11 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   void _onScannerPressed() {
@@ -41,8 +44,13 @@ class _HomeScreenState extends State<HomeScreen> {
       extendBody: true,
 
       body: SafeArea(
-        child: IndexedStack(
-          index: _selectedIndex,
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
           children: _screens,
         ),
       ),
@@ -87,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 onPressed: () => _onItemTapped(1),
               ),
-              const SizedBox(width: 48), // Space for FAB
+              const SizedBox(width: 48),
               IconButton(
                 icon: Icon(
                   Icons.bar_chart,

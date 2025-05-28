@@ -17,14 +17,14 @@ class QuickActionButton extends StatelessWidget {
     final theme = Theme.of(context);
 
     return InkWell(
-      borderRadius: BorderRadius.circular(40), // round effect on tap
+      borderRadius: BorderRadius.circular(40),
       onTap: onPressed,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           CircleAvatar(
             radius: 28,
-            backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+            backgroundColor: theme.colorScheme.primary.withAlpha(30),
             child: Icon(icon, size: 28, color: theme.colorScheme.primary),
           ),
           const SizedBox(height: 6),
