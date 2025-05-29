@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       extendBody: true,
-
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: PageView(
           controller: _pageController,

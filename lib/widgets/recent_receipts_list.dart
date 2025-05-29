@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/utils/category_colour.dart';
 
 class RecentReceiptsList extends StatefulWidget {
-  final List<Map<String, dynamic>> receipts;
+  final List<Receipt> receipts;
 
   const RecentReceiptsList({super.key, required this.receipts});
 
@@ -14,6 +16,7 @@ class _RecentReceiptsListState extends State<RecentReceiptsList> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     final recentThree = widget.receipts.length > 3
         ? widget.receipts.sublist(widget.receipts.length - 3)
@@ -37,8 +40,10 @@ class _RecentReceiptsListState extends State<RecentReceiptsList> {
           const SizedBox(height: 12),
           ...recentThree.map(
                 (receipt) {
-              final category = receipt['category'] ?? '';
-              final categoryColor = getCategoryColor(category);
+              final categoryColor = getCategoryColor(receipt.category);
+              final formattedDate = receipt.date != null
+                  ? DateFormat.yMMMd().format(receipt.date)
+                  : '';
               return ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 9),
                 leading: Icon(
@@ -46,11 +51,23 @@ class _RecentReceiptsListState extends State<RecentReceiptsList> {
                   color: categoryColor,
                 ),
                 title: Text(
-                  "${receipt['title']}",
-                  style: TextStyle(color: categoryColor),
+                  receipt.title ?? '',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
                 ),
-                subtitle: Text("${receipt['date']}"),
-                trailing: Text('RM ${receipt['amount'].toString()}'),
+                  subtitle: Text(
+                  formattedDate.toString(),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  )),
+                trailing: Text(
+                  'RM ${receipt.amount.toString()}',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
               );
             },
           ),

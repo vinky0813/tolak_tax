@@ -10,6 +10,8 @@ Color getCategoryColor(String category) {
       return Colors.purple;
     case 'utilities':
       return Colors.blue;
+    case 'entertainment':
+      return Colors.red;
     default:
       return Colors.black87;
   }
