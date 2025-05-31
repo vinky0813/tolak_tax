@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
+import 'package:tolak_tax/widgets/gamified_progress.dart';
 import 'package:tolak_tax/widgets/quick_actionbutton.dart';
 import 'package:tolak_tax/widgets/recent_receipts_list.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
@@ -18,6 +19,7 @@ class DashboardScreen extends StatelessWidget {
     final double totalExpenses = 1523.75;
     final double totalTax = 123.45;
     final double taxDue = 40.00;
+    final double totalMakanExpenses = 200.00;
 
     final recentReceipts = [
       Receipt.fromMap({
@@ -122,6 +124,48 @@ class DashboardScreen extends StatelessWidget {
         'amount': 54.90,
         'category': 'shopping'
       }),
+      Receipt.fromMap({
+        'title': 'Groceries',
+        'date': '2025-05-26',
+        'amount': 45.00,
+        'category': 'food',
+      }),
+      Receipt.fromMap({
+        'title': 'Online Shopping',
+        'date': '2025-05-27',
+        'amount': 120.90,
+        'category': 'shopping',
+      }),
+      Receipt.fromMap({
+        'title': 'Electric Bill',
+        'date': '2025-05-28',
+        'amount': 75.50,
+        'category': 'utilities',
+      }),
+      Receipt.fromMap({
+        'title': 'Lunch with friends',
+        'date': '2025-05-29',
+        'amount': 28.40,
+        'category': 'food',
+      }),
+      Receipt.fromMap({
+        'title': 'Train ride',
+        'date': '2025-05-30',
+        'amount': 6.80,
+        'category': 'transport',
+      }),
+      Receipt.fromMap({
+        'title': 'Movie ticket',
+        'date': '2025-05-31',
+        'amount': 15.00,
+        'category': 'entertainment',
+      }),
+      Receipt.fromMap({
+        'title': 'Taxi',
+        'date': '2025-06-01',
+        'amount': 18.20,
+        'category': 'transport',
+      }),
     ];
 
     final userName = 'John';
@@ -191,7 +235,7 @@ class DashboardScreen extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        const WeeklyBarChart(),
+                        WeeklyBarChart(receipts: recentReceipts,),
                         const SizedBox(height: 16),
                       ],
                     ),
@@ -303,7 +347,7 @@ class DashboardScreen extends StatelessWidget {
                                 ),
                                 QuickActionButton(
                                   icon: Icons.calculate,
-                                  label: 'Calculate Tax',
+                                  label: 'Generate Report',
                                   onPressed: () {
                                     // TODO: Navigate to tax calculation screen
                                   },
@@ -312,6 +356,14 @@ class DashboardScreen extends StatelessWidget {
                             ),
                           ],
                         ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      GamifiedProgress(
+                        label: 'Makan',
+                        budget: 500.0,
+                        spent: totalMakanExpenses,
                       ),
 
                       const SizedBox(height: 20),

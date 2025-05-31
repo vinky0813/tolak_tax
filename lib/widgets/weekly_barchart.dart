@@ -1,23 +1,45 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:tolak_tax/models/receipt_model.dart';
 
 class WeeklyBarChart extends StatelessWidget {
-  const WeeklyBarChart({super.key});
+  final List<Receipt> receipts;
+
+  const WeeklyBarChart({super.key, required this.receipts});
+
+  List<double> _calculateWeeklyTotals() {
+    final now = DateTime.now();
+    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+    final dailyTotals = List<double>.filled(7, 0.0);
+
+    for (var receipt in receipts) {
+      final diff = receipt.date.difference(startOfWeek).inDays;
+      if (diff >= 0 && diff < 7) {
+        dailyTotals[diff] += receipt.amount;
+      }
+    }
+
+    return dailyTotals;
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    final dailyTotals = _calculateWeeklyTotals();
+    final maxY = (dailyTotals.reduce((a, b) => a > b ? a : b) * 1.2).clamp(10.0, double.infinity);
+
     return SizedBox(
       height: 140,
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
-          maxY: 10,
+          maxY: maxY,
           gridData: FlGridData(show: false),
           titlesData: FlTitlesData(
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                interval: 2,
+                interval: (maxY / 5).clamp(2.0, double.infinity),
                 getTitlesWidget: (value, meta) {
                   return Text(
                     value.toInt().toString(),
@@ -45,12 +67,11 @@ class WeeklyBarChart extends StatelessWidget {
           ),
           borderData: FlBorderData(show: false),
           barGroups: List.generate(7, (i) {
-            final heights = [4.0, 6.5, 5.0, 7.0, 3.5, 6.0, 4.5];
             return BarChartGroupData(
               x: i,
               barRods: [
                 BarChartRodData(
-                  toY: heights[i],
+                  toY: dailyTotals[i],
                   color: Colors.white,
                   width: 14,
                   borderRadius: BorderRadius.circular(4),
