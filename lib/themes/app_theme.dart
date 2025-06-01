@@ -126,7 +126,7 @@ class AppTheme {
   }
 
 
-  static const ColorScheme _lightColorScheme = ColorScheme(
+  static final ColorScheme _lightColorScheme = ColorScheme(
     brightness: Brightness.light,
     primary: const Color(0xFF386641),         // Hunter Green
     onPrimary: const Color(0xFFFFFFFF),       // White (for text/icons on primary)
@@ -148,7 +148,7 @@ class AppTheme {
     errorContainer: const Color(0xFFF2DADB),   // Lighter Bittersweet (e.g., bittersweet_shimmer.900)
     onErrorContainer: const Color(0xFF260E0E), // Dark text for onErrorContainer
 
-    background: const Color(0xFFF2E8CF),       // Parchment
+    background: Colors.grey[100] ,              // Parchment
     onBackground: const Color(0xFF0B140D),     // Very Dark Green (hunter_green.100 for text on parchment)
 
     surface: const Color(0xFFF7F1E2),         // Lighter Parchment (parchment.700 for cards, dialogs)
