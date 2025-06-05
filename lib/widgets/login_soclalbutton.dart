@@ -7,12 +7,12 @@ class LoginSoclalbutton extends StatelessWidget {
   final IconData? iconData;
 
   const LoginSoclalbutton({
-    Key? key,
+    super.key,
     this.assetPath,
     this.iconData,
     required this.onTap,
-  }) : assert(assetPath != null || iconData != null, 'Either assetPath or iconData must be provided'),
-  super(key: key);
+  }) : assert(assetPath != null || iconData != null,
+            'Either assetPath or iconData must be provided');
 
   @override
   Widget build(BuildContext context) {

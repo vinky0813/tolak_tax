@@ -18,7 +18,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
   String searchText = '';
   String selectedCategory = 'All';
   final TextEditingController searchController = TextEditingController();
-  int? selectedMonth = null;
+  int? selectedMonth;
   int? selectedYear = DateTime.now().year;
 
   final receipts = [
@@ -137,10 +137,9 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
 
       final date = receipt.date;
 
-      final matchesYear =
-          selectedYear == null || (date.year == selectedYear);
-      final matchesMonth = selectedMonth == null ||
-          (date.month == selectedMonth);
+      final matchesYear = selectedYear == null || (date.year == selectedYear);
+      final matchesMonth =
+          selectedMonth == null || (date.month == selectedMonth);
 
       return matchesSearch && matchesCategory && matchesYear && matchesMonth;
     }).toList();
@@ -185,7 +184,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                 hasScrollBody: false,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: colorScheme.background,
+                    color: colorScheme.surface,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(24),
                       topRight: Radius.circular(24),
@@ -280,7 +279,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                           hintText: 'Search receipts',
                           prefixIcon: const Icon(Icons.search),
                           filled: true,
-                          fillColor: colorScheme.background,
+                          fillColor: colorScheme.surface,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -291,14 +290,14 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                       // Dropdown
                       Theme(
                         data: Theme.of(context).copyWith(
-                          canvasColor: colorScheme.background,
+                          canvasColor: colorScheme.surface,
                         ),
                         child: DropdownButtonFormField<String>(
                           value: selectedCategory,
                           isExpanded: true,
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: colorScheme.background,
+                            fillColor: colorScheme.surface,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -355,7 +354,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                               ),
                             ),
                           );
-                        }).toList(),
+                        }),
                     ],
                   ),
                 )),

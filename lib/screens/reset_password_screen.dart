@@ -54,15 +54,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             height: 300,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assets/backgrounds/tolaktax-background2.png"),
+                image:
+                    AssetImage("assets/backgrounds/tolaktax-background2.png"),
                 fit: BoxFit.cover,
                 alignment: Alignment.topRight,
               ),
             ),
           ),
-
-          BackButtonWidget(),
-
+          const BackButtonWidget(),
           Positioned(
             top: screenHeight * 0.12,
             left: 24,
@@ -88,7 +87,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               ],
             ),
           ),
-
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(

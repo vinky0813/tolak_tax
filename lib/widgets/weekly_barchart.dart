@@ -24,9 +24,9 @@ class WeeklyBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final dailyTotals = _calculateWeeklyTotals();
-    final maxY = (dailyTotals.reduce((a, b) => a > b ? a : b) * 1.2).clamp(10.0, double.infinity);
+    final maxY = (dailyTotals.reduce((a, b) => a > b ? a : b) * 1.2)
+        .clamp(10.0, double.infinity);
 
     return SizedBox(
       height: 140,
@@ -34,7 +34,7 @@ class WeeklyBarChart extends StatelessWidget {
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
           maxY: maxY,
-          gridData: FlGridData(show: false),
+          gridData: const FlGridData(show: false),
           titlesData: FlTitlesData(
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
@@ -49,8 +49,10 @@ class WeeklyBarChart extends StatelessWidget {
                 reservedSize: 28,
               ),
             ),
-            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,

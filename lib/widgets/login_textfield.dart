@@ -9,14 +9,14 @@ class LoginTextField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
 
   const LoginTextField({
-    Key? key,
+    super.key,
     required this.label,
     required this.icon,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.controller,
     this.validator,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +29,12 @@ class LoginTextField extends StatelessWidget {
       validator: validator,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(
+        labelStyle: const TextStyle(
           fontFamily: "DMSans",
         ),
         filled: true,
         fillColor: Colors.white,
-        prefixIcon: Container(
+        prefixIcon: SizedBox(
           width: 60,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
