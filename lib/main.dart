@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
           case '/input-phone':
             return fadeRoute(const PhoneNumberInputScreen());
           case '/camera':
-            return slideTransitionRoute(const CameraPage(),);
+            return scaleRoute(const CameraPage(),);
           case '/otp-verification':
             final args = settings.arguments as Map<String, dynamic>;
             return fadeRoute(
