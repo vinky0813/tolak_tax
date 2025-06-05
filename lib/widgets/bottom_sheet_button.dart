@@ -10,6 +10,9 @@ class BottomSheetButton extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return GestureDetector(
       onTap: onPressed,
       child: Container(
@@ -20,7 +23,7 @@ class BottomSheetButton extends StatelessWidget{
               padding: const EdgeInsets.only(left: 45),
               child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Icon(icon)),
+                  child: Icon(icon, color: colorScheme.primary)),
             ),
             Align(
                 alignment:Alignment.center,
