@@ -4,6 +4,8 @@ import 'package:tolak_tax/screens/dashboard_screen.dart';
 import 'package:tolak_tax/screens/expense_screen.dart';
 import 'package:tolak_tax/screens/profile_screen.dart';
 import 'package:tolak_tax/screens/reports_screen.dart';
+import 'package:tolak_tax/screens/camera_page.dart';
+import 'package:tolak_tax/widgets/bottom_scanned_file_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,7 +34,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onScannerPressed() {
-    print('Scanner button pressed');
+    showModalBottomSheet(context: context, builder: (BuildContext context){
+      return const BottomScannedFileSheet();
+    }
+    );
   }
 
   @override

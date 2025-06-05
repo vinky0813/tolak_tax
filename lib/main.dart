@@ -10,6 +10,7 @@ import 'package:tolak_tax/screens/signup_screen.dart';
 import 'package:tolak_tax/screens/splash_screen.dart';
 import 'package:tolak_tax/themes/app_theme.dart';
 import 'package:tolak_tax/utils/transitions.dart';
+import 'package:tolak_tax/screens/camera_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +43,8 @@ class MyApp extends StatelessWidget {
             return fadeRoute(const HomeScreen());
           case '/input-phone':
             return fadeRoute(const PhoneNumberInputScreen());
+          case '/camera':
+            return slideTransitionRoute(const CameraPage(),);
           case '/otp-verification':
             final args = settings.arguments as Map<String, dynamic>;
             return fadeRoute(
