@@ -3,6 +3,7 @@ import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/widgets/gamified_progress.dart';
 import 'package:tolak_tax/widgets/quick_actionbutton.dart';
 import 'package:tolak_tax/widgets/recent_receipts_list.dart';
+import 'package:tolak_tax/widgets/section_container.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
 import 'package:tolak_tax/widgets/weekly_barchart.dart';
 
@@ -150,19 +151,19 @@ class DashboardScreen extends StatelessWidget {
       }),
       Receipt.fromMap({
         'title': 'Train ride',
-        'date': '2025-05-30',
+        'date': '2025-06-2',
         'amount': 6.80,
         'category': 'transport',
       }),
       Receipt.fromMap({
         'title': 'Movie ticket',
-        'date': '2025-05-31',
+        'date': '2025-06-03',
         'amount': 15.00,
         'category': 'entertainment',
       }),
       Receipt.fromMap({
         'title': 'Taxi',
-        'date': '2025-06-01',
+        'date': '2025-06-04',
         'amount': 18.20,
         'category': 'transport',
       }),
@@ -305,58 +306,32 @@ class DashboardScreen extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            const BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 6,
-                              offset: Offset(0, 3),
-                            )
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Quick Actions',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                QuickActionButton(
-                                  icon: Icons.camera_alt,
-                                  label: 'Scan Receipt',
-                                  onPressed: () {
-                                    // TODO: Add scan logic
-                                  },
-                                ),
-                                QuickActionButton(
-                                  icon: Icons.receipt,
-                                  label: 'View Receipts',
-                                  onPressed: () {
-                                    // TODO: Navigate to receipts list
-                                  },
-                                ),
-                                QuickActionButton(
-                                  icon: Icons.calculate,
-                                  label: 'Generate Report',
-                                  onPressed: () {
-                                    // TODO: Navigate to tax calculation screen
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      SectionContainer(title: 'Quick Actions', child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          QuickActionButton(
+                            icon: Icons.camera_alt,
+                            label: 'Scan Receipt',
+                            onPressed: () {
+                              // TODO: Add scan logic
+                            },
+                          ),
+                          QuickActionButton(
+                            icon: Icons.receipt,
+                            label: 'View Receipts',
+                            onPressed: () {
+                              // TODO: Navigate to receipts list
+                            },
+                          ),
+                          QuickActionButton(
+                            icon: Icons.calculate,
+                            label: 'Generate Report',
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/generate-report');
+                            },
+                          ),
+                        ],
+                      ),),
 
                       const SizedBox(height: 20),
 

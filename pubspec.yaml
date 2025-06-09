@@ -45,6 +45,7 @@ dependencies:
   flutter_facebook_auth: ^7.1.0
   fl_chart: ^0.71.0
   intl: ^0.20.2
+  step_progress_indicator: ^1.0.1
 
 dev_dependencies:
   flutter_test:
