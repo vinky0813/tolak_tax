@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tolak_tax/firebase/firebase_initializer.dart';
 import 'package:tolak_tax/screens/forgot_password_screen.dart';
+import 'package:tolak_tax/screens/generate_report_screen.dart';
 import 'package:tolak_tax/screens/home_screen.dart';
 import 'package:tolak_tax/screens/login_screen.dart';
 import 'package:tolak_tax/screens/otp_verification_screen.dart';
@@ -54,6 +55,8 @@ class MyApp extends StatelessWidget {
             return fadeThroughRoute(const HomeScreen());
           case '/splash-to-login':
             return fadeThroughRoute(const LoginScreen());
+          case '/generate-report':
+            return fadeThroughRoute(const GenerateReportScreen());
           default:
             // make a real 404 error page when free
             return MaterialPageRoute(

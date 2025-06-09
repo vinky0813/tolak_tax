@@ -150,19 +150,19 @@ class DashboardScreen extends StatelessWidget {
       }),
       Receipt.fromMap({
         'title': 'Train ride',
-        'date': '2025-05-30',
+        'date': '2025-06-2',
         'amount': 6.80,
         'category': 'transport',
       }),
       Receipt.fromMap({
         'title': 'Movie ticket',
-        'date': '2025-05-31',
+        'date': '2025-06-03',
         'amount': 15.00,
         'category': 'entertainment',
       }),
       Receipt.fromMap({
         'title': 'Taxi',
-        'date': '2025-06-01',
+        'date': '2025-06-04',
         'amount': 18.20,
         'category': 'transport',
       }),
@@ -349,7 +349,7 @@ class DashboardScreen extends StatelessWidget {
                                   icon: Icons.calculate,
                                   label: 'Generate Report',
                                   onPressed: () {
-                                    // TODO: Navigate to tax calculation screen
+                                    Navigator.pushNamed(context, '/generate-report');
                                   },
                                 ),
                               ],
