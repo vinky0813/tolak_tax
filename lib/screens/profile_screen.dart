@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tolak_tax/widgets/achievement_tile.dart';
 import 'package:tolak_tax/widgets/settings_item.dart';
 
@@ -11,8 +12,16 @@ class ProfileScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    void _signOut(BuildContext context) async {
+    void _signOut() async {
+      final user = FirebaseAuth.instance.currentUser;
       await FirebaseAuth.instance.signOut();
+      if (user != null) {
+        final providerIds = user.providerData.map((info) => info.providerId).toList();
+
+        if (providerIds.contains('google.com')) {
+          await GoogleSignIn().signOut();
+        }
+      }
       Navigator.of(context).pushReplacementNamed('/login');
     }
 
@@ -149,7 +158,7 @@ class ProfileScreen extends StatelessWidget {
                       icon: Icons.logout,
                       title: 'Sign Out',
                       onTap: () {
-                        _signOut;
+                        _signOut();
                       },
                     ),
                   ],
