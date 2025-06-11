@@ -160,6 +160,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
     final totalAmount = getTotalAmount(filteredReceipts);
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: colorScheme.primary,
       body: SafeArea(
         child: CustomScrollView(
@@ -354,6 +355,12 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                                 color: theme.colorScheme.primary,
                               ),
                             ),
+                            onTap:() {
+                              Navigator.pushNamed(
+                                context,
+                                '/receipt-details',
+                                arguments: receipt,
+                              );}
                           );
                         }).toList(),
                     ],
