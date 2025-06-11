@@ -1,21 +1,38 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tolak_tax/firebase/firebase_initializer.dart';
+import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/screens/forgot_password_screen.dart';
 import 'package:tolak_tax/screens/generate_report_screen.dart';
 import 'package:tolak_tax/screens/home_screen.dart';
 import 'package:tolak_tax/screens/login_screen.dart';
 import 'package:tolak_tax/screens/otp_verification_screen.dart';
 import 'package:tolak_tax/screens/phone_number_input_screen.dart';
+import 'package:tolak_tax/screens/receipt_details_screen.dart';
 import 'package:tolak_tax/screens/reset_password_screen.dart';
 import 'package:tolak_tax/screens/signup_screen.dart';
 import 'package:tolak_tax/screens/splash_screen.dart';
+import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/themes/app_theme.dart';
 import 'package:tolak_tax/utils/transitions.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeFirebase();
-  runApp(const MyApp());
+  // adding provider
+  runApp(MultiProvider(
+    providers: [
+      Provider<AuthService>(
+        create: (_) => AuthService(),
+      ),
+      StreamProvider<User?>(
+        create: (context) => context.read<AuthService>().authStateChanges,
+        initialData: null,
+      ),
+    ],
+    child: MyApp(),
+  ),);
 }
 
 class MyApp extends StatelessWidget {
@@ -57,6 +74,9 @@ class MyApp extends StatelessWidget {
             return fadeThroughRoute(const LoginScreen());
           case '/generate-report':
             return fadeThroughRoute(const GenerateReportScreen());
+          case '/receipt-details':
+            final receipt = settings.arguments as Receipt;
+            return fadeThroughRoute(ReceiptDetailsScreen(receipt: receipt));
           default:
             // make a real 404 error page when free
             return MaterialPageRoute(

@@ -46,6 +46,7 @@ dependencies:
   fl_chart: ^0.71.0
   intl: ^0.20.2
   step_progress_indicator: ^1.0.1
+  provider: ^6.1.5
 
 dev_dependencies:
   flutter_test:

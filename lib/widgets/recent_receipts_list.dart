@@ -68,6 +68,12 @@ class _RecentReceiptsListState extends State<RecentReceiptsList> {
                     color: theme.colorScheme.primary,
                   ),
                 ),
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/receipt-details',
+                    arguments: receipt,
+                  );}
               );
             },
           ),

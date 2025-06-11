@@ -3,12 +3,14 @@ class Receipt {
   final DateTime date;
   final double amount;
   final String category;
+  String? imageUrl;
 
   Receipt({
     required this.title,
     required this.date,
     required this.amount,
     required this.category,
+    this.imageUrl,
   });
 
   /// Factory to create a Receipt from a Map (e.g., from JSON or raw list)
@@ -18,6 +20,7 @@ class Receipt {
       date: DateTime.tryParse(map['date'] ?? '') ?? DateTime.now(),
       amount: (map['amount'] as num).toDouble(),
       category: map['category'] ?? 'uncategorized',
+      imageUrl: map['imageUrl'] ?? '',
     );
   }
 
@@ -28,6 +31,7 @@ class Receipt {
       'date': date.toIso8601String(),
       'amount': amount,
       'category': category,
+      'imageUrl': imageUrl,
     };
   }
 }

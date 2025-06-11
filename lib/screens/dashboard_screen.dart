@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
+import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/widgets/gamified_progress.dart';
 import 'package:tolak_tax/widgets/quick_actionbutton.dart';
 import 'package:tolak_tax/widgets/recent_receipts_list.dart';
@@ -154,22 +156,25 @@ class DashboardScreen extends StatelessWidget {
         'date': '2025-06-2',
         'amount': 6.80,
         'category': 'transport',
+        'imageUrl': 'https://via.placeholder.com/300x180.png?text=Receipt+Image',
       }),
       Receipt.fromMap({
         'title': 'Movie ticket',
         'date': '2025-06-03',
         'amount': 15.00,
         'category': 'entertainment',
+        'imageUrl': 'https://via.placeholder.com/300x180.png?text=Receipt+Image',
       }),
       Receipt.fromMap({
         'title': 'Taxi',
         'date': '2025-06-04',
         'amount': 18.20,
         'category': 'transport',
+        'imageUrl': 'https://via.placeholder.com/300x180.png?text=Receipt+Image',
       }),
     ];
 
-    final userName = 'John';
+    final userName = Provider.of<AuthService>(context).currentUser?.displayName;
 
     return Scaffold(
       backgroundColor: colorScheme.primary,
@@ -224,7 +229,7 @@ class DashboardScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  userName,
+                                  userName!,
                                   style:
                                       theme.textTheme.headlineSmall?.copyWith(
                                     color: colorScheme.onPrimary,
