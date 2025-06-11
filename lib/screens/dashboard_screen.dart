@@ -154,18 +154,21 @@ class DashboardScreen extends StatelessWidget {
         'date': '2025-06-2',
         'amount': 6.80,
         'category': 'transport',
+        'imageUrl': 'https://via.placeholder.com/300x180.png?text=Receipt+Image',
       }),
       Receipt.fromMap({
         'title': 'Movie ticket',
         'date': '2025-06-03',
         'amount': 15.00,
         'category': 'entertainment',
+        'imageUrl': 'https://via.placeholder.com/300x180.png?text=Receipt+Image',
       }),
       Receipt.fromMap({
         'title': 'Taxi',
         'date': '2025-06-04',
         'amount': 18.20,
         'category': 'transport',
+        'imageUrl': 'https://via.placeholder.com/300x180.png?text=Receipt+Image',
       }),
     ];
 
