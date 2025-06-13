@@ -6,6 +6,7 @@ import 'package:tolak_tax/screens/profile_screen.dart';
 import 'package:tolak_tax/screens/reports_screen.dart';
 import 'package:tolak_tax/screens/camera_page.dart';
 import 'package:tolak_tax/widgets/bottom_scanned_file_sheet.dart';
+import 'package:tolak_tax/services/api_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,16 +35,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onScannerPressed() {
-    showModalBottomSheet(context: context, builder: (BuildContext context){
-      return const BottomScannedFileSheet();
-    }
-    );
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return const BottomScannedFileSheet();
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     final theme = Theme.of(context);
+    final apiService = ApiService();
+
+    apiService.printUserDetails(context);
 
     if (user != null) {
       print('Name: ${user.displayName}');
