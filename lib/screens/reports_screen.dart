@@ -291,7 +291,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                                   icon: Icons.calculate,
                                   label: 'Generate Report',
                                   onPressed: () {
-                                    // Handle click
+                                    Navigator.pushNamed(context, '/generate-report');
                                   },
                                 ),
                               ),

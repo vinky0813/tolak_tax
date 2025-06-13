@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:tolak_tax/widgets/achievement_tile.dart';
 import 'package:tolak_tax/widgets/settings_item.dart';
+import '../services/auth_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -10,12 +11,8 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
-    void signOut(BuildContext context) async {
-      await FirebaseAuth.instance.signOut();
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
-
+    final user = Provider.of<AuthService>(context).currentUser;
+   
     return Scaffold(
       backgroundColor: colorScheme.primary,
       body: SafeArea(
@@ -40,12 +37,12 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'John',
+                        user?.displayName ?? 'No Name',
                         style: theme.textTheme.titleLarge?.copyWith(
                           color: Colors.white,
                         ),
                       ),
-                      Text('john@example.com',
+                      Text(user?.email ?? 'Email',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: Colors.white,
                           )),
@@ -149,8 +146,10 @@ class ProfileScreen extends StatelessWidget {
                     SettingsItem(
                       icon: Icons.logout,
                       title: 'Sign Out',
-                      onTap: () {
-                        signOut;
+                      onTap: () async {
+                        final auth = Provider.of<AuthService>(context, listen: false);
+                        await auth.signOut();
+                        Navigator.of(context).pushReplacementNamed('/login');
                       },
                     ),
                   ],

@@ -45,6 +45,18 @@ class _HomeScreenState extends State<HomeScreen> {
     final user = FirebaseAuth.instance.currentUser;
     final theme = Theme.of(context);
 
+    if (user != null) {
+      print('Name: ${user.displayName}');
+      print('Email: ${user.email}');
+      print('Photo URL: ${user.photoURL}');
+      print('UID: ${user.uid}');
+      for (final info in user.providerData) {
+        print('Signed in with: ${info.providerId}');
+      }
+    } else {
+      print('No user is currently signed in.');
+    }
+
     return Scaffold(
       extendBody: true,
       resizeToAvoidBottomInset: false,
