@@ -110,7 +110,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               ),
             ),
           ),
-          BackButtonWidget(),
+          const BackButtonWidget(),
           Positioned(
             top: screenHeight * 0.12,
             left: 24,

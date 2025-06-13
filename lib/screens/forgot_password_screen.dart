@@ -39,7 +39,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Something went wrong')),
+          const SnackBar(content: Text('Something went wrong')),
         );
       }
     }
@@ -57,15 +57,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             height: 300,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assets/backgrounds/tolaktax-background2.png"),
+                image:
+                    AssetImage("assets/backgrounds/tolaktax-background2.png"),
                 fit: BoxFit.cover,
                 alignment: Alignment.topRight,
               ),
             ),
           ),
-
-          BackButtonWidget(),
-
+          const BackButtonWidget(),
           Positioned(
             top: screenHeight * 0.12,
             left: 24,
@@ -91,7 +90,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ],
             ),
           ),
-
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(

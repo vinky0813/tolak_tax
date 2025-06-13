@@ -18,11 +18,11 @@ class DashboardScreen extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     // Dummy data for demo
-    final int totalReceipts = 24;
-    final double totalExpenses = 1523.75;
-    final double totalTax = 123.45;
-    final double taxDue = 40.00;
-    final double totalMakanExpenses = 200.00;
+    const int totalReceipts = 24;
+    const double totalExpenses = 1523.75;
+    const double totalTax = 123.45;
+    const double taxDue = 40.00;
+    const double totalMakanExpenses = 200.00;
 
     final recentReceipts = [
       Receipt.fromMap({
@@ -176,6 +176,7 @@ class DashboardScreen extends StatelessWidget {
 
     final userName = Provider.of<AuthService>(context).currentUser?.displayName;
 
+
     return Scaffold(
       backgroundColor: colorScheme.primary,
       body: SafeArea(
@@ -224,8 +225,7 @@ class DashboardScreen extends StatelessWidget {
                                 Text(
                                   'Welcome!',
                                   style: theme.textTheme.titleMedium?.copyWith(
-                                    color:
-                                        colorScheme.onPrimary,
+                                    color: colorScheme.onPrimary,
                                   ),
                                 ),
                                 Text(
@@ -241,7 +241,9 @@ class DashboardScreen extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        WeeklyBarChart(receipts: recentReceipts,),
+                        WeeklyBarChart(
+                          receipts: recentReceipts,
+                        ),
                         const SizedBox(height: 16),
                       ],
                     ),
@@ -252,7 +254,7 @@ class DashboardScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: Container(
                 decoration: BoxDecoration(
-                  color: colorScheme.background,
+                  color: colorScheme.surface,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
@@ -282,7 +284,7 @@ class DashboardScreen extends StatelessWidget {
                           spacing: 12,
                           children: [
                             SummaryCard(
-                              width: 70,
+                                width: 70,
                                 icon: Icons.receipt_long,
                                 label: 'Receipts',
                                 value: totalReceipts.toString(),
@@ -337,7 +339,7 @@ class DashboardScreen extends StatelessWidget {
                           ),
                         ],
                       ),),
-
+                      
                       const SizedBox(height: 20),
 
                       GamifiedProgress(
@@ -354,15 +356,17 @@ class DashboardScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            const BoxShadow(
+                          boxShadow: const [
+                            BoxShadow(
                               color: Colors.black12,
                               blurRadius: 6,
                               offset: Offset(0, 3),
                             )
                           ],
                         ),
-                        child: RecentReceiptsList(receipts: recentReceipts,),
+                        child: RecentReceiptsList(
+                          receipts: recentReceipts,
+                        ),
                       ),
                     ],
                   ),

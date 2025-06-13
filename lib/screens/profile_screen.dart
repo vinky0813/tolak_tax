@@ -12,7 +12,7 @@ class ProfileScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final user = Provider.of<AuthService>(context).currentUser;
-
+   
     return Scaffold(
       backgroundColor: colorScheme.primary,
       body: SafeArea(
@@ -57,7 +57,7 @@ class ProfileScreen extends StatelessWidget {
               hasScrollBody: false,
               child: Container(
                 decoration: BoxDecoration(
-                  color: colorScheme.background,
+                  color: colorScheme.surface,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
@@ -96,10 +96,11 @@ class ProfileScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               AchievementTile(
-                                  icon: Icons.savings,
-                                  label: 'RM 123.12',
-                                  subtitle: 'Total Savings',
-                                  width: 80,),
+                                icon: Icons.savings,
+                                label: 'RM 123.12',
+                                subtitle: 'Total Savings',
+                                width: 80,
+                              ),
                               AchievementTile(
                                 icon: Icons.local_fire_department,
                                 label: '12 Days',

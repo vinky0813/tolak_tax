@@ -16,6 +16,7 @@ import 'package:tolak_tax/screens/splash_screen.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/themes/app_theme.dart';
 import 'package:tolak_tax/utils/transitions.dart';
+import 'package:tolak_tax/screens/camera_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,16 +54,19 @@ class MyApp extends StatelessWidget {
           case '/signup':
             return fadeRoute(const SignupScreen());
           case '/forgot-password':
-            return fadeRoute(ForgotPasswordScreen());
+            return fadeRoute(const ForgotPasswordScreen());
           case '/reset-password':
-            return fadeRoute(ResetPasswordScreen());
+            return fadeRoute(const ResetPasswordScreen());
           case '/home':
             return fadeRoute(const HomeScreen());
           case '/input-phone':
-            return fadeRoute(PhoneNumberInputScreen());
+            return fadeRoute(const PhoneNumberInputScreen());
+          case '/camera':
+            return scaleRoute(const CameraPage(),);
           case '/otp-verification':
             final args = settings.arguments as Map<String, dynamic>;
-            return fadeRoute(OTPVerificationScreen(
+            return fadeRoute(
+              OTPVerificationScreen(
                 phoneNumber: args['phoneNumber'],
                 verificationId: args['verificationId'],
               ),
@@ -86,7 +90,6 @@ class MyApp extends StatelessWidget {
             );
         }
       },
-
     );
   }
 }

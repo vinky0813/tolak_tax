@@ -84,15 +84,14 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
             height: 300,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assets/backgrounds/tolaktax-background2.png"),
+                image:
+                    AssetImage("assets/backgrounds/tolaktax-background2.png"),
                 fit: BoxFit.cover,
                 alignment: Alignment.topRight,
               ),
             ),
           ),
-
-          BackButtonWidget(),
-
+          const BackButtonWidget(),
           Positioned(
             top: screenHeight * 0.12,
             left: 24,
@@ -118,7 +117,6 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
               ],
             ),
           ),
-
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -157,7 +155,7 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
                         validator: validatePhoneNumber,
                         decoration: InputDecoration(
                           labelText: "Phone Number",
-                          labelStyle: TextStyle(
+                          labelStyle: const TextStyle(
                             fontFamily: "DMSans",
                           ),
                           filled: true,
@@ -172,7 +170,8 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
                                 Container(
                                   height: 24,
                                   width: 1,
-                                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 8),
                                   color: colorScheme.outline,
                                 ),
                                 Text(
@@ -192,8 +191,6 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
                           ),
                         ),
                       ),
-
-
                       const SizedBox(height: 32),
                       SizedBox(
                         width: double.infinity,

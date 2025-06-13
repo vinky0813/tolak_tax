@@ -9,7 +9,7 @@ class BackButtonWidget extends StatelessWidget {
 
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.only(left: 8, top: 8),
+        padding: const EdgeInsets.all(8),
         child: IconButton(
           icon: Icon(Icons.arrow_back,
               color: theme.colorScheme.primary, size: 28),

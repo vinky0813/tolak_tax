@@ -136,11 +136,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
   List<Receipt> get filteredReceipts {
     return receipts.where((receipt) {
       if (startDate == null || endDate == null) return true;
-      return receipt.date.isAfter(startDate!.subtract(const Duration(days: 1))) &&
+      return receipt.date
+              .isAfter(startDate!.subtract(const Duration(days: 1))) &&
           receipt.date.isBefore(endDate!.add(const Duration(days: 1)));
     }).toList();
   }
-
 
   Map<String, double> _groupReceipts() {
     final Map<String, double> groupedData = {};
@@ -175,14 +175,15 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     color: colorScheme.onPrimary,
                   ),
                 ),
-                titlePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                titlePadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
               foregroundColor: colorScheme.onPrimary,
             ),
             SliverToBoxAdapter(
               child: Container(
                 decoration: BoxDecoration(
-                  color: colorScheme.background,
+                  color: colorScheme.surface,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
@@ -257,7 +258,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
                                     width: 85,
                                     icon: Icons.attach_money,
                                     label: 'Total Amount',
-                                    value: 'RM ${totalAmount.toStringAsFixed(2)}',
+                                    value:
+                                        'RM ${totalAmount.toStringAsFixed(2)}',
                                     color: Colors.green,
                                   ),
                                 ],
@@ -319,64 +321,66 @@ class _ReportsScreenState extends State<ReportsScreen> {
                         children: [
                           Text(
                             'Expenses by Category',
-                            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                            style: theme.textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 10),
                           SizedBox(
                             height: 300,
-                            child: ExpensesByCategoryChart(receipts: filteredReceipts),
+                            child: ExpensesByCategoryChart(
+                                receipts: filteredReceipts),
                           ),
                         ],
                       ),
                     ),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 6,
-                        offset: Offset(0, 3),
-                      )
-                    ],
-                  ),
-                  child: Column(
-                    children: groupedData.entries.map((entry) {
-                      final color = getCategoryColor(entry.key);
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 18,
-                              height: 18,
-                              decoration: BoxDecoration(
-                                color: color,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                entry.key,
-                                style: theme.textTheme.bodyLarge
-                                    ?.copyWith(fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            Text(
-                              'RM ${entry.value.toStringAsFixed(2)}',
-                              style: theme.textTheme.bodyLarge,
-                            ),
+                    Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 6,
+                              offset: Offset(0, 3),
+                            )
                           ],
                         ),
-                      );
-                    }).toList(),
-                  )
-                ),
+                        child: Column(
+                          children: groupedData.entries.map((entry) {
+                            final color = getCategoryColor(entry.key);
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 6),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 18,
+                                    height: 18,
+                                    decoration: BoxDecoration(
+                                      color: color,
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      entry.key,
+                                      style: theme.textTheme.bodyLarge
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                  Text(
+                                    'RM ${entry.value.toStringAsFixed(2)}',
+                                    style: theme.textTheme.bodyLarge,
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        )),
 
                     Container(
                       width: double.infinity,
@@ -398,7 +402,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
                         children: [
                           Text(
                             'Monthly Expense Trend',
-                            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                            style: theme.textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 20),
                           SizedBox(

@@ -13,7 +13,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -83,13 +82,13 @@ class _LoginScreenState extends State<LoginScreen> {
             height: 400,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assets/backgrounds/tolaktax-background1.png"),
+                image:
+                    AssetImage("assets/backgrounds/tolaktax-background1.png"),
                 fit: BoxFit.cover,
                 alignment: Alignment.topCenter,
               ),
             ),
           ),
-
           Positioned(
             top: screenHeight * 0.05,
             left: 16,
@@ -128,7 +127,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
           ),
-
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -180,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         validator: validatePassword,
                       ),
                       const SizedBox(height: 24),
-                  
+
                       SizedBox(
                         width: double.infinity,
                         child: InkWell(
@@ -210,61 +208,80 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () {
                             Navigator.pushNamed(context, '/forgot-password');
                           },
-                          child: const Text("Forgot password?", style: TextStyle(fontFamily: "DMSans"),),
+                          child: const Text(
+                            "Forgot password?",
+                            style: TextStyle(fontFamily: "DMSans"),
+                          ),
                         ),
                       ),
-                  
+
                       //const SizedBox(height: 6),
                       Center(
                         child: Text(
                           "or continue with",
-                          style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                          style: theme.textTheme.bodyMedium
+                              ?.copyWith(color: Colors.grey[600]),
                         ),
                       ),
                       const SizedBox(height: 6),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          LoginSoclalbutton(assetPath:'assets/icons/icons8-google.svg',
+                          LoginSoclalbutton(
+                            assetPath: 'assets/icons/icons8-google.svg',
                             onTap: () async {
-                              final userCredential = await _authService.signInWithGoogle();
+                              final userCredential =
+                                  await _authService.signInWithGoogle();
                               if (userCredential != null) {
-                                Navigator.pushReplacementNamed(context, '/home');
+                                Navigator.pushReplacementNamed(
+                                    context, '/home');
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("Google Sign-In failed")),
+                                  const SnackBar(
+                                      content: Text("Google Sign-In failed")),
                                 );
                               }
-                            },),
+                            },
+                          ),
                           const SizedBox(width: 16),
-                          LoginSoclalbutton(iconData: Icons.phone,
+                          LoginSoclalbutton(
+                            iconData: Icons.phone,
                             onTap: () {
                               Navigator.pushNamed(context, '/input-phone');
-                            },),
+                            },
+                          ),
                           const SizedBox(width: 16),
-                          LoginSoclalbutton(assetPath:'assets/icons/icons8-facebook.svg',
+                          LoginSoclalbutton(
+                            assetPath: 'assets/icons/icons8-facebook.svg',
                             onTap: () async {
-                              final userCredential = await _authService.signInWithFacebook();
+                              final userCredential =
+                                  await _authService.signInWithFacebook();
 
                               if (userCredential != null) {
-                                Navigator.pushReplacementNamed(context, '/home');
+                                Navigator.pushReplacementNamed(
+                                    context, '/home');
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("Facebook Sign-In failed")),
+                                  const SnackBar(
+                                      content: Text("Facebook Sign-In failed")),
                                 );
                               }
-                            },),
+                            },
+                          ),
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Don't have an account?", style: theme.textTheme.bodyMedium),
+                          Text("Don't have an account?",
+                              style: theme.textTheme.bodyMedium),
                           TextButton(
                             onPressed: () {
                               Navigator.pushNamed(context, '/signup');
                             },
-                            child: Text("Sign up", ),
+                            child: const Text(
+                              "Sign up",
+                            ),
                           )
                         ],
                       ),

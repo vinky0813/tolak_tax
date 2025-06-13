@@ -63,19 +63,33 @@ class MonthlyExpenseTrendChart extends StatelessWidget {
               interval: 1,
               getTitlesWidget: (value, meta) {
                 const monthNames = [
-                  '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                  '',
+                  'Jan',
+                  'Feb',
+                  'Mar',
+                  'Apr',
+                  'May',
+                  'Jun',
+                  'Jul',
+                  'Aug',
+                  'Sep',
+                  'Oct',
+                  'Nov',
+                  'Dec'
                 ];
                 if (value >= 1 && value <= 12) {
                   return Text(monthNames[value.toInt()],
-                      style: TextStyle(fontSize: 10, color: Colors.grey.shade600));
+                      style:
+                          TextStyle(fontSize: 10, color: Colors.grey.shade600));
                 }
                 return const SizedBox.shrink();
               },
             ),
           ),
-          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
         borderData: FlBorderData(
           show: true,

@@ -66,7 +66,8 @@ class _DateRangeSelectorState extends State<DateRangeSelector> {
         return FadeTransition(
           opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
           child: ScaleTransition(
-            scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
+            scale:
+                CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
             child: Center(
               child: Material(
                 borderRadius: BorderRadius.circular(12),
@@ -103,7 +104,6 @@ class _DateRangeSelectorState extends State<DateRangeSelector> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -119,14 +119,16 @@ class _DateRangeSelectorState extends State<DateRangeSelector> {
       children: [
         Theme(
           data: Theme.of(context).copyWith(
-            canvasColor: colorScheme.background,
+            canvasColor: colorScheme.surface,
           ),
           child: DropdownButtonFormField<String>(
             value: selectedPreset,
             items: const [
               DropdownMenuItem(value: 'Last Month', child: Text('Last Month')),
-              DropdownMenuItem(value: 'Last Quarter', child: Text('Last Quarter')),
-              DropdownMenuItem(value: 'Year-to-Date', child: Text('Year-to-Date')),
+              DropdownMenuItem(
+                  value: 'Last Quarter', child: Text('Last Quarter')),
+              DropdownMenuItem(
+                  value: 'Year-to-Date', child: Text('Year-to-Date')),
               DropdownMenuItem(value: 'Custom', child: Text('Custom')),
             ],
             onChanged: (value) {
@@ -145,71 +147,73 @@ class _DateRangeSelectorState extends State<DateRangeSelector> {
           ),
         ),
         const SizedBox(height: 16),
-
         AnimatedSize(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           alignment: Alignment.topCenter,
           child: selectedPreset == 'Custom'
               ? Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => _selectDate(isStart: true),
-                      child: AbsorbPointer(
-                        child: TextFormField(
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          decoration: InputDecoration(
-                            labelText: 'Start Date',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _selectDate(isStart: true),
+                            child: AbsorbPointer(
+                              child: TextFormField(
+                                style: Theme.of(context).textTheme.bodyMedium,
+                                decoration: InputDecoration(
+                                  labelText: 'Start Date',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(Icons.calendar_today,
+                                        color: colorScheme.primary),
+                                    onPressed: () => _selectDate(isStart: true),
+                                  ),
+                                ),
+                                controller: TextEditingController(
+                                  text: customStartDate != null
+                                      ? _formatDate(customStartDate!)
+                                      : '',
+                                ),
+                              ),
                             ),
-                            suffixIcon: IconButton(
-                              icon: Icon(Icons.calendar_today, color: colorScheme.primary),
-                              onPressed: () => _selectDate(isStart: true),
-                            ),
-                          ),
-                          controller: TextEditingController(
-                            text: customStartDate != null
-                                ? _formatDate(customStartDate!)
-                                : '',
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => _selectDate(isStart: false),
-                      child: AbsorbPointer(
-                        child: TextFormField(
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          decoration: InputDecoration(
-                            labelText: 'End Date',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _selectDate(isStart: false),
+                            child: AbsorbPointer(
+                              child: TextFormField(
+                                style: Theme.of(context).textTheme.bodyMedium,
+                                decoration: InputDecoration(
+                                  labelText: 'End Date',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(Icons.calendar_today,
+                                        color: colorScheme.primary),
+                                    onPressed: () =>
+                                        _selectDate(isStart: false),
+                                  ),
+                                ),
+                                controller: TextEditingController(
+                                  text: customEndDate != null
+                                      ? _formatDate(customEndDate!)
+                                      : '',
+                                ),
+                              ),
                             ),
-                            suffixIcon: IconButton(
-                              icon: Icon(Icons.calendar_today, color: colorScheme.primary),
-                              onPressed: () => _selectDate(isStart: false),
-                            ),
-                          ),
-                          controller: TextEditingController(
-                            text: customEndDate != null
-                                ? _formatDate(customEndDate!)
-                                : '',
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            ],
-          )
+                  ],
+                )
               : const SizedBox.shrink(),
         ),
       ],
