@@ -1,11 +1,27 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'auth_service.dart';
+import 'package:http/http.dart' as http;
 
 class ApiService {
-  Future<void> printUserDetails(BuildContext context) async {
+  final apiUrl = '10.0.2.2:8000';
+
+  Future<String?> getIdToken(BuildContext context) async {
     final String? token =
         await Provider.of<AuthService>(context, listen: false).getIdToken();
-    print(token);
+    return token;
+  }
+
+  Future<String> getUserReciepts(String? idToken) async {
+    var url =
+        Uri.http(apiUrl, '/get-receipts-by-user/', {'id_token': idToken ?? ''});
+
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      throw Exception('Failed to load data');
+    }
   }
 }
