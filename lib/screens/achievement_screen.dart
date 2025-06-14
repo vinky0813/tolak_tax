@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tolak_tax/models/achievement_model.dart';
 import 'package:tolak_tax/widgets/achievement_progress_bar.dart';
+import 'package:tolak_tax/widgets/achievement_progress_tile.dart';
 
 class AchievementScreen extends StatelessWidget {
   const AchievementScreen({super.key});
@@ -9,6 +11,41 @@ class AchievementScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    List<Achievement> achievements = [
+      Achievement(
+        icon: Icons.savings_outlined,
+        title: 'Savvy Saver',
+        subtitle: 'Reach RM 1,000 in total savings',
+        currentProgress: 855,
+        goal: 1000,
+        pointsReward: 50,
+      ),
+      Achievement(
+        icon: Icons.local_fire_department,
+        title: 'On a Roll!',
+        subtitle: 'Maintain a 10-day scanning streak',
+        currentProgress: 12,
+        goal: 10,
+        pointsReward: 100,
+      ),
+      Achievement(
+        icon: Icons.emoji_events_outlined,
+        title: 'Golden Achiever',
+        subtitle: 'Reach the Gold rank with 1,500 points',
+        currentProgress: 1250,
+        goal: 1500,
+        pointsReward: 250,
+      ),
+      Achievement(
+        icon: Icons.checklist_rtl_outlined,
+        title: 'Task Master',
+        subtitle: 'Complete 50 daily tasks',
+        currentProgress: 23,
+        goal: 50,
+        pointsReward: 75,
+      ),
+    ];
+
     return Scaffold(
       backgroundColor: colorScheme.primary,
       body: SafeArea(
@@ -16,7 +53,7 @@ class AchievementScreen extends StatelessWidget {
           slivers: [
             SliverAppBar(
               pinned: true,
-              expandedHeight: 300,
+              expandedHeight: 250,
               backgroundColor: colorScheme.primary,
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
@@ -35,46 +72,36 @@ class AchievementScreen extends StatelessWidget {
               ),
             ),
 
-            SliverToBoxAdapter(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: colorScheme.background,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  if (index == 0) {
+                    return Container(
+                      padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+                      decoration: BoxDecoration(
+                        color: colorScheme.background,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(32),
+                          topRight: Radius.circular(32),
+                        ),
+                      ),
+                      child: Text(
                         'Your Achievements',
-                        style: theme.textTheme.titleLarge?.copyWith(
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: colorScheme.onBackground,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      ...List.generate(5, (index) {
-                        return Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          margin: const EdgeInsets.symmetric(vertical: 8),
-                          elevation: 2,
-                          child: ListTile(
-                            leading: Icon(Icons.star, color: colorScheme.primary),
-                            title: Text('Achievement ${index + 1}'),
-                            subtitle: Text('Earned for doing something awesome!'),
-                            trailing: Icon(Icons.check_circle, color: Colors.green),
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                ),
+                    );
+                  }
+                  final achievement = achievements[index - 1];
+                  return Container(
+                    color: colorScheme.background,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: AchievementProgressTile(achievement: achievement),
+                  );
+                },
+                childCount: achievements.length,
               ),
             ),
           ],

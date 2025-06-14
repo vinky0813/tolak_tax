@@ -77,6 +77,7 @@ class _AchievementProgressBarState extends State<AchievementProgressBar>
     final colorScheme = theme.colorScheme;
 
     return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
       child: AnimatedBuilder(
         animation: _progressAnimation,
         builder: (context, child) {
@@ -85,24 +86,31 @@ class _AchievementProgressBarState extends State<AchievementProgressBar>
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.emoji_events,
-                size: 48,
-                color: _getTrophyColor(currentProgress),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '${widget.totalPoints}',
+                    style: theme.textTheme.displaySmall?.copyWith(
+                      color: colorScheme.onPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Icon(
+                    Icons.emoji_events,
+                    size: 48,
+                    color: _getTrophyColor(currentProgress),
+                  ),
+                ],
               ),
               const SizedBox(height: 8),
               Text(
-                'Achievement Points',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  color: colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '${widget.totalPoints}',
-                style: theme.textTheme.displaySmall?.copyWith(
-                  color: colorScheme.onPrimary,
+                'Total Points',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: colorScheme.onPrimary.withOpacity(0.8),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(height: 20),

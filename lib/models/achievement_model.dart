@@ -6,6 +6,7 @@ class Achievement {
   final String subtitle;
   final double currentProgress;
   final double goal;
+  final int pointsReward;
 
   Achievement({
     required this.icon,
@@ -13,6 +14,7 @@ class Achievement {
     required this.subtitle,
     required this.currentProgress,
     required this.goal,
+    required this.pointsReward,
   });
 
   bool get isCompleted => currentProgress >= goal;
