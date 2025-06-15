@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/firebase/firebase_initializer.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
+import 'package:tolak_tax/screens/achievement_screen.dart';
+import 'package:tolak_tax/screens/budget_overview_screen.dart';
 import 'package:tolak_tax/screens/forgot_password_screen.dart';
 import 'package:tolak_tax/screens/generate_report_screen.dart';
 import 'package:tolak_tax/screens/home_screen.dart';
@@ -71,7 +73,6 @@ class MyApp extends StatelessWidget {
                 verificationId: args['verificationId'],
               ),
             );
-
           case '/splash-to-home':
             return fadeThroughRoute(const HomeScreen());
           case '/splash-to-login':
@@ -81,6 +82,17 @@ class MyApp extends StatelessWidget {
           case '/receipt-details':
             final receipt = settings.arguments as Receipt;
             return fadeThroughRoute(ReceiptDetailsScreen(receipt: receipt));
+          case '/achievement':
+            return fadeThroughRoute(const AchievementScreen());
+          case '/budget-overview':
+            final args = settings.arguments as Map<String, dynamic>;
+            return fadeThroughRoute(
+              BudgetOverviewScreen(
+                initialFocusedCategoryKey: args['initialFocusedCategoryKey'] ?? '',
+                budgets: args['budgets'] ?? {},
+                spentAmounts: args['spentAmounts'] ?? {},
+              ),
+            );
           default:
             // make a real 404 error page when free
             return MaterialPageRoute(
