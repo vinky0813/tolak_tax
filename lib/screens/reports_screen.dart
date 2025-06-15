@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
-import 'package:tolak_tax/utils/category_helper.dart';
+import 'package:tolak_tax/utils/category_colour.dart';
 import 'package:tolak_tax/widgets/date_range_selector.dart';
 import 'package:tolak_tax/widgets/monthly_expense_trend_chart.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
@@ -376,7 +376,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                         ),
                       );
                             }).toList(),
-                        )),
+                        ),),
 
                     Container(
                       width: double.infinity,
