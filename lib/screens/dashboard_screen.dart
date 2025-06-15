@@ -2,16 +2,50 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/services/auth_service.dart';
+import 'package:tolak_tax/utils/category_constants.dart';
+import 'package:tolak_tax/utils/category_helper.dart';
 import 'package:tolak_tax/widgets/gamified_progress.dart';
 import 'package:tolak_tax/widgets/quick_actionbutton.dart';
 import 'package:tolak_tax/widgets/recent_receipts_list.dart';
 import 'package:tolak_tax/widgets/section_container.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
 import 'package:tolak_tax/widgets/weekly_barchart.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+
+  late Map<String, double> _budgets;
+  late Map<String, double> _spentAmounts;
+
+  final List<String> _displayCategories = allCategories.where((c) => c != 'All').toList();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _budgets = {
+      'food': 500.0,
+      'shopping': 300.0,
+      'utilities': 400.0,
+      'entertainment': 150.0,
+      'transport': 200.0,
+    };
+
+    _spentAmounts = {
+      'food': 285.50,
+      'shopping': 310.75,
+      'utilities': 150.0,
+      'entertainment': 95.20,
+      'transport': 120.0,
+    };
+  }
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -340,11 +374,33 @@ class DashboardScreen extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      GamifiedProgress(
-                        label: 'Makan',
-                        budget: 500.0,
-                        spent: totalMakanExpenses,
-                      ),
+                      CarouselSlider.builder(
+                          itemCount: _displayCategories.length,
+                          itemBuilder: (context, index, realIndex) {
+                            final category = _displayCategories[index];
+                            final budget = _budgets[category] ?? 0.0;
+                            final spent = _spentAmounts[category] ?? 0.0;
+                            final icon = CategoryHelper.getIcon(category);
+                            final label = CategoryHelper.getDisplayName(category);
+                            final color = CategoryHelper.getCategoryColor(category);
+
+                            return GamifiedProgress(
+                                label: label,
+                                icon: icon,
+                                budget: budget,
+                                spent: spent,
+                                color: color,
+                                onTap: () {
+                                  print("pressed");
+                                },);
+                          },
+                          options: CarouselOptions(
+                            autoPlay: true,
+                            autoPlayInterval: const Duration(seconds: 5),
+                            enlargeCenterPage: true,
+                            viewportFraction: 0.85,
+                            height: 170,
+                          )),
 
                       const SizedBox(height: 20),
 
