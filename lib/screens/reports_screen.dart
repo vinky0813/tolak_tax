@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
 import 'package:tolak_tax/widgets/date_range_selector.dart';
-import 'package:tolak_tax/widgets/month_dropdown.dart';
 import 'package:tolak_tax/widgets/monthly_expense_trend_chart.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
-import 'package:tolak_tax/widgets/year_dropdown.dart';
 import '../widgets/expenses_by_category_chart.dart';
 import '../widgets/quick_actionbutton.dart';
 
@@ -375,53 +372,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
                               'RM ${entry.value.toStringAsFixed(2)}',
                               style: theme.textTheme.bodyLarge,
                             ),
-                    Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        margin: const EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 6,
-                              offset: Offset(0, 3),
-                            )
                           ],
                         ),
-                        child: Column(
-                          children: groupedData.entries.map((entry) {
-                            final color = getCategoryColor(entry.key);
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 6),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 18,
-                                    height: 18,
-                                    decoration: BoxDecoration(
-                                      color: color,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      entry.key,
-                                      style: theme.textTheme.bodyLarge
-                                          ?.copyWith(
-                                              fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  Text(
-                                    'RM ${entry.value.toStringAsFixed(2)}',
-                                    style: theme.textTheme.bodyLarge,
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
+                      );
+                            }).toList(),
                         )),
 
                     Container(
