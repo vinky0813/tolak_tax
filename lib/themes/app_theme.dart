@@ -229,7 +229,7 @@ class AppTheme {
         0xFF260E0E), // Very Dark Green (hunter_green.100 for text on parchment)
 
     surface: const Color(
-        0xFFF7F1E2), // Lighter Parchment (parchment.700 for cards, dialogs)
+        0xFFF8F8F8), // Lighter Parchment (parchment.700 for cards, dialogs)
     onSurface: const Color(
         0xFF0B140D), // Very Dark Green (hunter_green.100 for text on surface)
 
