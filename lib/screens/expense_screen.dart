@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
-import 'package:tolak_tax/utils/category_colour.dart';
+import 'package:tolak_tax/utils/category_helper.dart';
 import 'package:tolak_tax/utils/category_constants.dart';
 import 'package:tolak_tax/widgets/month_dropdown.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
@@ -327,7 +327,8 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                       else
                         ...filteredReceipts.map((receipt) {
                           final category = (receipt.category);
-                          final categoryColor = getCategoryColor(category);
+                          final categoryColor = CategoryHelper.getCategoryColor(category);
+                          final categoryIcon = CategoryHelper.getIcon(category);
                           final date = receipt.date;
                           final formattedDate = date != null
                               ? DateFormat.yMMMd().format(date)
@@ -335,7 +336,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
 
                           return ListTile(
                             contentPadding: EdgeInsets.zero,
-                            leading: Icon(Icons.receipt, color: categoryColor),
+                            leading: Icon(categoryIcon, color: categoryColor),
                             title: Text(
                               receipt.title,
                               style: theme.textTheme.bodyLarge?.copyWith(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
-import 'package:tolak_tax/utils/category_colour.dart';
+import 'package:tolak_tax/utils/category_helper.dart';
 import 'package:tolak_tax/widgets/date_range_selector.dart';
 import 'package:tolak_tax/widgets/month_dropdown.dart';
 import 'package:tolak_tax/widgets/monthly_expense_trend_chart.dart';
@@ -346,7 +346,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   ),
                   child: Column(
                     children: groupedData.entries.map((entry) {
-                      final color = getCategoryColor(entry.key);
+                      final color = CategoryHelper.getCategoryColor(entry.key);
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6),
                         child: Row(
