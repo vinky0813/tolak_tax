@@ -1,0 +1,161 @@
+import 'package:flutter/material.dart';
+import 'package:tolak_tax/utils/category_helper.dart';
+import 'package:tolak_tax/widgets/budget_metric_row.dart';
+
+class BudgetOverviewScreen extends StatefulWidget {
+  final String initialFocusedCategoryKey;
+  final Map<String, double> budgets;
+  final Map<String, double> spentAmounts;
+
+  const BudgetOverviewScreen({
+    super.key,
+    required this.initialFocusedCategoryKey,
+    required this.budgets,
+    required this.spentAmounts,
+  });
+
+  @override
+  State<BudgetOverviewScreen> createState() => _BudgetOverviewScreenState();
+}
+
+class _BudgetOverviewScreenState extends State<BudgetOverviewScreen> {
+  late String _focusedCategoryKey;
+  late List<String> _categoryKeys;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusedCategoryKey = widget.initialFocusedCategoryKey;
+    _categoryKeys = widget.budgets.keys.toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Scaffold(
+        backgroundColor: colorScheme.background,
+        body: SafeArea(
+            child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              floating: true,
+              pinned: true,
+              expandedHeight: 120,
+              backgroundColor: theme.primaryColor,
+              flexibleSpace: FlexibleSpaceBar(
+                title: Text(
+                  'Budget Overview',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: colorScheme.onPrimary,
+                  ),
+                ),
+                titlePadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+              foregroundColor: colorScheme.onPrimary,
+            ),
+            SliverToBoxAdapter(
+                child: Container(
+                    decoration: BoxDecoration(
+                      color: colorScheme.background,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(16.0),
+                    child: ExpansionPanelList(
+                        dividerColor: Colors.grey.withOpacity(0.4),
+                        animationDuration: const Duration(milliseconds: 500),
+                        elevation: 0,
+                        expansionCallback: (int index, bool isExpanded) {
+                          setState(() {
+                            final tappedkey = _categoryKeys[index];
+                            if (_focusedCategoryKey == tappedkey) {
+                              _focusedCategoryKey = '';
+                            } else {
+                              _focusedCategoryKey = tappedkey;
+                            }
+                          });
+                        },
+                        children:
+                            _categoryKeys.map<ExpansionPanel>((categoryKey) {
+                          final isFocused = _focusedCategoryKey == categoryKey;
+                          final color =
+                              CategoryHelper.getCategoryColor(categoryKey);
+                          final icon = CategoryHelper.getIcon(categoryKey);
+                          final categoryName =
+                              CategoryHelper.getDisplayName(categoryKey);
+                          final spentAmount =
+                              widget.spentAmounts[categoryKey] ?? 0.0;
+                          final budget = widget.budgets[categoryKey] ?? 0.0;
+                          final remainingBudget = budget - spentAmount;
+                          final progressValue = spentAmount / budget;
+                          final isOverBudget = progressValue > 1;
+
+                          return ExpansionPanel(
+                            isExpanded: isFocused,
+                            canTapOnHeader: true,
+                            backgroundColor: colorScheme.onPrimary,
+                            headerBuilder:
+                                (BuildContext context, bool isExpanded) {
+                              return ListTile(
+                                  leading: Icon(icon, color: color),
+                                  title: Text(
+                                    categoryName,
+                                    style:
+                                        theme.textTheme.titleMedium?.copyWith(
+                                      color: colorScheme.onBackground,
+                                    ),
+                                  ),
+                                  trailing: Text(
+                                    'RM ${spentAmount.toStringAsFixed(2)}',
+                                    style:
+                                        theme.textTheme.titleMedium?.copyWith(
+                                      color: colorScheme.onBackground,
+                                    ),
+                                  ));
+                            },
+                            body: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: LinearProgressIndicator(
+                                      value: progressValue.clamp(0.0, 1.0),
+                                      backgroundColor: color.withOpacity(0.2),
+                                      valueColor: AlwaysStoppedAnimation(color),
+                                      minHeight: 10,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  BudgetMetricRow(context, 'Budget',
+                                      'RM ${budget.toStringAsFixed(2)}'),
+                                  const Divider(
+                                    height: 16,
+                                  ),
+                                  BudgetMetricRow(context, 'Spent',
+                                      'RM ${spentAmount.toStringAsFixed(2)}'),
+                                  const Divider(
+                                    height: 16,
+                                  ),
+                                  BudgetMetricRow(context, 'Remaining',
+                                      'RM ${remainingBudget.toStringAsFixed(2)}'),
+                                  const SizedBox(height: 16),
+                                  if (isOverBudget)
+                                    Text(
+                                      'You have exceeded your budget for this category by RM${(remainingBudget * -1).toStringAsFixed(2)}',
+                                      style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                                    )
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList()))),
+          ],
+        )));
+  }
+}

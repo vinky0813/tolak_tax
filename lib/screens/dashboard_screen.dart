@@ -391,7 +391,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 spent: spent,
                                 color: color,
                                 onTap: () {
-                                  print("pressed");
+                                  Navigator.pushNamed(context, '/budget-overview', arguments: {
+                                    'initialFocusedCategoryKey': category,
+                                    'budgets': _budgets,
+                                    'spentAmounts': _spentAmounts,
+                                  });
                                 },);
                           },
                           options: CarouselOptions(
