@@ -86,13 +86,14 @@ class _SignupScreenState extends State<SignupScreen> {
             height: 300,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assets/backgrounds/tolaktax-background2.png"),
+                image:
+                    AssetImage("assets/backgrounds/tolaktax-background2.png"),
                 fit: BoxFit.cover,
                 alignment: Alignment.topCenter,
               ),
             ),
           ),
-          BackButtonWidget(),
+          const BackButtonWidget(),
           Positioned(
             top: screenHeight * 0.12,
             left: 24,
@@ -155,16 +156,15 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                
                       LoginTextField(
                         controller: _fullNameController,
                         label: "Full Name",
                         icon: Icons.people,
-                        validator: (value) =>
-                        value == null || value.isEmpty ? 'Name is required' : null,
+                        validator: (value) => value == null || value.isEmpty
+                            ? 'Name is required'
+                            : null,
                       ),
                       const SizedBox(height: 16),
-                
                       LoginTextField(
                         controller: _emailController,
                         label: "Email",
@@ -173,7 +173,6 @@ class _SignupScreenState extends State<SignupScreen> {
                         validator: validateEmail,
                       ),
                       const SizedBox(height: 16),
-                
                       LoginTextField(
                         controller: _passwordController,
                         label: "Password",
@@ -182,16 +181,15 @@ class _SignupScreenState extends State<SignupScreen> {
                         validator: validatePassword,
                       ),
                       const SizedBox(height: 16),
-                
                       LoginTextField(
                         controller: _confirmPasswordController,
                         label: "Confirm Password",
                         icon: Icons.lock,
                         obscureText: true,
-                        validator: (value) => confirmPassword(value, _passwordController.text),
+                        validator: (value) =>
+                            confirmPassword(value, _passwordController.text),
                       ),
                       const SizedBox(height: 24),
-
                       SizedBox(
                         width: double.infinity,
                         child: InkWell(
@@ -215,13 +213,12 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 24),
-                
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Already have an account?", style: theme.textTheme.bodyMedium),
+                          Text("Already have an account?",
+                              style: theme.textTheme.bodyMedium),
                           TextButton(
                             onPressed: () {
                               Navigator.pushReplacementNamed(context, '/login');

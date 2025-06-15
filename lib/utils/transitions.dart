@@ -61,15 +61,22 @@ Route<T> slideTransitionRoute<T>(Widget page, {Duration duration = const Duratio
   );
 }
 
-Route<T> scaleRoute<T>(Widget page, {Duration duration = const Duration(milliseconds: 400)}) {
+Route<T> scaleRoute<T>(Widget page, {Duration duration = const Duration(milliseconds: 350), Curve curve = Curves.easeOutBack,Curve? reverseCurve,Alignment alignment = Alignment.center}) {
   return PageRouteBuilder<T>(
     pageBuilder: (context, animation, secondaryAnimation) => page,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final CurvedAnimation popAnimation = CurvedAnimation(
+          parent: animation,
+          curve: curve,
+          reverseCurve: reverseCurve,
+      );
       return ScaleTransition(
-        scale: animation,
+        scale: popAnimation,
+        alignment: alignment,
         child: child,
       );
     },
     transitionDuration: duration,
+    reverseTransitionDuration: duration,
   );
 }

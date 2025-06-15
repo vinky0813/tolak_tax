@@ -12,7 +12,7 @@ class ProfileScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final user = Provider.of<AuthService>(context).currentUser;
-
+   
     return Scaffold(
       backgroundColor: colorScheme.primary,
       body: SafeArea(
@@ -57,7 +57,7 @@ class ProfileScreen extends StatelessWidget {
               hasScrollBody: false,
               child: Container(
                 decoration: BoxDecoration(
-                  color: colorScheme.background,
+                  color: colorScheme.surface,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),

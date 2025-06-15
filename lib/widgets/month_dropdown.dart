@@ -19,7 +19,7 @@ class MonthDropdown extends StatelessWidget {
 
     return Theme(
       data: Theme.of(context).copyWith(
-        canvasColor: colorScheme.background,
+        canvasColor: colorScheme.surface,
       ),
       child: DropdownButtonFormField<int?>(
         isExpanded: true,

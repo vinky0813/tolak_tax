@@ -7,6 +7,7 @@ class AchievementTile extends StatelessWidget {
   final double width;
 
   const AchievementTile({
+    super.key,
     required this.icon,
     required this.label,
     required this.subtitle,

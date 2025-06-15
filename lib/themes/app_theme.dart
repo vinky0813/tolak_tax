@@ -37,29 +37,65 @@ class AppTheme {
           borderSide: BorderSide(color: _lightColorScheme.primary),
         ),
       ),
-
       textTheme: const TextTheme(
-        displayLarge: TextStyle(fontSize: 57, fontWeight: FontWeight.normal, letterSpacing: -0.25, fontFamily: "DMSerif"),
-        displayMedium: TextStyle(fontSize: 45, fontWeight: FontWeight.normal, fontFamily: "DMSerif"),
-        displaySmall: TextStyle(fontSize: 36, fontWeight: FontWeight.normal, fontFamily: "DMSerif"),
-
-        headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w400, fontFamily: "DMSerif"),
-        headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.w400, fontFamily: "DMSerif"),
-        headlineSmall: TextStyle(fontSize: 24, fontWeight: FontWeight.w400, fontFamily: "DMSerif"),
-
-        titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, fontFamily: "DMSans"),
-        titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15, fontFamily: "DMSans"),
-        titleSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 0.1, fontFamily: "DMSans"),
-
-        bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.normal, letterSpacing: 0.5, fontFamily: "DMSans"),
-        bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, letterSpacing: 0.25, fontFamily: "DMSans"),
-        bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, letterSpacing: 0.4, fontFamily: "DMSans"),
-
-        labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.1, fontFamily: "DMSans"),
-        labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, letterSpacing: 0.5, fontFamily: "DMSans"),
-        labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, letterSpacing: 0.5, fontFamily: "DMSans"),
+        displayLarge: TextStyle(
+            fontSize: 57,
+            fontWeight: FontWeight.normal,
+            letterSpacing: -0.25,
+            fontFamily: "DMSerif"),
+        displayMedium: TextStyle(
+            fontSize: 45, fontWeight: FontWeight.normal, fontFamily: "DMSerif"),
+        displaySmall: TextStyle(
+            fontSize: 36, fontWeight: FontWeight.normal, fontFamily: "DMSerif"),
+        headlineLarge: TextStyle(
+            fontSize: 32, fontWeight: FontWeight.w400, fontFamily: "DMSerif"),
+        headlineMedium: TextStyle(
+            fontSize: 28, fontWeight: FontWeight.w400, fontFamily: "DMSerif"),
+        headlineSmall: TextStyle(
+            fontSize: 24, fontWeight: FontWeight.w400, fontFamily: "DMSerif"),
+        titleLarge: TextStyle(
+            fontSize: 22, fontWeight: FontWeight.bold, fontFamily: "DMSans"),
+        titleMedium: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.15,
+            fontFamily: "DMSans"),
+        titleSmall: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.1,
+            fontFamily: "DMSans"),
+        bodyLarge: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+            letterSpacing: 0.5,
+            fontFamily: "DMSans"),
+        bodyMedium: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
+            letterSpacing: 0.25,
+            fontFamily: "DMSans"),
+        bodySmall: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.normal,
+            letterSpacing: 0.4,
+            fontFamily: "DMSans"),
+        labelLarge: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.1,
+            fontFamily: "DMSans"),
+        labelMedium: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.5,
+            fontFamily: "DMSans"),
+        labelSmall: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.5,
+            fontFamily: "DMSans"),
       ),
-
     );
   }
 
@@ -99,119 +135,186 @@ class AppTheme {
           borderSide: BorderSide(color: _darkColorScheme.primary),
         ),
       ),
-
       textTheme: const TextTheme(
-        displayLarge: TextStyle(fontSize: 57, fontWeight: FontWeight.normal, letterSpacing: -0.25, fontFamily: "DMSerif"),
-        displayMedium: TextStyle(fontSize: 45, fontWeight: FontWeight.normal, fontFamily: "DMSerif"),
-        displaySmall: TextStyle(fontSize: 36, fontWeight: FontWeight.normal, fontFamily: "DMSerif"),
-
-        headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w400, fontFamily: "DMSerif"),
-        headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.w400, fontFamily: "DMSerif"),
-        headlineSmall: TextStyle(fontSize: 24, fontWeight: FontWeight.w400, fontFamily: "DMSerif"),
-
-        titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, fontFamily: "DMSans"),
-        titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15, fontFamily: "DMSans"),
-        titleSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 0.1, fontFamily: "DMSans"),
-
-        bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.normal, letterSpacing: 0.5, fontFamily: "DMSans"),
-        bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, letterSpacing: 0.25, fontFamily: "DMSans"),
-        bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, letterSpacing: 0.4, fontFamily: "DMSans"),
-
-        labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.1, fontFamily: "DMSans"),
-        labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, letterSpacing: 0.5, fontFamily: "DMSans"),
-        labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, letterSpacing: 0.5, fontFamily: "DMSans"),
+        displayLarge: TextStyle(
+            fontSize: 57,
+            fontWeight: FontWeight.normal,
+            letterSpacing: -0.25,
+            fontFamily: "DMSerif"),
+        displayMedium: TextStyle(
+            fontSize: 45, fontWeight: FontWeight.normal, fontFamily: "DMSerif"),
+        displaySmall: TextStyle(
+            fontSize: 36, fontWeight: FontWeight.normal, fontFamily: "DMSerif"),
+        headlineLarge: TextStyle(
+            fontSize: 32, fontWeight: FontWeight.w400, fontFamily: "DMSerif"),
+        headlineMedium: TextStyle(
+            fontSize: 28, fontWeight: FontWeight.w400, fontFamily: "DMSerif"),
+        headlineSmall: TextStyle(
+            fontSize: 24, fontWeight: FontWeight.w400, fontFamily: "DMSerif"),
+        titleLarge: TextStyle(
+            fontSize: 22, fontWeight: FontWeight.bold, fontFamily: "DMSans"),
+        titleMedium: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.15,
+            fontFamily: "DMSans"),
+        titleSmall: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.1,
+            fontFamily: "DMSans"),
+        bodyLarge: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+            letterSpacing: 0.5,
+            fontFamily: "DMSans"),
+        bodyMedium: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
+            letterSpacing: 0.25,
+            fontFamily: "DMSans"),
+        bodySmall: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.normal,
+            letterSpacing: 0.4,
+            fontFamily: "DMSans"),
+        labelLarge: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.1,
+            fontFamily: "DMSans"),
+        labelMedium: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.5,
+            fontFamily: "DMSans"),
+        labelSmall: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.5,
+            fontFamily: "DMSans"),
       ),
-
     );
   }
 
-
   static final ColorScheme _lightColorScheme = ColorScheme(
     brightness: Brightness.light,
-    primary: const Color(0xFF386641),         // Hunter Green
-    onPrimary: const Color(0xFFFFFFFF),       // White (for text/icons on primary)
-    primaryContainer: const Color(0xFFA4CDAC),  // Lighter shade of Hunter Green (e.g., hunter_green.800)
-    onPrimaryContainer: const Color(0xFF0B140D),// Dark text for onPrimaryContainer
+    primary: const Color(0xFF386641), // Hunter Green
+    onPrimary: const Color(0xFFFFFFFF), // White (for text/icons on primary)
+    primaryContainer: const Color(
+        0xFFA4CDAC), // Lighter shade of Hunter Green (e.g., hunter_green.800)
+    onPrimaryContainer:
+        const Color(0xFF0B140D), // Dark text for onPrimaryContainer
 
-    secondary: const Color(0xFF6A994E),       // Asparagus
-    onSecondary: const Color(0xFFFFFFFF),     // White (for text/icons on secondary)
-    secondaryContainer: const Color(0xFFC2D9B5),// Lighter Asparagus (e.g., asparagus.800)
-    onSecondaryContainer: const Color(0xFF151E10),// Dark text for onSecondaryContainer
+    secondary: const Color(0xFF6A994E), // Asparagus
+    onSecondary: const Color(0xFFFFFFFF), // White (for text/icons on secondary)
+    secondaryContainer:
+        const Color(0xFFC2D9B5), // Lighter Asparagus (e.g., asparagus.800)
+    onSecondaryContainer:
+        const Color(0xFF151E10), // Dark text for onSecondaryContainer
 
-    tertiary: const Color(0xFFA7C957),        // Yellow Green
-    onTertiary: const Color(0xFF222B0E),      // Darkest Yellow Green (for text/icons on tertiary)
-    tertiaryContainer: const Color(0xFFDBE9BB), // Lighter Yellow Green (e.g., yellow_green.800)
-    onTertiaryContainer: const Color(0xFF222B0E),// Dark text for onTertiaryContainer
+    tertiary: const Color(0xFFA7C957), // Yellow Green
+    onTertiary: const Color(
+        0xFF222B0E), // Darkest Yellow Green (for text/icons on tertiary)
+    tertiaryContainer: const Color(
+        0xFFDBE9BB), // Lighter Yellow Green (e.g., yellow_green.800)
+    onTertiaryContainer:
+        const Color(0xFF222B0E), // Dark text for onTertiaryContainer
 
-    error: const Color(0xFFBC4749),           // Bittersweet Shimmer
-    onError: const Color(0xFFFFFFFF),         // White (for text/icons on error)
-    errorContainer: const Color(0xFFF2DADB),   // Lighter Bittersweet (e.g., bittersweet_shimmer.900)
-    onErrorContainer: const Color(0xFF260E0E), // Dark text for onErrorContainer
+    error: const Color(0xFFBC4749), // Bittersweet Shimmer
+    onError: const Color(0xFFFFFFFF), // White (for text/icons on error)
+    errorContainer: const Color(
+        0xFFF2DADB), // Lighter Bittersweet (e.g., bittersweet_shimmer.900)
+    onErrorContainer: const Color(
+        0xFF260E0E), // Very Dark Green (hunter_green.100 for text on parchment)
 
-    background: Colors.grey[100] ,              // Parchment
-    onBackground: const Color(0xFF0B140D),     // Very Dark Green (hunter_green.100 for text on parchment)
+    surface: const Color(
+        0xFFF7F1E2), // Lighter Parchment (parchment.700 for cards, dialogs)
+    onSurface: const Color(
+        0xFF0B140D), // Very Dark Green (hunter_green.100 for text on surface)
 
-    surface: const Color(0xFFF7F1E2),         // Lighter Parchment (parchment.700 for cards, dialogs)
-    onSurface: const Color(0xFF0B140D),       // Very Dark Green (hunter_green.100 for text on surface)
+    surfaceContainerHighest:
+        const Color(0xFFF4EDD9), // Another Parchment variant (parchment.600)
+    onSurfaceVariant:
+        const Color(0xFF0B140D), // Very Dark Green (hunter_green.100)
 
-    surfaceVariant: const Color(0xFFF4EDD9),   // Another Parchment variant (parchment.600)
-    onSurfaceVariant: const Color(0xFF0B140D), // Very Dark Green (hunter_green.100)
+    outline: const Color(
+        0xFFA4CDAC), // Light Hunter Green (hunter_green.800 for borders)
+    outlineVariant: const Color(
+        0xFF77B483), // Medium Hunter Green (hunter_green.700 for subtle borders)
 
-    outline: const Color(0xFFA4CDAC),         // Light Hunter Green (hunter_green.800 for borders)
-    outlineVariant: const Color(0xFF77B483),   // Medium Hunter Green (hunter_green.700 for subtle borders)
+    shadow: const Color(0xFF000000), // Black (standard shadow)
+    scrim: const Color(0xFF000000), // Black (standard scrim)
 
-    shadow: const Color(0xFF000000),           // Black (standard shadow)
-    scrim: const Color(0xFF000000),            // Black (standard scrim)
-
-    inverseSurface: const Color(0xFF223D27),   // Dark Green (hunter_green.300, for elements on an inverted background)
-    onInverseSurface: const Color(0xFFFCFAF5), // Lightest Parchment (parchment.900)
-    inversePrimary: const Color(0xFF77B483),   // A hunter green shade suitable for dark backgrounds (hunter_green.700)
-    surfaceTint: const Color(0xFF386641),      // Hunter Green (often same as primary for surface elevation tint)
+    inverseSurface: const Color(
+        0xFF223D27), // Dark Green (hunter_green.300, for elements on an inverted background)
+    onInverseSurface:
+        const Color(0xFFFCFAF5), // Lightest Parchment (parchment.900)
+    inversePrimary: const Color(
+        0xFF77B483), // A hunter green shade suitable for dark backgrounds (hunter_green.700)
+    surfaceTint: const Color(
+        0xFF386641), // Hunter Green (often same as primary for surface elevation tint)
   );
-
 
 // --- Dark Theme ColorScheme ---
   static const ColorScheme _darkColorScheme = ColorScheme(
     brightness: Brightness.dark,
-    primary: const Color(0xFF6A994E),         // Asparagus (Primary for dark theme)
-    onPrimary: const Color(0xFF151E10),       // Darkest Asparagus (asparagus.100 for text on primary)
-    primaryContainer: const Color(0xFF3F5B2F),  // Darker Asparagus (e.g., asparagus.300)
-    onPrimaryContainer: const Color(0xFFE1ECDA),// Lightest Asparagus (asparagus.900)
+    primary: Color(0xFF6A994E), // Asparagus (Primary for dark theme)
+    onPrimary: Color(
+        0xFF151E10), // Darkest Asparagus (asparagus.100 for text on primary)
+    primaryContainer:
+        Color(0xFF3F5B2F), // Darker Asparagus (e.g., asparagus.300)
+    onPrimaryContainer: Color(0xFFE1ECDA), // Lightest Asparagus (asparagus.900)
 
-    secondary: const Color(0xFFA7C957),       // Yellow Green
-    onSecondary: const Color(0xFF222B0E),     // Darkest Yellow Green (yellow_green.100 for text on secondary)
-    secondaryContainer: const Color(0xFF67812A),// Darker Yellow Green (e.g., yellow_green.300)
-    onSecondaryContainer: const Color(0xFFEDF4DD),// Lightest Yellow Green (yellow_green.900)
+    secondary: Color(0xFFA7C957), // Yellow Green
+    onSecondary: Color(
+        0xFF222B0E), // Darkest Yellow Green (yellow_green.100 for text on secondary)
+    secondaryContainer:
+        Color(0xFF67812A), // Darker Yellow Green (e.g., yellow_green.300)
+    onSecondaryContainer:
+        Color(0xFFEDF4DD), // Lightest Yellow Green (yellow_green.900)
 
-    tertiary: const Color(0xFF51935E),        // Hunter Green 600 (as a less prominent accent in dark)
-    onTertiary: const Color(0xFFD2E6D6),      // Lightest Hunter Green (hunter_green.900)
-    tertiaryContainer: const Color(0xFF223D27), // Darker Hunter Green (e.g., hunter_green.300)
-    onTertiaryContainer: const Color(0xFFA4CDAC),// Lighter Hunter Green (hunter_green.800)
+    tertiary: Color(
+        0xFF51935E), // Hunter Green 600 (as a less prominent accent in dark)
+    onTertiary: Color(0xFFD2E6D6), // Lightest Hunter Green (hunter_green.900)
+    tertiaryContainer:
+        Color(0xFF223D27), // Darker Hunter Green (e.g., hunter_green.300)
+    onTertiaryContainer:
+        Color(0xFFA4CDAC), // Lighter Hunter Green (hunter_green.800)
 
-    error: const Color(0xFFCA6C6E),           // Bittersweet Shimmer 600 (slightly lighter red for dark mode)
-    onError: const Color(0xFF260E0E),         // Darkest Bittersweet (bittersweet_shimmer.100)
-    errorContainer: const Color(0xFF73292B),   // Darker Bittersweet (e.g., bittersweet_shimmer.300)
-    onErrorContainer: const Color(0xFFF2DADB), // Lightest Bittersweet (bittersweet_shimmer.900)
+    error: Color(
+        0xFFCA6C6E), // Bittersweet Shimmer 600 (slightly lighter red for dark mode)
+    onError: Color(0xFF260E0E), // Darkest Bittersweet (bittersweet_shimmer.100)
+    errorContainer:
+        Color(0xFF73292B), // Darker Bittersweet (e.g., bittersweet_shimmer.300)
+    onErrorContainer: Color(
+        0xFFF2DADB), // Lightest Parchment (parchment.900 for text on dark background)
 
-    background: const Color(0xFF0B140D),       // Very Dark Hunter Green (hunter_green.100)
-    onBackground: const Color(0xFFFCFAF5),     // Lightest Parchment (parchment.900 for text on dark background)
+    surface: Color(
+        0xFF16291A), // Dark Hunter Green (hunter_green.200 for cards, dialogs)
+    onSurface: Color(
+        0xFFFCFAF5), // Lightest Parchment (parchment.900 for text on surface)
 
-    surface: const Color(0xFF16291A),         // Dark Hunter Green (hunter_green.200 for cards, dialogs)
-    onSurface: const Color(0xFFFCFAF5),       // Lightest Parchment (parchment.900 for text on surface)
+    surfaceContainerHighest:
+        Color(0xFF223D27), // Darker Hunter Green (hunter_green.300)
+    onSurfaceVariant:
+        Color(0xFFD2E6D6), // Lightest Hunter Green (hunter_green.900)
 
-    surfaceVariant: const Color(0xFF223D27),   // Darker Hunter Green (hunter_green.300)
-    onSurfaceVariant: const Color(0xFFD2E6D6), // Lightest Hunter Green (hunter_green.900)
+    outline: Color(
+        0xFF2D5234), // Medium-Dark Hunter Green (hunter_green.400 for borders)
+    outlineVariant: Color(
+        0xFF223D27), // Darker Hunter Green (hunter_green.300 for subtle borders)
 
-    outline: const Color(0xFF2D5234),         // Medium-Dark Hunter Green (hunter_green.400 for borders)
-    outlineVariant: const Color(0xFF223D27),   // Darker Hunter Green (hunter_green.300 for subtle borders)
+    shadow: Color(0xFF000000), // Black
+    scrim: Color(0xFF000000), // Black
 
-    shadow: const Color(0xFF000000),           // Black
-    scrim: const Color(0xFF000000),            // Black
-
-    inverseSurface: const Color(0xFFF7F1E2),   // Lighter Parchment (parchment.700)
-    onInverseSurface: const Color(0xFF0B140D), // Very Dark Hunter Green (hunter_green.100)
-    inversePrimary: const Color(0xFF386641),   // Hunter Green (for elements on an inverted light background)
-    surfaceTint: const Color(0xFF6A994E),      // Asparagus (often same as primary for surface elevation tint in dark)
+    inverseSurface: Color(0xFFF7F1E2), // Lighter Parchment (parchment.700)
+    onInverseSurface:
+        Color(0xFF0B140D), // Very Dark Hunter Green (hunter_green.100)
+    inversePrimary: Color(
+        0xFF386641), // Hunter Green (for elements on an inverted light background)
+    surfaceTint: Color(
+        0xFF6A994E), // Asparagus (often same as primary for surface elevation tint in dark)
   );
 
   /*
@@ -313,5 +416,4 @@ class AppTheme {
     surfaceContainerHighest: Color(0xff353434),
   );
   */
-
 }
