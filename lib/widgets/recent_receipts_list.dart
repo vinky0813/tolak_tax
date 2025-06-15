@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
-import 'package:tolak_tax/utils/category_helper.dart';
+import 'package:tolak_tax/utils/category_colour.dart';
 
 class RecentReceiptsList extends StatefulWidget {
   final List<Receipt> receipts;
@@ -40,15 +40,14 @@ class _RecentReceiptsListState extends State<RecentReceiptsList> {
           const SizedBox(height: 12),
           ...recentThree.map(
                 (receipt) {
-              final categoryColor = CategoryHelper.getCategoryColor(receipt.category);
-              final categoryIcon = CategoryHelper.getIcon(receipt.category);
+              final categoryColor = getCategoryColor(receipt.category);
               final formattedDate = receipt.date != null
                   ? DateFormat.yMMMd().format(receipt.date)
                   : '';
               return ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 9),
                 leading: Icon(
-                  categoryIcon,
+                  Icons.receipt,
                   color: categoryColor,
                 ),
                 title: Text(

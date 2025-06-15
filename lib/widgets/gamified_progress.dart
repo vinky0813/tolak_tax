@@ -2,20 +2,14 @@ import 'package:flutter/material.dart';
 
 class GamifiedProgress extends StatefulWidget {
   final String label;
-  final IconData icon;
   final double budget;
   final double spent;
-  final Color color;
-  final VoidCallback onTap;
 
   const GamifiedProgress({
     super.key,
     required this.label,
-    required this.icon,
     required this.budget,
     required this.spent,
-    required this.color,
-    required this.onTap,
   });
 
   @override
@@ -85,99 +79,51 @@ class _GamifiedProgressState extends State<GamifiedProgress>
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final remaining = (widget.budget - widget.spent).clamp(0, widget.budget);
-    final progressValue =
-        (widget.budget > 0) ? (widget.spent / widget.budget) : 0.0;
-    const Color textColor = Colors.white;
-    final Color faintTextColor = Colors.white.withOpacity(0.8);
 
-    return InkWell(
-      onTap: widget.onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        child: Stack(children: [
-          Positioned(
-            right: -20,
-            bottom: -20,
-            child: Icon(
-              widget.icon,
-              size: 120,
-              color: Colors.white.withOpacity(0.15),
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.shadow.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          )
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'RM${remaining.toStringAsFixed(2)} away from your "${widget.label}" budget goal!',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface,
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  widget.color.withOpacity(0.9),
-                  widget.color,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+          const SizedBox(height: 4),
+          Text(
+            '$_daysLeft days left until reset',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.6),
+            ),
+          ),
+          const SizedBox(height: 8),
+          AnimatedBuilder(
+            animation: _progressAnimation,
+            builder: (context, child) => ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: _progressAnimation.value,
+                backgroundColor: colorScheme.primary.withOpacity(0.2),
+                valueColor: AlwaysStoppedAnimation(colorScheme.primary),
+                minHeight: 8,
               ),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: colorScheme.shadow.withOpacity(0.1),
-                  blurRadius: 6,
-                  offset: const Offset(0, 3),
-                )
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      widget.icon,
-                      color: textColor,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(widget.label,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: textColor,
-                        )),
-                  ],
-                ),
-                const Spacer(),
-                Text(
-                  'RM${remaining.toStringAsFixed(2)} left to spend',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: textColor,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Left to spend $_daysLeft days left until reset',
-                  style: theme.textTheme.bodyMedium
-                      ?.copyWith(color: faintTextColor),
-                ),
-                const SizedBox(height: 10),
-                AnimatedBuilder(
-                  animation: _progressAnimation,
-                  builder: (context, child) {
-                    final indicatorColor = progressValue > 1.0
-                        ? Colors.red.shade400
-                        : Colors.white;
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: LinearProgressIndicator(
-                        value: _progressAnimation.value,
-                        backgroundColor: Colors.white.withOpacity(0.3),
-                        valueColor: AlwaysStoppedAnimation(indicatorColor),
-                        minHeight: 8,
-                      ),
-                    );
-                  },
-                ),
-              ],
             ),
           ),
-        ]),
+        ],
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
-import 'package:tolak_tax/utils/category_helper.dart';
+import 'package:tolak_tax/utils/category_colour.dart';
 
 class ExpensesByCategoryChart extends StatelessWidget {
   final List<Receipt> receipts;
@@ -30,7 +30,7 @@ class ExpensesByCategoryChart extends StatelessWidget {
     return PieChart(
       PieChartData(
         sections: groupedData.entries.map((entry) {
-          final color = CategoryHelper.getCategoryColor(entry.key);
+          final color = getCategoryColor(entry.key);
           final percent = (entry.value / total) * 100;
           return PieChartSectionData(
             color: color,
