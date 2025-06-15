@@ -82,40 +82,44 @@ class ProfileScreen extends StatelessWidget {
                           )
                         ],
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Achievements',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushNamed('/achievement');
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Achievements',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              AchievementTile(
-                                icon: Icons.savings,
-                                label: 'RM 123.12',
-                                subtitle: 'Total Savings',
-                                width: 80,
-                              ),
-                              AchievementTile(
-                                icon: Icons.local_fire_department,
-                                label: '12 Days',
-                                subtitle: 'Streak',
-                                width: 80,
-                              ),
-                              AchievementTile(
-                                icon: Icons.emoji_events,
-                                label: 'Gold',
-                                subtitle: 'Rank',
-                                width: 80,
-                              ),
-                            ],
-                          ),
-                        ],
+                            const SizedBox(height: 12),
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                AchievementTile(
+                                    icon: Icons.savings,
+                                    label: 'RM 123.12',
+                                    subtitle: 'Total Savings',
+                                    width: 80,),
+                                AchievementTile(
+                                  icon: Icons.local_fire_department,
+                                  label: '12 Days',
+                                  subtitle: 'Streak',
+                                  width: 80,
+                                ),
+                                AchievementTile(
+                                  icon: Icons.emoji_events,
+                                  label: 'Gold',
+                                  subtitle: 'Rank',
+                                  width: 80,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
