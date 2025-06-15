@@ -44,219 +44,223 @@ class _BudgetOverviewScreenState extends State<BudgetOverviewScreen> {
     final bool isOverBudgetOverall = totalRemaining < 0;
 
     return Scaffold(
-        backgroundColor: colorScheme.primary,
-        body: SafeArea(
-            child: CustomScrollView(
-                  slivers: [
-                    SliverAppBar(
-                      floating: true,
-                      pinned: true,
-                      expandedHeight: 120,
-                      backgroundColor: theme.primaryColor,
-                      flexibleSpace: FlexibleSpaceBar(
-                        title: Text(
-                          'Budget Overview',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            color: colorScheme.onPrimary,
-                          ),
-                        ),
-                        titlePadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                      ),
-                      foregroundColor: colorScheme.onPrimary,
+      backgroundColor: colorScheme.primary,
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              floating: true,
+              pinned: true,
+              expandedHeight: 120,
+              backgroundColor: theme.primaryColor,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.edit, color: Colors.white,),
+                  onPressed: () {
+                    print('edit button pressed');
+                  },
+                  tooltip: 'Edit Budgets',
+                ),
+              ],
+              flexibleSpace: FlexibleSpaceBar(
+                title: Text(
+                  'Budget Overview',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: colorScheme.onPrimary,
+                  ),
+                ),
+                titlePadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+              foregroundColor: colorScheme.onPrimary,
+            ),
+            SliverFillRemaining(
+                hasScrollBody: false,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: colorScheme.background,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(24),
+                      topRight: Radius.circular(24),
                     ),
-                    SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: colorScheme.background,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(24),
-                              topRight: Radius.circular(24),
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(16.0),
-                          child: SingleChildScrollView(
+                  ),
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Card(
+                          color: Colors.white,
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Card(
-                                  color: Colors.white,
-                                  elevation: 2,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Overall Budget',
-                                          style:
-                                          theme.textTheme.titleMedium?.copyWith(
-                                            color: colorScheme.onSurface
-                                                .withOpacity(0.7),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          'RM ${totalRemaining.toStringAsFixed(2)}',
-                                          style:
-                                          theme.textTheme.headlineLarge?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: isOverBudgetOverall
-                                                ? Colors.red.shade700
-                                                : Colors.green.shade800,
-                                          ),
-                                        ),
-                                        Text(
-                                          isOverBudgetOverall
-                                              ? 'Over Budget'
-                                              : 'Remaining',
-                                          style:
-                                          theme.textTheme.titleMedium?.copyWith(
-                                            color: colorScheme.onSurface
-                                                .withOpacity(0.7),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 16),
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(10),
-                                          child: LinearProgressIndicator(
-                                            value: totalProgress.clamp(0.0, 1.0),
-                                            backgroundColor:
-                                            colorScheme.primary.withOpacity(0.2),
-                                            valueColor: AlwaysStoppedAnimation(
-                                                colorScheme.primary),
-                                            minHeight: 10,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Spent: RM ${totalSpent.toStringAsFixed(2)}',
-                                              style: theme.textTheme.bodyMedium,
-                                            ),
-                                            Text(
-                                              'Budget: RM ${totalBudget.toStringAsFixed(2)}',
-                                              style: theme.textTheme.bodyMedium,
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
+                                Text(
+                                  'Overall Budget',
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    color:
+                                        colorScheme.onSurface.withOpacity(0.7),
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 12,
+                                const SizedBox(height: 8),
+                                Text(
+                                  'RM ${totalRemaining.toStringAsFixed(2)}',
+                                  style:
+                                      theme.textTheme.headlineLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: isOverBudgetOverall
+                                        ? Colors.red.shade700
+                                        : Colors.green.shade800,
+                                  ),
                                 ),
-                                ExpansionPanelList(
-                                    dividerColor: Colors.grey.withOpacity(0.4),
-                                    animationDuration:
-                                    const Duration(milliseconds: 500),
-                                    elevation: 0,
-                                    expansionCallback: (int index, bool isExpanded) {
-                                      setState(() {
-                                        final tappedkey = _categoryKeys[index];
-                                        if (_focusedCategoryKey == tappedkey) {
-                                          _focusedCategoryKey = '';
-                                        } else {
-                                          _focusedCategoryKey = tappedkey;
-                                        }
-                                      });
-                                    },
-                                    children: _categoryKeys
-                                        .map<ExpansionPanel>((categoryKey) {
-                                      final isFocused =
-                                          _focusedCategoryKey == categoryKey;
-                                      final color = CategoryHelper.getCategoryColor(
-                                          categoryKey);
-                                      final icon =
-                                      CategoryHelper.getIcon(categoryKey);
-                                      final categoryName =
-                                      CategoryHelper.getDisplayName(categoryKey);
-                                      final spentAmount =
-                                          widget.spentAmounts[categoryKey] ?? 0.0;
-                                      final budget =
-                                          widget.budgets[categoryKey] ?? 0.0;
-                                      final remainingBudget = budget - spentAmount;
-                                      final progressValue = spentAmount / budget;
-                                      final isOverBudget = progressValue > 1;
-                            
-                                      return ExpansionPanel(
-                                        isExpanded: isFocused,
-                                        canTapOnHeader: true,
-                                        backgroundColor: colorScheme.onPrimary,
-                                        headerBuilder:
-                                            (BuildContext context, bool isExpanded) {
-                                          return ListTile(
-                                              leading: Icon(icon, color: color),
-                                              title: Text(
-                                                categoryName,
-                                                style: theme.textTheme.titleMedium
-                                                    ?.copyWith(
-                                                  color: colorScheme.onBackground,
-                                                ),
-                                              ),
-                                              trailing: Text(
-                                                'RM ${spentAmount.toStringAsFixed(2)}',
-                                                style: theme.textTheme.titleMedium
-                                                    ?.copyWith(
-                                                  color: colorScheme.onBackground,
-                                                ),
-                                              ));
-                                        },
-                                        body: Padding(
-                                          padding: const EdgeInsets.all(16.0),
-                                          child: Column(
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                BorderRadius.circular(12),
-                                                child: LinearProgressIndicator(
-                                                  value:
-                                                  progressValue.clamp(0.0, 1.0),
-                                                  backgroundColor:
-                                                  color.withOpacity(0.2),
-                                                  valueColor:
-                                                  AlwaysStoppedAnimation(color),
-                                                  minHeight: 10,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 16),
-                                              BudgetMetricRow(context, 'Budget',
-                                                  'RM ${budget.toStringAsFixed(2)}'),
-                                              const Divider(
-                                                height: 16,
-                                              ),
-                                              BudgetMetricRow(context, 'Spent',
-                                                  'RM ${spentAmount.toStringAsFixed(2)}'),
-                                              const Divider(
-                                                height: 16,
-                                              ),
-                                              BudgetMetricRow(context, 'Remaining',
-                                                  'RM ${remainingBudget.toStringAsFixed(2)}'),
-                                              const SizedBox(height: 16),
-                                              if (isOverBudget)
-                                                Text(
-                                                  'You have exceeded your budget for this category by RM${(remainingBudget * -1).toStringAsFixed(2)}',
-                                                  style: const TextStyle(
-                                                      color: Colors.red,
-                                                      fontWeight: FontWeight.bold),
-                                                )
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    }).toList()),
+                                Text(
+                                  isOverBudgetOverall
+                                      ? 'Over Budget'
+                                      : 'Remaining',
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    color:
+                                        colorScheme.onSurface.withOpacity(0.7),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: LinearProgressIndicator(
+                                    value: totalProgress.clamp(0.0, 1.0),
+                                    backgroundColor:
+                                        colorScheme.primary.withOpacity(0.2),
+                                    valueColor: AlwaysStoppedAnimation(
+                                        colorScheme.primary),
+                                    minHeight: 10,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Spent: RM ${totalSpent.toStringAsFixed(2)}',
+                                      style: theme.textTheme.bodyMedium,
+                                    ),
+                                    Text(
+                                      'Budget: RM ${totalBudget.toStringAsFixed(2)}',
+                                      style: theme.textTheme.bodyMedium,
+                                    ),
+                                  ],
+                                )
                               ],
                             ),
                           ),
-                        )),
-                  ],
-                ),
-            ),);
+                        ),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        ExpansionPanelList(
+                            dividerColor: Colors.grey.withOpacity(0.4),
+                            animationDuration:
+                                const Duration(milliseconds: 500),
+                            elevation: 0,
+                            expansionCallback: (int index, bool isExpanded) {
+                              setState(() {
+                                final tappedkey = _categoryKeys[index];
+                                if (_focusedCategoryKey == tappedkey) {
+                                  _focusedCategoryKey = '';
+                                } else {
+                                  _focusedCategoryKey = tappedkey;
+                                }
+                              });
+                            },
+                            children: _categoryKeys
+                                .map<ExpansionPanel>((categoryKey) {
+                              final isFocused =
+                                  _focusedCategoryKey == categoryKey;
+                              final color =
+                                  CategoryHelper.getCategoryColor(categoryKey);
+                              final icon = CategoryHelper.getIcon(categoryKey);
+                              final categoryName =
+                                  CategoryHelper.getDisplayName(categoryKey);
+                              final spentAmount =
+                                  widget.spentAmounts[categoryKey] ?? 0.0;
+                              final budget = widget.budgets[categoryKey] ?? 0.0;
+                              final remainingBudget = budget - spentAmount;
+                              final progressValue = spentAmount / budget;
+                              final isOverBudget = progressValue > 1;
+
+                              return ExpansionPanel(
+                                isExpanded: isFocused,
+                                canTapOnHeader: true,
+                                backgroundColor: colorScheme.onPrimary,
+                                headerBuilder:
+                                    (BuildContext context, bool isExpanded) {
+                                  return ListTile(
+                                      leading: Icon(icon, color: color),
+                                      title: Text(
+                                        categoryName,
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
+                                          color: colorScheme.onBackground,
+                                        ),
+                                      ),
+                                      trailing: Text(
+                                        'RM ${spentAmount.toStringAsFixed(2)}',
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
+                                          color: colorScheme.onBackground,
+                                        ),
+                                      ));
+                                },
+                                body: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: LinearProgressIndicator(
+                                          value: progressValue.clamp(0.0, 1.0),
+                                          backgroundColor:
+                                              color.withOpacity(0.2),
+                                          valueColor:
+                                              AlwaysStoppedAnimation(color),
+                                          minHeight: 10,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      BudgetMetricRow(context, 'Budget',
+                                          'RM ${budget.toStringAsFixed(2)}'),
+                                      const Divider(
+                                        height: 16,
+                                      ),
+                                      BudgetMetricRow(context, 'Spent',
+                                          'RM ${spentAmount.toStringAsFixed(2)}'),
+                                      const Divider(
+                                        height: 16,
+                                      ),
+                                      BudgetMetricRow(context, 'Remaining',
+                                          'RM ${remainingBudget.toStringAsFixed(2)}'),
+                                      const SizedBox(height: 16),
+                                      if (isOverBudget)
+                                        Text(
+                                          'You have exceeded your budget for this category by RM${(remainingBudget * -1).toStringAsFixed(2)}',
+                                          style: const TextStyle(
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList()),
+                      ],
+                    ),
+                  ),
+                )),
+          ],
+        ),
+      ),
+    );
   }
 }
