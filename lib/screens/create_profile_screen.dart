@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tolak_tax/services/auth_service.dart';
+import 'package:tolak_tax/utils/avatar_options.dart';
 
 class CreateProfileScreen extends StatefulWidget {
   const CreateProfileScreen({super.key});
@@ -17,6 +18,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _displayNameController = TextEditingController();
   int _currentStep = 0;
+  final List<String> _avatarOptions = AvatarOptions;
 
   String? _selectedAvatar;
 
@@ -24,26 +26,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     'Enter Your Display Name!',
     'Select Your Avatar!',
     'Review and Confirm',
-  ];
-
-  // https://www.dicebear.com/playground/
-  final List<String> _avatarOptions = [
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Emery',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Christopher',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Adrian',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Destiny',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Jude',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Mason',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Vivian',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Maria',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Sophia',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Nolan',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Jameson',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Maria',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Sara',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Aiden',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Ryan',
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Liam',
   ];
 
   @override

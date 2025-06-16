@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/widgets/achievement_tile.dart';
 import 'package:tolak_tax/widgets/settings_item.dart';
@@ -12,6 +13,8 @@ class ProfileScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final user = Provider.of<AuthService>(context).currentUser;
+    final String? photoUrl = user?.photoURL;
+    final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
    
     return Scaffold(
       backgroundColor: colorScheme.primary,
@@ -30,10 +33,23 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 40,
                         backgroundColor: Colors.white,
-                        child: Icon(Icons.person, size: 40),
+                        child: hasAvatar
+                            ? ClipOval(
+                          child: SvgPicture.network(
+                            photoUrl,
+                            fit: BoxFit.cover,
+                            placeholderBuilder: (context) =>
+                            const CircularProgressIndicator.adaptive(),
+                          ),
+                        )
+                            : Icon(
+                          Icons.person,
+                          size: 40,
+                          color: colorScheme.primary,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Text(
