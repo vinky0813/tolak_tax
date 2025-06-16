@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:tolak_tax/widgets/back_button.dart';
+import 'package:tolak_tax/services/api_service.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -45,9 +46,6 @@ class CameraPageState extends State<CameraPage> {
         enableAudio: false,
       );
 
-      // It's better to await the initialization within this method
-      // if the main purpose of initializeControllerFuture (for FutureBuilder)
-      // is to know when THIS WHOLE initializeCamera() process is done.
       await controller!.initialize();
 
       if (!mounted) return;
@@ -69,7 +67,7 @@ class CameraPageState extends State<CameraPage> {
     super.dispose();
   }
 
-  Future<XFile?> takePicture() async {
+  Future<XFile?> takePicture(ApiService apiService) async {
     if (controller == null || !controller!.value.isInitialized) {
       // Use 'controller'
       print('Error: camera not initialized.');
@@ -88,6 +86,11 @@ class CameraPageState extends State<CameraPage> {
     try {
       final XFile imageFile =
           await controller!.takePicture(); // Use 'controller'
+
+      apiService.uploadReceipt(
+        await apiService.getIdToken(context),
+        imageFile.path,
+      );
 
       if (!mounted) return imageFile; // context is available here
       await Navigator.of(context).push(
@@ -113,6 +116,7 @@ class CameraPageState extends State<CameraPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final apiService = ApiService();
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -169,7 +173,7 @@ class CameraPageState extends State<CameraPage> {
 
           try {
             final XFile? image =
-                await takePicture(); // Use 'controller'
+                await takePicture(apiService); // Use 'controller'
             final Directory directory =
                 await getApplicationDocumentsDirectory();
             final String imagePath = p.join(
