@@ -167,9 +167,45 @@ class ProfileScreen extends StatelessWidget {
                       icon: Icons.logout,
                       title: 'Sign Out',
                       onTap: () async {
-                        final auth = Provider.of<AuthService>(context, listen: false);
-                        await auth.signOut();
-                        Navigator.of(context).pushReplacementNamed('/login');
+                        final bool? didRequestSignOut = await showDialog<bool>(
+                          context: context,
+                          builder: (BuildContext dialogContext) {
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16.0),
+                              ),
+                              title: Text('Confirm Sign Out', style: theme.textTheme.titleLarge),
+                              content: Text(
+                                'Are you sure you want to sign out?',
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () {
+                                    Navigator.of(dialogContext).pop(false);
+                                  },
+                                ),
+
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: colorScheme.primary,
+                                  ),
+                                  child: const Text('Sign Out'),
+                                  onPressed: () {
+                                    Navigator.of(dialogContext).pop(true);
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                        if (didRequestSignOut == true) {
+                          final auth = Provider.of<AuthService>(
+                              context, listen: false);
+                          await auth.signOut();
+                          Navigator.of(context).pushReplacementNamed('/login');
+                        }
                       },
                     ),
                   ],
