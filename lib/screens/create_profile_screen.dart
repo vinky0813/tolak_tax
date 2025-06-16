@@ -6,6 +6,7 @@ import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/utils/avatar_options.dart';
+import 'package:tolak_tax/widgets/cached_network_svg.dart';
 
 class CreateProfileScreen extends StatefulWidget {
   const CreateProfileScreen({super.key});
@@ -294,7 +295,12 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
             CircleAvatar(
               radius: 60,
               child: _selectedAvatar != null
-                  ? ClipOval(child: SvgPicture.network(_selectedAvatar!))
+                  ? ClipOval(
+                child: CachedNetworkSvg(
+                  url: _selectedAvatar!,
+                  fit: BoxFit.cover,
+                ),
+              )
                   : const Icon(Icons.person, size: 60),
             ),
             const SizedBox(height: 24),

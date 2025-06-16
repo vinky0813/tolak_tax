@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/widgets/achievement_tile.dart';
+import 'package:tolak_tax/widgets/cached_network_svg.dart';
 import 'package:tolak_tax/widgets/settings_item.dart';
 import '../services/auth_service.dart';
 
@@ -38,11 +39,10 @@ class ProfileScreen extends StatelessWidget {
                         backgroundColor: Colors.white,
                         child: hasAvatar
                             ? ClipOval(
-                          child: SvgPicture.network(
-                            photoUrl,
+                          child: CachedNetworkSvg(
+                            url: photoUrl,
                             fit: BoxFit.cover,
-                            placeholderBuilder: (context) =>
-                            const CircularProgressIndicator.adaptive(),
+                            placeholder: const CircularProgressIndicator.adaptive(),
                           ),
                         )
                             : Icon(
