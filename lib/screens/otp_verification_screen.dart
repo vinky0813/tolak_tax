@@ -1,5 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tolak_tax/services/auth_result.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/widgets/back_button.dart';
 import 'package:tolak_tax/widgets/login_textfield.dart';
@@ -18,6 +19,13 @@ class OTPVerificationScreen extends StatefulWidget {
 class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _otpController = TextEditingController();
+  late String _currentVerificationId;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentVerificationId = widget.verificationId;
+  }
 
   @override
   void dispose() {
@@ -27,25 +35,34 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   Future<void> _handleVerifyOTP() async {
     if (_formKey.currentState!.validate()) {
+      final authService = Provider.of<AuthService>(context, listen: false);
       final otp = _otpController.text.trim();
       // handle verify otp
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator()),
+      );
+
       try {
-        final credential = PhoneAuthProvider.credential(
-          verificationId: widget.verificationId,
-          smsCode: otp,
-        );
 
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (_) => const Center(child: CircularProgressIndicator()),
-        );
-
-        await FirebaseAuth.instance.signInWithCredential(credential);
+        final AuthResult result = await authService.signInWithOTP(otp);
 
         Navigator.of(context).pop();
 
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
+        if (result.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result.errorMessage!)),
+          );
+          return;
+        }
+
+        if (result.isNewUser) {
+          Navigator.pushNamedAndRemoveUntil(context, '/create-profile', (_) => false);
+        } else {
+          Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
+        }
       } catch (e) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -60,34 +77,16 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       const SnackBar(content: Text('OTP resent')),
     );
     // handle resend otp
-    final authService = AuthService();
+    final authService = Provider.of<AuthService>(context, listen: false);
 
-    await authService.verifyPhoneNumber(
+    await authService.resendOtp(
       phoneNumber: widget.phoneNumber,
-      verificationCompleted: (credential) async {
-        await FirebaseAuth.instance.signInWithCredential(credential);
-        Navigator.pushReplacementNamed(context, '/home');
-      },
-      verificationFailed: (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Failed: ${e.message}")),
-        );
-      },
-      codeSent: (newVerificationId) {
+      context: context,
+      onCodeSent: (String verificationId) {
         setState(() {
-          // update with new verification ID
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (_) => OTPVerificationScreen(
-                phoneNumber: widget.phoneNumber,
-                verificationId: newVerificationId,
-              ),
-            ),
-          );
+          _currentVerificationId = verificationId;
         });
       },
-      codeAutoRetrievalTimeout: (_) {},
     );
   }
 

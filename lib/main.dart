@@ -5,6 +5,7 @@ import 'package:tolak_tax/firebase/firebase_initializer.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/screens/achievement_screen.dart';
 import 'package:tolak_tax/screens/budget_overview_screen.dart';
+import 'package:tolak_tax/screens/create_profile_screen.dart';
 import 'package:tolak_tax/screens/forgot_password_screen.dart';
 import 'package:tolak_tax/screens/generate_report_screen.dart';
 import 'package:tolak_tax/screens/home_screen.dart';
@@ -84,6 +85,8 @@ class MyApp extends StatelessWidget {
             return fadeThroughRoute(ReceiptDetailsScreen(receipt: receipt));
           case '/achievement':
             return fadeThroughRoute(const AchievementScreen());
+          case '/create-profile':
+            return fadeThroughRoute(const CreateProfileScreen());
           case '/budget-overview':
             final args = settings.arguments as Map<String, dynamic>;
             return fadeThroughRoute(

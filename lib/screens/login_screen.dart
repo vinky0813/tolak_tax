@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tolak_tax/services/auth_result.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/utils/validators.dart';
 import 'package:tolak_tax/widgets/login_soclalbutton.dart';
@@ -16,7 +18,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final AuthService _authService = AuthService();
 
   @override
   void dispose() {
@@ -27,12 +28,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
+      final authService = Provider.of<AuthService>(context, listen: false);
       final email = _emailController.text.trim();
       final password = _passwordController.text;
       print("Logging in with: $email / $password");
 
       try {
-        final user = await AuthService().signInWithEmail(email, password);
+        final user = await authService.signInWithEmail(email, password);
         if (user != null) {
           Navigator.pushReplacementNamed(context, '/home');
         } else {
@@ -74,6 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final screenHeight = MediaQuery.of(context).size.height;
+    final _authService = Provider.of<AuthService>(context, listen: false);
 
     return Scaffold(
       body: Stack(
@@ -230,16 +233,29 @@ class _LoginScreenState extends State<LoginScreen> {
                           LoginSoclalbutton(
                             assetPath: 'assets/icons/icons8-google.svg',
                             onTap: () async {
-                              final userCredential =
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (_) => const Center(
+                                    child: CircularProgressIndicator()),
+                              );
+
+                              final AuthResult? result =
                                   await _authService.signInWithGoogle();
-                              if (userCredential != null) {
-                                Navigator.pushReplacementNamed(
-                                    context, '/home');
-                              } else {
+
+                              Navigator.of(context, rootNavigator: true).pop();
+
+                              if (result!.errorMessage != null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text("Google Sign-In failed")),
+                                  SnackBar(content: Text(result.errorMessage!)),
                                 );
+                                return;
+                              }
+
+                              if (result.isNewUser) {
+                                Navigator.pushNamedAndRemoveUntil(context, '/create-profile', (_) => false);
+                              } else {
+                                Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
                               }
                             },
                           ),
@@ -254,17 +270,29 @@ class _LoginScreenState extends State<LoginScreen> {
                           LoginSoclalbutton(
                             assetPath: 'assets/icons/icons8-facebook.svg',
                             onTap: () async {
-                              final userCredential =
+
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (_) => const Center(child: CircularProgressIndicator()),
+                              );
+
+                              final AuthResult? result =
                                   await _authService.signInWithFacebook();
 
-                              if (userCredential != null) {
-                                Navigator.pushReplacementNamed(
-                                    context, '/home');
-                              } else {
+                              Navigator.of(context, rootNavigator: true).pop();
+
+                              if (result!.errorMessage != null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text("Facebook Sign-In failed")),
+                                  SnackBar(content: Text(result.errorMessage!)),
                                 );
+                                return; // Stop execution
+                              }
+
+                              if (result.isNewUser) {
+                                Navigator.pushNamedAndRemoveUntil(context, '/create-profile', (_) => false);
+                              } else {
+                                Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
                               }
                             },
                           ),

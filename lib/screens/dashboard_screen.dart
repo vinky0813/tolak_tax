@@ -263,7 +263,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ),
                                 ),
                                 Text(
-                                  userName!,
+                                  userName?.isNotEmpty == true ? userName! : 'No name',
                                   style:
                                       theme.textTheme.headlineSmall?.copyWith(
                                     color: colorScheme.onPrimary,
