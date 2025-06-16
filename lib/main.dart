@@ -7,6 +7,7 @@ import 'package:tolak_tax/screens/achievement_screen.dart';
 import 'package:tolak_tax/screens/budget_overview_screen.dart';
 import 'package:tolak_tax/screens/display_picture_screen.dart';
 import 'package:tolak_tax/screens/create_profile_screen.dart';
+import 'package:tolak_tax/screens/display_picture_screen.dart';
 import 'package:tolak_tax/screens/forgot_password_screen.dart';
 import 'package:tolak_tax/screens/generate_report_screen.dart';
 import 'package:tolak_tax/screens/home_screen.dart';
