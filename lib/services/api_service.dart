@@ -32,7 +32,7 @@ class ApiService {
     }
 
     // Send id_token as a query parameter
-    var url = Uri.http(apiUrl, '/upload-reciept-image/');
+    var url = Uri.http(apiUrl, '/add-receipt/');
     var request = http.MultipartRequest('POST', url);
 
     var multipartFile = await http.MultipartFile.fromPath('file', imagePath);
