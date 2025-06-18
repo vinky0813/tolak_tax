@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiService {
-  final apiUrl = '10.0.2.2:8000';
+  final apiUrl = 'tolaktaxapi-291467312481.asia-east1.run.app';
 
   Future<String?> getIdToken(BuildContext context) async {
     final String? token =
@@ -26,7 +26,7 @@ class ApiService {
     }
   }
 
-  Future<void> uploadReceipt(String? idToken, String imagePath) async {
+  Future<String> uploadReceipt(String? idToken, String imagePath) async {
     if (idToken == null || idToken.isEmpty) {
       throw Exception('ID token is required to add a receipt.');
     }
@@ -36,12 +36,13 @@ class ApiService {
     var request = http.MultipartRequest('POST', url);
 
     var multipartFile = await http.MultipartFile.fromPath('file', imagePath);
+    request.headers['id_token'] = idToken;
     request.files.add(multipartFile);
 
     try {
       http.StreamedResponse response = await request.send();
       String responseBody = await response.stream.bytesToString();
-      print(responseBody);
+      return responseBody;
     } catch (e) {
       throw Exception('Error sending request to add receipt: $e');
     }
