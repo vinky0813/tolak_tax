@@ -34,11 +34,13 @@ class Receipt {
   factory Receipt.fromMap(Map<String, dynamic> map) {
     final date = map['transaction_date'];
     final time = map['transaction_time'];
-    final dateTimeString = (date != null && time != null) ? '$date $time' : date;
+    final dateTimeString =
+        (date != null && time != null) ? '$date $time' : date;
 
     return Receipt(
       merchantName: map['merchant_name'] ?? 'Unknown Merchant',
-      transactionDate: DateTime.tryParse(dateTimeString ?? '') ?? DateTime.now(),
+      transactionDate:
+          DateTime.tryParse(dateTimeString ?? '') ?? DateTime.now(),
       totalAmount: (map['total_amount'] as num?)?.toDouble() ?? 0.0,
       merchantAddress: map['merchant_address'],
       lineItems: (map['line_items'] as List?)
@@ -63,10 +65,12 @@ class Receipt {
       'merchant_name': merchantName,
       'merchant_address': merchantAddress,
       'transaction_date': transactionDate.toIso8601String().split('T').first,
-      'transaction_time': transactionDate.toIso8601String().split('T')[1].substring(0, 8),
+      'transaction_time':
+          transactionDate.toIso8601String().split('T')[1].substring(0, 8),
       'line_items': lineItems?.map((item) => item.toMap()).toList(),
       'subtotal': subtotal,
-      'overall_discounts': overallDiscounts?.map((item) => item.toMap()).toList(),
+      'overall_discounts':
+          overallDiscounts?.map((item) => item.toMap()).toList(),
       'tax_amount': taxAmount,
       'tip_amount': tipAmount,
       'total_amount': totalAmount,

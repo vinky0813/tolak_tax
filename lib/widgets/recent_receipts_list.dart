@@ -43,43 +43,44 @@ class _RecentReceiptsListState extends State<RecentReceiptsList> {
           ),
           const SizedBox(height: 12),
           ...recentThree.map(
-                (receipt) {
-              final categoryColor = CategoryHelper.getCategoryColor(receipt.expenseCategory);
-              final categoryIcon = CategoryHelper.getIcon(receipt.expenseCategory);
+            (receipt) {
+              final categoryColor =
+                  CategoryHelper.getCategoryColor(receipt.expenseCategory);
+              final categoryIcon =
+                  CategoryHelper.getIcon(receipt.expenseCategory);
               final formattedDate = receipt.transactionDate != null
                   ? DateFormat.yMMMd().format(receipt.transactionDate)
                   : '';
               return ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 9),
-                leading: Icon(
-                  categoryIcon,
-                  color: categoryColor,
-                ),
-                title: Text(
-                  receipt.merchantName ?? '',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: colorScheme.onSurface,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 9),
+                  leading: Icon(
+                    categoryIcon,
+                    color: categoryColor,
                   ),
-                ),
-                  subtitle: Text(
-                  formattedDate.toString(),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                  )),
-                trailing: Text(
-                  'RM ${receipt.totalAmount.toString()}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.primary,
+                  title: Text(
+                    receipt.merchantName ?? '',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
                   ),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/receipt-details',
-                    arguments: receipt,
-                  );}
-              );
+                  subtitle: Text(formattedDate.toString(),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      )),
+                  trailing: Text(
+                    'RM ${receipt.totalAmount.toString()}',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      '/receipt-details',
+                      arguments: receipt,
+                    );
+                  });
             },
           ),
         ],

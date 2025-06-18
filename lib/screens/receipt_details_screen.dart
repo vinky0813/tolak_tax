@@ -44,11 +44,13 @@ class ReceiptDetailsScreen extends StatelessWidget {
                       ReceiptItem(
                           icon: Icons.calendar_today,
                           label: "Date",
-                          value: DateFormat.yMMMd().format(receipt.transactionDate)),
+                          value: DateFormat.yMMMd()
+                              .format(receipt.transactionDate)),
                       ReceiptItem(
                           icon: Icons.access_time,
                           label: "Time",
-                          value: DateFormat.jm().format(receipt.transactionDate)),
+                          value:
+                              DateFormat.jm().format(receipt.transactionDate)),
                       ReceiptItem(
                           icon: Icons.category,
                           label: "Category",
@@ -59,15 +61,17 @@ class ReceiptDetailsScreen extends StatelessWidget {
                             icon: Icons.payment,
                             label: "Payment",
                             value: receipt.paymentMethod!),
-
-                      const SizedBox(height: 12,),
-
-                      if (receipt.lineItems != null && receipt.lineItems!.isNotEmpty)
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      if (receipt.lineItems != null &&
+                          receipt.lineItems!.isNotEmpty)
                         SectionContainer(
                           title: 'Items',
                           child: Column(
                             children: receipt.lineItems!.map((item) {
-                              final price = 'RM ${item.totalPrice.toStringAsFixed(2)}';
+                              final price =
+                                  'RM ${item.totalPrice.toStringAsFixed(2)}';
                               return ReceiptItem(
                                 icon: Icons.shopping_cart,
                                 label: '${item.description} x${item.quantity}',
@@ -76,42 +80,45 @@ class ReceiptDetailsScreen extends StatelessWidget {
                             }).toList(),
                           ),
                         ),
-                      const SizedBox(height: 12,),
+                      const SizedBox(
+                        height: 12,
+                      ),
                       SectionContainer(
                         title: 'Summary',
                         child: Column(
                           children: [
                             if (receipt.subtotal != null)
                               ReceiptItem(
-                                icon: Icons.receipt_long,
-                                label: "Subtotal",
-                                value: 'RM ${receipt.subtotal?.toStringAsFixed(2)}'
-                              ),
+                                  icon: Icons.receipt_long,
+                                  label: "Subtotal",
+                                  value:
+                                      'RM ${receipt.subtotal?.toStringAsFixed(2)}'),
                             if (receipt.taxAmount != null)
                               ReceiptItem(
-                                icon: Icons.receipt,
-                                label: "Tax",
-                                value: 'RM ${receipt.taxAmount?.toStringAsFixed(2)}'
-                              ),
+                                  icon: Icons.receipt,
+                                  label: "Tax",
+                                  value:
+                                      'RM ${receipt.taxAmount?.toStringAsFixed(2)}'),
                             if (receipt.tipAmount != null)
                               ReceiptItem(
-                                icon: Icons.wallet_giftcard,
-                                label: "Tip",
-                                value: 'RM ${receipt.tipAmount?.toStringAsFixed(2)}'
-                              ),
+                                  icon: Icons.wallet_giftcard,
+                                  label: "Tip",
+                                  value:
+                                      'RM ${receipt.tipAmount?.toStringAsFixed(2)}'),
                             if (receipt.overallDiscounts != null &&
                                 receipt.overallDiscounts!.isNotEmpty)
-                              ...receipt.overallDiscounts!.map((discount) => ReceiptItem(
-                                icon: Icons.discount,
-                                label: discount.description,
-                                value: '-RM ${discount.amount.toStringAsFixed(2)}'
-                              )),
+                              ...receipt.overallDiscounts!.map((discount) =>
+                                  ReceiptItem(
+                                      icon: Icons.discount,
+                                      label: discount.description,
+                                      value:
+                                          '-RM ${discount.amount.toStringAsFixed(2)}')),
                             const Divider(height: 24),
                             ReceiptItem(
-                              icon: Icons.attach_money,
-                              label: "Total",
-                              value: 'RM ${receipt.totalAmount.toStringAsFixed(2)}'
-                            ),
+                                icon: Icons.attach_money,
+                                label: "Total",
+                                value:
+                                    'RM ${receipt.totalAmount.toStringAsFixed(2)}'),
                           ],
                         ),
                       ),
@@ -136,7 +143,8 @@ class ReceiptDetailsScreen extends StatelessWidget {
                                         placeholder: Container(
                                           color: Colors.black,
                                           child: const Center(
-                                            child: CircularProgressIndicator(color: Colors.white),
+                                            child: CircularProgressIndicator(
+                                                color: Colors.white),
                                           ),
                                         ),
                                         errorWidget: Container(
@@ -145,11 +153,14 @@ class ReceiptDetailsScreen extends StatelessWidget {
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: const [
-                                                Icon(Icons.broken_image, color: Colors.white, size: 48),
+                                                Icon(Icons.broken_image,
+                                                    color: Colors.white,
+                                                    size: 48),
                                                 SizedBox(height: 8),
                                                 Text(
                                                   'Image not available',
-                                                  style: TextStyle(color: Colors.white),
+                                                  style: TextStyle(
+                                                      color: Colors.white),
                                                 ),
                                               ],
                                             ),
@@ -164,52 +175,64 @@ class ReceiptDetailsScreen extends StatelessWidget {
                           },
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: receipt.imageUrl != null ?
-                            CachedNetworkImage(
-                              url: receipt.imageUrl!,
-                              fit: BoxFit.cover,
-                              placeholder: Container(
-                                height: 180,
-                                width: double.infinity,
-                                color: Colors.grey.shade100,
-                                child: const Center(child: CircularProgressIndicator()),
-                              ),
-                              errorWidget: Container(
-                                height: 180,
-                                width: double.infinity,
-                                color: Colors.grey.shade200,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.broken_image, size: 48, color: Colors.grey.shade500),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'Image not available',
-                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: Colors.grey.shade600,
+                            child: receipt.imageUrl != null
+                                ? CachedNetworkImage(
+                                    url: receipt.imageUrl!,
+                                    fit: BoxFit.cover,
+                                    placeholder: Container(
+                                      height: 180,
+                                      width: double.infinity,
+                                      color: Colors.grey.shade100,
+                                      child: const Center(
+                                          child: CircularProgressIndicator()),
+                                    ),
+                                    errorWidget: Container(
+                                      height: 180,
+                                      width: double.infinity,
+                                      color: Colors.grey.shade200,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.broken_image,
+                                              size: 48,
+                                              color: Colors.grey.shade500),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            'Image not available',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                  color: Colors.grey.shade600,
+                                                ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ) : Container(
-                              height: 180,
-                              width: double.infinity,
-                              color: Colors.grey.shade200,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.broken_image, size: 48, color: Colors.grey.shade500),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Image not available',
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: Colors.grey.shade600,
+                                  )
+                                : Container(
+                                    height: 180,
+                                    width: double.infinity,
+                                    color: Colors.grey.shade200,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.broken_image,
+                                            size: 48,
+                                            color: Colors.grey.shade500),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Image not available',
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
                           ),
                         ),
                       ),

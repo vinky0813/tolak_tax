@@ -224,6 +224,9 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                         )
                       else
                         ...filteredReceipts.map((receipt) {
+                          final category = (receipt.category);
+                          final categoryColor =
+                              CategoryHelper.getCategoryColor(category);
                           final category = (receipt.expenseCategory);
                           final categoryColor = CategoryHelper.getCategoryColor(category);
                           final categoryIcon = CategoryHelper.getIcon(category);
@@ -233,6 +236,34 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                               : receipt.transactionDate;
 
                           return ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              leading: Icon(categoryIcon, color: categoryColor),
+                              title: Text(
+                                receipt.title,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: colorScheme.onSurface,
+                                ),
+                              ),
+                              subtitle: Text(
+                                formattedDate.toString(),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                              trailing: Text(
+                                'RM ${receipt.amount.toString()}',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: theme.colorScheme.primary,
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/receipt-details',
+                                  arguments: receipt,
+                                );
+                              });
                             contentPadding: EdgeInsets.zero,
                             leading: Icon(categoryIcon, color: categoryColor),
                             title: Text(
