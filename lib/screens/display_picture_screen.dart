@@ -42,7 +42,15 @@ class DisplayPictureScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                confirmUploadReceipts(context, apiService, imagePath);
+                Navigator.pushNamed(context, '/receipt-confirm', arguments: {
+                  'receiptImagePath': imagePath,
+                  'receiptData': {
+                    'storeName': '',
+                    'date': '',
+                    'totalAmount': 0.0,
+                    'taxAmount': 0.0,
+                  }
+                });
               },
               child: Text(
                 'Confirm',

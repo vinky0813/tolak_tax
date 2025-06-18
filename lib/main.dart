@@ -22,6 +22,7 @@ import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/themes/app_theme.dart';
 import 'package:tolak_tax/utils/transitions.dart';
 import 'package:tolak_tax/screens/camera_page.dart';
+import 'package:tolak_tax/screens/receipt_confirm_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -108,6 +109,14 @@ class MyApp extends StatelessWidget {
             return fadeThroughRoute(
               DisplayPictureScreen(
                 imagePath: args['imagePath'],
+              ),
+            );
+          case '/receipt-confirm':
+            final args = settings.arguments as Map<String, dynamic>;
+            return fadeThroughRoute(
+              ReceiptConfirmScreen(
+                receiptData: args['receiptData'],
+                receiptImagePath: args['receiptImagePath'],
               ),
             );
 
