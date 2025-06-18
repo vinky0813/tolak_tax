@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/widgets/achievement_tile.dart';
+import 'package:tolak_tax/widgets/cached_network_svg.dart';
 import 'package:tolak_tax/widgets/settings_item.dart';
 import '../services/auth_service.dart';
 
@@ -12,6 +14,8 @@ class ProfileScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final user = Provider.of<AuthService>(context).currentUser;
+    final String? photoUrl = user?.photoURL;
+    final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
    
     return Scaffold(
       backgroundColor: colorScheme.primary,
@@ -30,10 +34,22 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 40,
                         backgroundColor: Colors.white,
-                        child: Icon(Icons.person, size: 40),
+                        child: hasAvatar
+                            ? ClipOval(
+                          child: CachedNetworkSvg(
+                            url: photoUrl,
+                            fit: BoxFit.cover,
+                            placeholder: const CircularProgressIndicator.adaptive(),
+                          ),
+                        )
+                            : Icon(
+                          Icons.person,
+                          size: 40,
+                          color: colorScheme.primary,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Text(
@@ -151,9 +167,45 @@ class ProfileScreen extends StatelessWidget {
                       icon: Icons.logout,
                       title: 'Sign Out',
                       onTap: () async {
-                        final auth = Provider.of<AuthService>(context, listen: false);
-                        await auth.signOut();
-                        Navigator.of(context).pushReplacementNamed('/login');
+                        final bool? didRequestSignOut = await showDialog<bool>(
+                          context: context,
+                          builder: (BuildContext dialogContext) {
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16.0),
+                              ),
+                              title: Text('Confirm Sign Out', style: theme.textTheme.titleLarge),
+                              content: Text(
+                                'Are you sure you want to sign out?',
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () {
+                                    Navigator.of(dialogContext).pop(false);
+                                  },
+                                ),
+
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: colorScheme.primary,
+                                  ),
+                                  child: const Text('Sign Out'),
+                                  onPressed: () {
+                                    Navigator.of(dialogContext).pop(true);
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                        if (didRequestSignOut == true) {
+                          final auth = Provider.of<AuthService>(
+                              context, listen: false);
+                          await auth.signOut();
+                          Navigator.of(context).pushReplacementNamed('/login');
+                        }
                       },
                     ),
                   ],

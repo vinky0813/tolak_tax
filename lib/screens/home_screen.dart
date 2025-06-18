@@ -4,7 +4,6 @@ import 'package:tolak_tax/screens/dashboard_screen.dart';
 import 'package:tolak_tax/screens/expense_screen.dart';
 import 'package:tolak_tax/screens/profile_screen.dart';
 import 'package:tolak_tax/screens/reports_screen.dart';
-import 'package:tolak_tax/screens/camera_page.dart';
 import 'package:tolak_tax/widgets/bottom_scanned_file_sheet.dart';
 import 'package:tolak_tax/services/api_service.dart';
 

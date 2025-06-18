@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/widgets/back_button.dart';
 import 'package:tolak_tax/widgets/login_textfield.dart';
@@ -18,8 +19,6 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
   final _formKey = GlobalKey<FormState>();
   final _phoneNumberController = TextEditingController();
 
-  final authService = AuthService();
-
   @override
   void dispose() {
     _phoneNumberController.dispose();
@@ -28,6 +27,7 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
 
   Future<void> _handleSendOTP() async {
     if (_formKey.currentState!.validate()) {
+      final authService = Provider.of<AuthService>(context, listen: false);
       final rawPhoneNumebr = _phoneNumberController.text.trim();
       final phoneNumber = '+60$rawPhoneNumebr';
       print("Send OTP to: $phoneNumber");
@@ -40,11 +40,6 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
 
       await authService.verifyPhoneNumber(
         phoneNumber: phoneNumber,
-        verificationCompleted: (credential) async {
-          await FirebaseAuth.instance.signInWithCredential(credential);
-          Navigator.of(context).pop();
-          Navigator.pushReplacementNamed(context, '/home');
-        },
         verificationFailed: (e) {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
@@ -67,6 +62,14 @@ class _PhoneNumberInputScreenState extends State<PhoneNumberInputScreen> {
           Navigator.of(context).pop();
           print("Auto-retrieval timeout: $msg");
         },
+        onVerificationCompleted: (UserCredential userCredential) {
+          Navigator.of(context).pop();
+          if (userCredential.additionalUserInfo?.isNewUser == true) {
+            Navigator.pushNamedAndRemoveUntil(context, '/create-profile', (_) => false);
+          } else {
+            Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
+          }
+      },
       );
     }
   }

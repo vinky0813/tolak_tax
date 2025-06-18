@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tolak_tax/services/auth_result.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/widgets/back_button.dart';
 import 'package:tolak_tax/widgets/login_textfield.dart';
@@ -18,7 +20,6 @@ class _SignupScreenState extends State<SignupScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final AuthService _authService = AuthService();
 
   @override
   void dispose() {
@@ -31,22 +32,36 @@ class _SignupScreenState extends State<SignupScreen> {
 
   Future<void> _handleSignUp() async {
     if (_formKey.currentState!.validate()) {
+      final authService = Provider.of<AuthService>(context, listen: false);
       final name = _fullNameController.text.trim();
       final email = _emailController.text.trim();
       final password = _passwordController.text;
 
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator()),
+      );
+
       try {
-        final user = await AuthService().registerWithEmail(email, password);
-        if (user != null) {
-          Navigator.pushReplacementNamed(context, '/home');
-        } else {
+        final AuthResult result = await authService.registerWithEmail(email, password, name);
+
+        Navigator.of(context, rootNavigator: true).pop();
+
+        if (result.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Sign up failed. Please try again."),
+            SnackBar(
+              content: Text(result.errorMessage!),
               backgroundColor: Colors.red,
             ),
           );
+          return;
         }
+
+        if (result.isNewUser) {
+          Navigator.pushNamedAndRemoveUntil(context, '/create-profile', (_) => false);
+        }
+
       } on FirebaseAuthException catch (e) {
         String errorMessage;
         if (e.code == 'email-already-in-use') {

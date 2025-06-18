@@ -51,6 +51,7 @@ dependencies:
   step_progress_indicator: ^1.0.1
   provider: ^6.1.5
   carousel_slider: ^5.1.1
+  flutter_cache_manager: ^3.4.1
   http: ^1.4.0
 
 

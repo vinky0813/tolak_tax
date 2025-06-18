@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/utils/category_constants.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
+import 'package:tolak_tax/widgets/cached_network_svg.dart';
 import 'package:tolak_tax/widgets/gamified_progress.dart';
 import 'package:tolak_tax/widgets/quick_actionbutton.dart';
 import 'package:tolak_tax/widgets/recent_receipts_list.dart';
@@ -50,6 +52,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final user = Provider.of<AuthService>(context).currentUser;
+    final String? photoUrl = user?.photoURL;
+    final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
 
     // Dummy data for demo
     const int totalReceipts = 24;
@@ -246,11 +251,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Row(
                           children: [
                             CircleAvatar(
-                              radius: 28,
-                              backgroundColor:
-                                  colorScheme.onPrimary.withAlpha(40),
-                              child: Icon(Icons.person,
-                                  size: 32, color: colorScheme.onPrimary),
+                              backgroundColor: Colors.white,
+                              child: hasAvatar
+                                  ? ClipOval(
+                                child: CachedNetworkSvg(
+                                  url: photoUrl,
+                                  fit: BoxFit.cover,
+                                  placeholder: const CircularProgressIndicator.adaptive(),
+                                ),
+                              )
+                                  : Icon(
+                                Icons.person,
+                                color: colorScheme.primary,
+                              ),
                             ),
                             const SizedBox(width: 16),
                             Column(
@@ -263,7 +276,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ),
                                 ),
                                 Text(
-                                  userName!,
+                                  userName?.isNotEmpty == true ? userName! : 'No name',
                                   style:
                                       theme.textTheme.headlineSmall?.copyWith(
                                     color: colorScheme.onPrimary,
