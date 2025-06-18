@@ -5,7 +5,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiService {
-  final apiUrl = 'tolaktaxapi-291467312481.asia-east1.run.app';
+  //final apiUrl = 'tolaktaxapi-291467312481.asia-east1.run.app';
+  final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
 
   Future<String?> getIdToken(BuildContext context) async {
     final String? token =
@@ -45,6 +46,23 @@ class ApiService {
       return responseBody;
     } catch (e) {
       throw Exception('Error sending request to add receipt: $e');
+    }
+  }
+
+  Future<String> readReceipt(String imagePath) async {
+    // Send id_token as a query parameter
+    var url = Uri.http(apiUrl, '/read-receipt-image/');
+    var request = http.MultipartRequest('POST', url);
+
+    var multipartFile = await http.MultipartFile.fromPath('file', imagePath);
+    request.files.add(multipartFile);
+
+    try {
+      http.StreamedResponse response = await request.send();
+      String responseBody = await response.stream.bytesToString();
+      return responseBody;
+    } catch (e) {
+      throw Exception('Error sending request to read receipt: $e');
     }
   }
 }

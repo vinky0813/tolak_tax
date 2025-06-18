@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:tolak_tax/models/receipt_model.dart';
 
 class ReceiptConfirmScreen extends StatefulWidget {
-  final Map<String, dynamic> receiptData;
+  final Receipt? receiptData;
   final String receiptImagePath;
 
   const ReceiptConfirmScreen(
@@ -14,27 +15,38 @@ class ReceiptConfirmScreen extends StatefulWidget {
 }
 
 class _ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
-  late TextEditingController storeNameController;
+  late TextEditingController merchantNameController;
   late TextEditingController dateController;
   late TextEditingController totalAmountController;
   late TextEditingController taxAmountController;
-
   @override
   void initState() {
     super.initState();
-    storeNameController =
-        TextEditingController(text: widget.receiptData?['storeName'] ?? '');
-    dateController =
-        TextEditingController(text: widget.receiptData?['date'] ?? '');
+    merchantNameController =
+        TextEditingController(text: widget.receiptData?.merchantName ?? '');
+
+    // Handle date formatting - convert from ISO 8601 to display format if needed
+    String dateText = '';
+    if (widget.receiptData?.transactionDatetime != null) {
+      try {
+        final DateTime parsedDate =
+            DateTime.parse(widget.receiptData!.transactionDatetime);
+        dateText = parsedDate.toString().split(' ')[0]; // YYYY-MM-DD format
+      } catch (e) {
+        dateText = widget.receiptData!.transactionDatetime;
+      }
+    }
+    dateController = TextEditingController(text: dateText);
+
     totalAmountController = TextEditingController(
-        text: widget.receiptData?['totalAmount']?.toString() ?? '');
+        text: widget.receiptData?.totalAmount.toString() ?? '');
     taxAmountController = TextEditingController(
-        text: widget.receiptData?['taxAmount']?.toString() ?? '');
+        text: widget.receiptData?.taxAmount?.toString() ?? '');
   }
 
   @override
   void dispose() {
-    storeNameController.dispose();
+    merchantNameController.dispose();
     dateController.dispose();
     totalAmountController.dispose();
     taxAmountController.dispose();
@@ -72,13 +84,11 @@ class _ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 20),
-
-            // Store Name Field
+            const SizedBox(height: 20), // Store Name Field
             TextFormField(
-              controller: storeNameController,
+              controller: merchantNameController,
               decoration: const InputDecoration(
-                labelText: 'Store Name',
+                labelText: 'Merchant Name',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.store),
               ),
@@ -171,8 +181,8 @@ class _ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
 
   void _saveReceipt() {
     // Validate required fields
-    if (storeNameController.text.trim().isEmpty) {
-      _showErrorSnackBar('Please enter store name');
+    if (merchantNameController.text.trim().isEmpty) {
+      _showErrorSnackBar('Please enter merchant name');
       return;
     }
 
@@ -204,17 +214,25 @@ class _ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         _showErrorSnackBar('Please enter a valid tax amount');
         return;
       }
+    } // Create receipt data
+    // Format date to ISO 8601 string
+    String transactionDatetime;
+    try {
+      final DateTime parsedDate = DateTime.parse(dateController.text.trim());
+      transactionDatetime = parsedDate.toIso8601String();
+    } catch (e) {
+      // If parsing fails, assume it's already in the correct format or use current time
+      transactionDatetime = dateController.text.trim().isNotEmpty
+          ? dateController.text.trim()
+          : DateTime.now().toIso8601String();
     }
 
-    // Create receipt data
-    final receiptData = {
-      'storeName': storeNameController.text.trim(),
-      'date': dateController.text.trim(),
-      'totalAmount': totalAmount,
-      'taxAmount': taxAmount,
-      'imagePath': widget.receiptImagePath,
-      'createdAt': DateTime.now().toIso8601String(),
-    };
+    final receiptData = Receipt(
+      merchantName: merchantNameController.text.trim(),
+      transactionDatetime: transactionDatetime,
+      totalAmount: totalAmount,
+      taxAmount: taxAmount,
+    );
 
     // TODO: Save to database/storage
     // For now, just show success and navigate back
