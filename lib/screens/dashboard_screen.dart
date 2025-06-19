@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tolak_tax/data/dummy_receipt_data.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/services/auth_service.dart';
-import 'package:tolak_tax/utils/category_constants.dart';
+import 'package:tolak_tax/data/category_constants.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
 import 'package:tolak_tax/widgets/cached_network_svg.dart';
 import 'package:tolak_tax/widgets/gamified_progress.dart';

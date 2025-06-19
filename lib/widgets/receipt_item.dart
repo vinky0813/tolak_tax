@@ -29,7 +29,8 @@ class ReceiptItem extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Flexible(
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 180),
             child: Text(
               value,
               maxLines: 1,

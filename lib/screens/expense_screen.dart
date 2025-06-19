@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
-import 'package:tolak_tax/utils/category_constants.dart';
+import 'package:tolak_tax/data/category_constants.dart';
 import 'package:tolak_tax/widgets/month_dropdown.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
 import 'package:tolak_tax/widgets/year_dropdown.dart';
