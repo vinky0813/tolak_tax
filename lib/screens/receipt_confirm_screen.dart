@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/page_status_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/reciept_image_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/merchant_info_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/transaction_details_card.dart';
+import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/financial_details_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/line_items_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/discounts_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/additional_info_card.dart';
@@ -135,9 +135,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
               merchantAddressController: merchantAddressController,
               isEditing: isEditing,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16), // Transaction Details Card
 
-            // Transaction Details Card
             TransactionDetailsCard(
               dateController: dateController,
               paymentMethodController: paymentMethodController,
@@ -146,12 +145,21 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
             ),
             const SizedBox(height: 16),
 
+            const SizedBox(height: 16),
+
             // Line Items Card (if available)
             if (widget.receiptData?.line_items.isNotEmpty == true)
               LineItemsCard(
                 lineItems: widget.receiptData!.line_items,
               ),
             const SizedBox(height: 16),
+
+            FinancialDetailsCard(
+              subtotalController: subtotalController,
+              taxAmountController: taxAmountController,
+              totalAmountController: totalAmountController,
+              isEditing: isEditing,
+            ),
 
             // Discounts Card (if available)
             if (widget.receiptData?.overall_discounts?.isNotEmpty == true)
@@ -270,7 +278,7 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
           ? merchantAddressController.text.trim()
           : null,
       transaction_datetime: transactionDatetime,
-      total_amount: totalAmount!,
+      total_amount: totalAmount,
       tax_amount: taxAmount,
       subtotal: subtotal,
       currency_code: currencyController.text.trim().isNotEmpty
