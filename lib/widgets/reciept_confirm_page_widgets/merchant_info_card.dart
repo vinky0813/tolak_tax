@@ -44,7 +44,8 @@ class _MerchantInfoCardState extends State<MerchantInfoCard> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),                IconButton(
+                ),
+                IconButton(
                   onPressed: () {
                     setState(() {
                       _isExpanded = !_isExpanded;
@@ -54,7 +55,8 @@ class _MerchantInfoCardState extends State<MerchantInfoCard> {
                     _isExpanded ? Icons.expand_less : Icons.expand_more,
                     color: theme.colorScheme.primary,
                   ),
-                ),              ],
+                ),
+              ],
             ),
             if (_isExpanded) ...[
               const SizedBox(height: 16),

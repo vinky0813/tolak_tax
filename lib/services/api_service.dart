@@ -27,22 +27,26 @@ class ApiService {
     }
   }
 
-  Future<String> uploadReceipt(String? idToken, String imagePath) async {
+  Future<String> uploadReceipt(
+      String? idToken, String imagePath, Map<String?, dynamic> receipt) async {
     if (idToken == null || idToken.isEmpty) {
       throw Exception('ID token is required to add a receipt.');
     }
 
-    // Send id_token as a query parameter
-    var url = Uri.http(apiUrl, '/add-receipt/');
+    // Send both id_token and receipt as query parameters with proper JSON encoding
+    var url = Uri.http(apiUrl, '/add-receipt/', {
+      'id_token': idToken,
+      'receipt': jsonEncode(receipt),
+    });
     var request = http.MultipartRequest('POST', url);
 
     var multipartFile = await http.MultipartFile.fromPath('file', imagePath);
-    request.headers['id_token'] = idToken;
     request.files.add(multipartFile);
 
     try {
       http.StreamedResponse response = await request.send();
       String responseBody = await response.stream.bytesToString();
+      print('Response from uploadReceipt: $responseBody');
       return responseBody;
     } catch (e) {
       throw Exception('Error sending request to add receipt: $e');

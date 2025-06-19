@@ -19,7 +19,7 @@ class DisplayPictureScreen extends StatefulWidget {
 class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
   bool _isLoading = false;
 
-  static Future<Receipt?> confirmReadReceipt(
+  Future<Receipt?> confirmReadReceipt(
       BuildContext context, ApiService apiService, String imagePath) async {
     try {
       final String? idToken = await apiService.getIdToken(context);

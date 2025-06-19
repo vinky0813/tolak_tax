@@ -87,10 +87,6 @@ class CameraPageState extends State<CameraPage> {
       final XFile imageFile =
           await controller!.takePicture(); // Use 'controller'
 
-      apiService.uploadReceipt(
-        await apiService.getIdToken(context),
-        imageFile.path,
-      );
       if (!mounted) return imageFile; // context is available here
       Navigator.pushNamed(
         context,

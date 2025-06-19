@@ -8,6 +8,7 @@ import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/financial_details
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/line_items_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/discounts_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/additional_info_card.dart';
+import 'package:tolak_tax/services/api_service.dart';
 
 class ReceiptConfirmScreen extends StatefulWidget {
   final Receipt? receiptData;
@@ -84,6 +85,24 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     paymentMethodController.dispose();
     expenseCategoryController.dispose();
     super.dispose();
+  }
+
+  Future<bool?> addReceipt(BuildContext context, ApiService apiService,
+      String imagePath, Receipt receiptData) async {
+    try {
+      final String? idToken = await apiService.getIdToken(context);
+
+      if (idToken == null || idToken.isEmpty) {
+        print('Error: Could not retrieve ID token.');
+        return null;
+      }
+
+      await apiService.uploadReceipt(idToken, imagePath, receiptData.toMap());
+      return true;
+    } catch (e) {
+      print('An error occurred: $e');
+      return false;
+    }
   }
 
   @override
@@ -294,8 +313,17 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
       overall_discounts: widget.receiptData?.overall_discounts ?? [],
     );
 
-    // TODO: Save to database/storage
-    // For now, just show success and navigate back
+    final ApiService apiService = ApiService();
+    addReceipt(context, apiService, widget.receiptImagePath, receiptData)
+        .then((success) {
+      if (success == true) {
+        _showSuccessSnackBar('Receipt saved successfully!');
+      } else {
+        _showErrorSnackBar('Failed to save receipt. Please try again.');
+      }
+    }).catchError((error) {
+      _showErrorSnackBar('An error occurred while saving the receipt: $error');
+    });
     _showSuccessSnackBar('Receipt saved successfully!');
 
     // Navigate back with the receipt data
