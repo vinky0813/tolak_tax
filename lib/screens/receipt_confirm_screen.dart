@@ -1,6 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
+import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/page_status_card.dart';
+import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/reciept_image_card.dart';
+import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/merchant_info_card.dart';
+import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/transaction_details_card.dart';
+import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/line_items_card.dart';
+import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/discounts_card.dart';
+import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/additional_info_card.dart';
 
 class ReceiptConfirmScreen extends StatefulWidget {
   final Receipt? receiptData;
@@ -11,19 +18,32 @@ class ReceiptConfirmScreen extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<ReceiptConfirmScreen> createState() => _ReceiptConfirmScreenState();
+  State<ReceiptConfirmScreen> createState() => ReceiptConfirmScreenState();
 }
 
-class _ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
+class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
+  bool isEditing = false;
   late TextEditingController merchantNameController;
+  late TextEditingController merchantAddressController;
   late TextEditingController dateController;
   late TextEditingController totalAmountController;
   late TextEditingController taxAmountController;
+  late TextEditingController subtotalController;
+  late TextEditingController currencyController;
+  late TextEditingController paymentMethodController;
+  late TextEditingController expenseCategoryController;
+
   @override
   void initState() {
     super.initState();
+    _initializeControllers();
+  }
+
+  void _initializeControllers() {
     merchantNameController =
         TextEditingController(text: widget.receiptData?.merchantName ?? '');
+    merchantAddressController =
+        TextEditingController(text: widget.receiptData?.merchantAddress ?? '');
 
     // Handle date formatting - convert from ISO 8601 to display format if needed
     String dateText = '';
@@ -42,137 +62,142 @@ class _ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         text: widget.receiptData?.totalAmount.toString() ?? '');
     taxAmountController = TextEditingController(
         text: widget.receiptData?.taxAmount?.toString() ?? '');
+    subtotalController = TextEditingController(
+        text: widget.receiptData?.subtotal?.toString() ?? '');
+    currencyController =
+        TextEditingController(text: widget.receiptData?.currencyCode ?? 'USD');
+    paymentMethodController =
+        TextEditingController(text: widget.receiptData?.paymentMethod ?? '');
+    expenseCategoryController =
+        TextEditingController(text: widget.receiptData?.expenseCategory ?? '');
   }
 
   @override
   void dispose() {
     merchantNameController.dispose();
+    merchantAddressController.dispose();
     dateController.dispose();
     totalAmountController.dispose();
     taxAmountController.dispose();
+    subtotalController.dispose();
+    currencyController.dispose();
+    paymentMethodController.dispose();
+    expenseCategoryController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print("imagePath: ${widget.receiptImagePath}");
+    final theme = Theme.of(context);
+    print('receiptData: ${widget.receiptData?.toMap()}');
+
     return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Confirm Receipt Details'),
+        title: const Text('Receipt Details'),
+        backgroundColor: theme.colorScheme.surface,
+        foregroundColor: theme.colorScheme.onSurface,
+        elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                isEditing = !isEditing;
+              });
+            },
+            icon: Icon(
+              isEditing ? Icons.visibility : Icons.edit,
+              color: theme.primaryColor,
+            ),
+            tooltip: isEditing ? 'View Mode' : 'Edit Mode',
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              height: 200,
-              margin: const EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Image.file(
-                File(widget.receiptImagePath),
-                fit: BoxFit.contain,
-              ),
+            // Status Indicator
+            PageStatusCard(isEditing),
+            const SizedBox(height: 16),
+
+            // Receipt Image Card
+            ReceiptImageCard(
+              receiptImagePath: widget.receiptImagePath,
             ),
-            const Text(
-              'Please verify the receipt details below:',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 20), // Store Name Field
-            TextFormField(
-              controller: merchantNameController,
-              decoration: const InputDecoration(
-                labelText: 'Merchant Name',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.store),
-              ),
+
+            const SizedBox(height: 16), // Merchant Information Card
+
+            MerchantInfoCard(
+              merchantNameController: merchantNameController,
+              merchantAddressController: merchantAddressController,
+              isEditing: isEditing,
             ),
             const SizedBox(height: 16),
 
-            // Date Field
-            TextFormField(
-              controller: dateController,
-              decoration: const InputDecoration(
-                labelText: 'Date',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.calendar_today),
-                hintText: 'YYYY-MM-DD',
-              ),
-              onTap: () async {
-                FocusScope.of(context).requestFocus(FocusNode());
-                final DateTime? picked = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2020),
-                  lastDate: DateTime.now(),
-                );
-                if (picked != null) {
-                  dateController.text = picked.toString().split(' ')[0];
-                }
-              },
+            // Transaction Details Card
+            TransactionDetailsCard(
+              dateController: dateController,
+              paymentMethodController: paymentMethodController,
+              currencyController: currencyController,
+              isEditing: isEditing,
             ),
             const SizedBox(height: 16),
 
-            // Total Amount Field
-            TextFormField(
-              controller: totalAmountController,
-              decoration: const InputDecoration(
-                labelText: 'Total Amount',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.attach_money),
-                prefixText: '\$ ',
+            // Line Items Card (if available)
+            if (widget.receiptData?.lineItems.isNotEmpty == true)
+              LineItemsCard(
+                lineItems: widget.receiptData!.lineItems,
               ),
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-            ),
             const SizedBox(height: 16),
 
-            // Tax Amount Field
-            TextFormField(
-              controller: taxAmountController,
-              decoration: const InputDecoration(
-                labelText: 'Tax Amount',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.receipt),
-                prefixText: '\$ ',
+            // Discounts Card (if available)
+            if (widget.receiptData?.overallDiscounts?.isNotEmpty == true)
+              DiscountsCard(
+                discounts: widget.receiptData!.overallDiscounts!,
               ),
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
+            const SizedBox(height: 16),
+
+            // Additional Information Card
+            AdditionalInfoCard(
+              expenseCategoryController: expenseCategoryController,
+              isEditing: isEditing,
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 24),
 
             // Action Buttons
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
+                  child: OutlinedButton.icon(
                     onPressed: () {
                       Navigator.pop(context);
                     },
+                    icon: const Icon(Icons.arrow_back),
+                    label: const Text('Back'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    child: const Text('Cancel'),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
+                  flex: 2,
+                  child: ElevatedButton.icon(
                     onPressed: _saveReceipt,
+                    icon: const Icon(Icons.save),
+                    label: const Text('Save Receipt'),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    child: const Text('Save Receipt'),
                   ),
                 ),
               ],
             ),
+
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -199,6 +224,7 @@ class _ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     // Parse and validate amounts
     double? totalAmount;
     double? taxAmount;
+    double? subtotal;
 
     try {
       totalAmount = double.parse(totalAmountController.text.trim());
@@ -214,7 +240,18 @@ class _ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         _showErrorSnackBar('Please enter a valid tax amount');
         return;
       }
-    } // Create receipt data
+    }
+
+    if (subtotalController.text.trim().isNotEmpty) {
+      try {
+        subtotal = double.parse(subtotalController.text.trim());
+      } catch (e) {
+        _showErrorSnackBar('Please enter a valid subtotal');
+        return;
+      }
+    }
+
+    // Create receipt data
     // Format date to ISO 8601 string
     String transactionDatetime;
     try {
@@ -229,9 +266,24 @@ class _ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
 
     final receiptData = Receipt(
       merchantName: merchantNameController.text.trim(),
+      merchantAddress: merchantAddressController.text.trim().isNotEmpty
+          ? merchantAddressController.text.trim()
+          : null,
       transactionDatetime: transactionDatetime,
       totalAmount: totalAmount,
       taxAmount: taxAmount,
+      subtotal: subtotal,
+      currencyCode: currencyController.text.trim().isNotEmpty
+          ? currencyController.text.trim()
+          : null,
+      paymentMethod: paymentMethodController.text.trim().isNotEmpty
+          ? paymentMethodController.text.trim()
+          : null,
+      expenseCategory: expenseCategoryController.text.trim().isNotEmpty
+          ? expenseCategoryController.text.trim()
+          : null,
+      lineItems: widget.receiptData?.lineItems ?? [],
+      overallDiscounts: widget.receiptData?.overallDiscounts ?? [],
     );
 
     // TODO: Save to database/storage
@@ -245,8 +297,15 @@ class _ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Row(
+          children: [
+            const Icon(Icons.error, color: Colors.white),
+            const SizedBox(width: 8),
+            Expanded(child: Text(message)),
+          ],
+        ),
         backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
@@ -254,8 +313,15 @@ class _ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
   void _showSuccessSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Colors.white),
+            const SizedBox(width: 8),
+            Expanded(child: Text(message)),
+          ],
+        ),
         backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
