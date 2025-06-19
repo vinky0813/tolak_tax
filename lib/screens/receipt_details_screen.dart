@@ -119,19 +119,80 @@ class ReceiptDetailsScreen extends StatelessWidget {
                       Divider(color: colorScheme.primary),
                       const SizedBox(height: 8),
                       Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: receipt.imageUrl != null ?
-                          CachedNetworkImage(
-                            url: receipt.imageUrl!,
-                            fit: BoxFit.cover,
-                            placeholder: Container(
-                              height: 180,
-                              width: double.infinity,
-                              color: Colors.grey.shade100,
-                              child: const Center(child: CircularProgressIndicator()),
-                            ),
-                            errorWidget: Container(
+                        child: GestureDetector(
+                          onTap: () {
+                            if (receipt.imageUrl != null) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => Dialog(
+                                  backgroundColor: Colors.black,
+                                  insetPadding: EdgeInsets.zero,
+                                  child: GestureDetector(
+                                    onTap: () => Navigator.of(context).pop(),
+                                    child: InteractiveViewer(
+                                      child: CachedNetworkImage(
+                                        url: receipt.imageUrl!,
+                                        fit: BoxFit.contain,
+                                        placeholder: Container(
+                                          color: Colors.black,
+                                          child: const Center(
+                                            child: CircularProgressIndicator(color: Colors.white),
+                                          ),
+                                        ),
+                                        errorWidget: Container(
+                                          color: Colors.black,
+                                          child: Center(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: const [
+                                                Icon(Icons.broken_image, color: Colors.white, size: 48),
+                                                SizedBox(height: 8),
+                                                Text(
+                                                  'Image not available',
+                                                  style: TextStyle(color: Colors.white),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: receipt.imageUrl != null ?
+                            CachedNetworkImage(
+                              url: receipt.imageUrl!,
+                              fit: BoxFit.cover,
+                              placeholder: Container(
+                                height: 180,
+                                width: double.infinity,
+                                color: Colors.grey.shade100,
+                                child: const Center(child: CircularProgressIndicator()),
+                              ),
+                              errorWidget: Container(
+                                height: 180,
+                                width: double.infinity,
+                                color: Colors.grey.shade200,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.broken_image, size: 48, color: Colors.grey.shade500),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Image not available',
+                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ) : Container(
                               height: 180,
                               width: double.infinity,
                               color: Colors.grey.shade200,
@@ -142,29 +203,12 @@ class ReceiptDetailsScreen extends StatelessWidget {
                                   const SizedBox(height: 8),
                                   Text(
                                     'Image not available',
-                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    style: theme.textTheme.bodyMedium?.copyWith(
                                       color: Colors.grey.shade600,
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ) : Container(
-                            height: 180,
-                            width: double.infinity,
-                            color: Colors.grey.shade200,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.broken_image, size: 48, color: Colors.grey.shade500),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Image not available',
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: Colors.grey.shade600,
-                                  ),
-                                ),
-                              ],
                             ),
                           ),
                         ),

@@ -58,11 +58,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
 
     // Dummy data for demo
-    const int totalReceipts = 24;
-    const double totalExpenses = 1523.75;
-    const double totalTax = 123.45;
+    final int totalReceipts = dummyReceipts.length;
+    final double totalExpenses = dummyReceipts.fold(0.0, (sum, receipt) => sum + receipt.totalAmount);
+    final double totalTax = dummyReceipts.fold(0.0, (sum, receipt) => sum + (receipt.taxAmount ?? 0.0));
     const double taxDue = 40.00;
-    const double totalMakanExpenses = 200.00;
 
     final recentReceipts = dummyReceipts;
 
