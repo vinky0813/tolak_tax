@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tolak_tax/data/dummy_receipt_data.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
 import 'package:tolak_tax/widgets/date_range_selector.dart';
@@ -20,130 +21,27 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
   double getTotalAmount(List<Receipt> data) {
     return data.fold(0.0, (sum, item) {
-      final amount = double.tryParse(item.amount.toString()) ?? 0.0;
+      final amount = double.tryParse(item.totalAmount.toString()) ?? 0.0;
       return sum + amount;
     });
   }
 
-  final receipts = [
-    Receipt.fromMap({
-      'title': 'Starbucks Coffee',
-      'date': '2025-05-25',
-      'amount': 12.50,
-      'category': 'food'
-    }),
-    Receipt.fromMap({
-      'title': 'Office Supplies',
-      'date': '2025-05-23',
-      'amount': 98.75,
-      'category': 'shopping'
-    }),
-    Receipt.fromMap({
-      'title': 'Electricity Bill',
-      'date': '2025-05-20',
-      'amount': 150.00,
-      'category': 'utilities'
-    }),
-    Receipt.fromMap({
-      'title': 'Netflix Subscription',
-      'date': '2025-05-19',
-      'amount': 17.00,
-      'category': 'entertainment'
-    }),
-    Receipt.fromMap({
-      'title': 'Grab Ride',
-      'date': '2025-05-18',
-      'amount': 9.30,
-      'category': 'transport'
-    }),
-    Receipt.fromMap({
-      'title': 'Lunch at Nando\'s',
-      'date': '2025-05-17',
-      'amount': 35.00,
-      'category': 'food'
-    }),
-    Receipt.fromMap({
-      'title': 'Shopee Purchase',
-      'date': '2025-05-15',
-      'amount': 65.90,
-      'category': 'shopping'
-    }),
-    Receipt.fromMap({
-      'title': 'Celcom Postpaid',
-      'date': '2025-05-13',
-      'amount': 89.00,
-      'category': 'utilities'
-    }),
-    Receipt.fromMap({
-      'title': 'Cinema Tickets',
-      'date': '2025-05-12',
-      'amount': 28.00,
-      'category': 'entertainment'
-    }),
-    Receipt.fromMap({
-      'title': 'Petrol',
-      'date': '2025-05-10',
-      'amount': 120.00,
-      'category': 'transport'
-    }),
-    Receipt.fromMap({
-      'title': 'Grocery Shopping',
-      'date': '2025-05-08',
-      'amount': 210.40,
-      'category': 'food'
-    }),
-    Receipt.fromMap({
-      'title': 'Spotify Family Plan',
-      'date': '2025-05-05',
-      'amount': 22.40,
-      'category': 'entertainment'
-    }),
-    Receipt.fromMap({
-      'title': 'Parking Fee',
-      'date': '2025-05-04',
-      'amount': 3.50,
-      'category': 'transport'
-    }),
-    Receipt.fromMap({
-      'title': 'Electric Kettle',
-      'date': '2025-05-02',
-      'amount': 79.99,
-      'category': 'shopping'
-    }),
-    Receipt.fromMap({
-      'title': 'Water Bill',
-      'date': '2025-04-29',
-      'amount': 30.60,
-      'category': 'utilities'
-    }),
-    Receipt.fromMap({
-      'title': 'Dinner at Sushi King',
-      'date': '2025-04-28',
-      'amount': 47.25,
-      'category': 'food'
-    }),
-    Receipt.fromMap({
-      'title': 'Bookstore',
-      'date': '2025-04-27',
-      'amount': 54.90,
-      'category': 'shopping'
-    }),
-  ];
+  final receipts = dummyReceipts;
 
   List<Receipt> get filteredReceipts {
     return receipts.where((receipt) {
       if (startDate == null || endDate == null) return true;
-      return receipt.date
+      return receipt.transactionDate
               .isAfter(startDate!.subtract(const Duration(days: 1))) &&
-          receipt.date.isBefore(endDate!.add(const Duration(days: 1)));
+          receipt.transactionDate.isBefore(endDate!.add(const Duration(days: 1)));
     }).toList();
   }
 
   Map<String, double> _groupReceipts() {
     final Map<String, double> groupedData = {};
     for (var receipt in filteredReceipts) {
-      groupedData.update(receipt.category, (value) => value + receipt.amount,
-          ifAbsent: () => receipt.amount);
+      groupedData.update(receipt.expenseCategory, (value) => value + receipt.totalAmount,
+          ifAbsent: () => receipt.totalAmount);
     }
     return groupedData;
   }

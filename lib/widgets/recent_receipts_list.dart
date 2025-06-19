@@ -18,9 +18,13 @@ class _RecentReceiptsListState extends State<RecentReceiptsList> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    final recentThree = widget.receipts.length > 3
-        ? widget.receipts.sublist(widget.receipts.length - 3)
-        : widget.receipts;
+    final sortableReceipts = List<Receipt>.from(widget.receipts);
+
+    sortableReceipts.sort((a, b) {
+      return b.transactionDate.compareTo(a.transactionDate);
+    });
+
+    final recentThree = sortableReceipts.take(3).toList();
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -40,10 +44,10 @@ class _RecentReceiptsListState extends State<RecentReceiptsList> {
           const SizedBox(height: 12),
           ...recentThree.map(
                 (receipt) {
-              final categoryColor = CategoryHelper.getCategoryColor(receipt.category);
-              final categoryIcon = CategoryHelper.getIcon(receipt.category);
-              final formattedDate = receipt.date != null
-                  ? DateFormat.yMMMd().format(receipt.date)
+              final categoryColor = CategoryHelper.getCategoryColor(receipt.expenseCategory);
+              final categoryIcon = CategoryHelper.getIcon(receipt.expenseCategory);
+              final formattedDate = receipt.transactionDate != null
+                  ? DateFormat.yMMMd().format(receipt.transactionDate)
                   : '';
               return ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 9),
@@ -52,7 +56,7 @@ class _RecentReceiptsListState extends State<RecentReceiptsList> {
                   color: categoryColor,
                 ),
                 title: Text(
-                  receipt.title ?? '',
+                  receipt.merchantName ?? '',
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
                   ),
@@ -63,7 +67,7 @@ class _RecentReceiptsListState extends State<RecentReceiptsList> {
                   color: colorScheme.onSurfaceVariant,
                   )),
                 trailing: Text(
-                  'RM ${receipt.amount.toString()}',
+                  'RM ${receipt.totalAmount.toString()}',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: theme.colorScheme.primary,

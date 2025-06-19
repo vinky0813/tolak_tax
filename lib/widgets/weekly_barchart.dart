@@ -13,9 +13,9 @@ class WeeklyBarChart extends StatelessWidget {
     final dailyTotals = List<double>.filled(7, 0.0);
 
     for (var receipt in receipts) {
-      final diff = receipt.date.difference(startOfWeek).inDays;
+      final diff = receipt.transactionDate.difference(startOfWeek).inDays;
       if (diff >= 0 && diff < 7) {
-        dailyTotals[diff] += receipt.amount;
+        dailyTotals[diff] += receipt.totalAmount;
       }
     }
 

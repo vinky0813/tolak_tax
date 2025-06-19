@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:tolak_tax/widgets/date_range_selector.dart';
 import 'package:tolak_tax/widgets/section_container.dart';
-import '../utils/category_constants.dart';
+import '../data/category_constants.dart';
 
 class GenerateReportScreen extends StatefulWidget {
   const GenerateReportScreen({super.key});

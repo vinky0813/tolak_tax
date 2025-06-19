@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tolak_tax/services/auth_service.dart';
-import 'package:tolak_tax/utils/avatar_options.dart';
+import 'package:tolak_tax/data/avatar_options.dart';
 import 'package:tolak_tax/widgets/cached_network_svg.dart';
 
 class CreateProfileScreen extends StatefulWidget {
