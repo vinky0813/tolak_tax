@@ -11,8 +11,8 @@ class ExpensesByCategoryChart extends StatelessWidget {
   Map<String, double> getGroupedData() {
     final Map<String, double> groupedData = {};
     for (var receipt in receipts) {
-      groupedData.update(receipt.category, (value) => value + receipt.amount,
-          ifAbsent: () => receipt.amount);
+      groupedData.update(receipt.expenseCategory, (value) => value + receipt.totalAmount,
+          ifAbsent: () => receipt.totalAmount);
     }
     return groupedData;
   }
