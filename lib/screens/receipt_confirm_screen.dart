@@ -41,35 +41,35 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
 
   void _initializeControllers() {
     merchantNameController =
-        TextEditingController(text: widget.receiptData?.merchantName ?? '');
+        TextEditingController(text: widget.receiptData?.merchant_name ?? '');
     merchantAddressController =
-        TextEditingController(text: widget.receiptData?.merchantAddress ?? '');
+        TextEditingController(text: widget.receiptData?.merchant_address ?? '');
 
     // Handle date formatting - convert from ISO 8601 to display format if needed
     String dateText = '';
-    if (widget.receiptData?.transactionDatetime != null) {
+    if (widget.receiptData?.transaction_datetime != null) {
       try {
         final DateTime parsedDate =
-            DateTime.parse(widget.receiptData!.transactionDatetime);
+            DateTime.parse(widget.receiptData!.transaction_datetime);
         dateText = parsedDate.toString().split(' ')[0]; // YYYY-MM-DD format
       } catch (e) {
-        dateText = widget.receiptData!.transactionDatetime;
+        dateText = widget.receiptData!.transaction_datetime;
       }
     }
     dateController = TextEditingController(text: dateText);
 
     totalAmountController = TextEditingController(
-        text: widget.receiptData?.totalAmount.toString() ?? '');
+        text: widget.receiptData?.total_amount.toString() ?? '');
     taxAmountController = TextEditingController(
-        text: widget.receiptData?.taxAmount?.toString() ?? '');
+        text: widget.receiptData?.tax_amount?.toString() ?? '');
     subtotalController = TextEditingController(
         text: widget.receiptData?.subtotal?.toString() ?? '');
     currencyController =
-        TextEditingController(text: widget.receiptData?.currencyCode ?? 'USD');
+        TextEditingController(text: widget.receiptData?.currency_code ?? 'USD');
     paymentMethodController =
-        TextEditingController(text: widget.receiptData?.paymentMethod ?? '');
+        TextEditingController(text: widget.receiptData?.payment_method ?? '');
     expenseCategoryController =
-        TextEditingController(text: widget.receiptData?.expenseCategory ?? '');
+        TextEditingController(text: widget.receiptData?.expense_category ?? '');
   }
 
   @override
@@ -147,16 +147,16 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
             const SizedBox(height: 16),
 
             // Line Items Card (if available)
-            if (widget.receiptData?.lineItems.isNotEmpty == true)
+            if (widget.receiptData?.line_items.isNotEmpty == true)
               LineItemsCard(
-                lineItems: widget.receiptData!.lineItems,
+                lineItems: widget.receiptData!.line_items,
               ),
             const SizedBox(height: 16),
 
             // Discounts Card (if available)
-            if (widget.receiptData?.overallDiscounts?.isNotEmpty == true)
+            if (widget.receiptData?.overall_discounts?.isNotEmpty == true)
               DiscountsCard(
-                discounts: widget.receiptData!.overallDiscounts!,
+                discounts: widget.receiptData!.overall_discounts!,
               ),
             const SizedBox(height: 16),
 
@@ -265,25 +265,25 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     }
 
     final receiptData = Receipt(
-      merchantName: merchantNameController.text.trim(),
-      merchantAddress: merchantAddressController.text.trim().isNotEmpty
+      merchant_name: merchantNameController.text.trim(),
+      merchant_address: merchantAddressController.text.trim().isNotEmpty
           ? merchantAddressController.text.trim()
           : null,
-      transactionDatetime: transactionDatetime,
-      totalAmount: totalAmount,
-      taxAmount: taxAmount,
+      transaction_datetime: transactionDatetime,
+      total_amount: totalAmount!,
+      tax_amount: taxAmount,
       subtotal: subtotal,
-      currencyCode: currencyController.text.trim().isNotEmpty
+      currency_code: currencyController.text.trim().isNotEmpty
           ? currencyController.text.trim()
           : null,
-      paymentMethod: paymentMethodController.text.trim().isNotEmpty
+      payment_method: paymentMethodController.text.trim().isNotEmpty
           ? paymentMethodController.text.trim()
           : null,
-      expenseCategory: expenseCategoryController.text.trim().isNotEmpty
+      expense_category: expenseCategoryController.text.trim().isNotEmpty
           ? expenseCategoryController.text.trim()
           : null,
-      lineItems: widget.receiptData?.lineItems ?? [],
-      overallDiscounts: widget.receiptData?.overallDiscounts ?? [],
+      line_items: widget.receiptData?.line_items ?? [],
+      overall_discounts: widget.receiptData?.overall_discounts ?? [],
     );
 
     // TODO: Save to database/storage

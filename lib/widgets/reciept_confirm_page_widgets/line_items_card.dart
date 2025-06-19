@@ -66,21 +66,21 @@ class LineItemsCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Qty: ${item.quantity} × \$${item.originalUnitPrice.toStringAsFixed(2)}',
+                'Qty: ${item.quantity} × \$${item.original_unit_price.toStringAsFixed(2)}',
                 style: theme.textTheme.bodySmall,
               ),
               Text(
-                '\$${item.totalPrice.toStringAsFixed(2)}',
+                '\$${item.total_price.toStringAsFixed(2)}',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          if (item.lineItemDiscountAmount != null &&
-              item.lineItemDiscountAmount! > 0)
+          if (item.line_item_discount_amount != null &&
+              item.line_item_discount_amount! > 0)
             Text(
-              'Discount: -\$${item.lineItemDiscountAmount!.toStringAsFixed(2)}',
+              'Discount: -\$${item.line_item_discount_amount!.toStringAsFixed(2)}',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: Colors.red,
               ),
