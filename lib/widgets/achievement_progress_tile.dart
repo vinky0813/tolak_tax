@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tolak_tax/models/achievement_model.dart';
 
 class AchievementProgressTile extends StatelessWidget {
-  final Achievement achievement;
+  final UiAchievement achievement;
 
   const AchievementProgressTile({super.key, required this.achievement});
 

@@ -1,0 +1,78 @@
+import 'package:flutter/material.dart';
+import 'package:tolak_tax/models/achievement_model.dart';
+
+final List<AchievementDefinition> allAchievementDefinitions = [
+  AchievementDefinition(
+    id: 'savvy_saver_1',
+    icon: Icons.savings_outlined,
+    title: 'Savvy Saver',
+    subtitle: 'Reach RM 1,000 in total savings',
+    goal: 1000,
+    pointsReward: 50,
+    type: AchievementType.totalSavings,
+  ),
+  AchievementDefinition(
+    id: 'scan_streak_1',
+    title: 'On a Roll!',
+    subtitle: 'Maintain a 10-day scanning streak',
+    icon: Icons.local_fire_department,
+    goal: 10,
+    pointsReward: 100,
+    type: AchievementType.scanStreak,
+  ),
+  AchievementDefinition(
+    id: 'bronze_rank_1',
+    title: 'Bronze Achiever',
+    subtitle: 'Reach the Bronze rank with 700 points',
+    icon: Icons.military_tech,
+    goal: 700,
+    pointsReward: 50,
+    type: AchievementType.totalPoints,
+  ),
+  AchievementDefinition(
+    id: 'silver_rank_1',
+    title: 'Silver Achiever',
+    subtitle: 'Reach the Silver rank with 1,000 points',
+    icon: Icons.star_half,
+    goal: 1000,
+    pointsReward: 100,
+    type: AchievementType.totalPoints,
+  ),
+  AchievementDefinition(
+    id: 'gold_rank_1',
+    title: 'Golden Achiever',
+    subtitle: 'Reach the Gold rank with 1,500 points',
+    icon: Icons.emoji_events_outlined,
+    goal: 1500,
+    pointsReward: 250,
+    type: AchievementType.totalPoints,
+  ),
+  AchievementDefinition(
+    id: 'receipt_master_1',
+    title: 'First Scan!',
+    subtitle: 'Scan your first receipt',
+    icon: Icons.receipt_long,
+    goal: 1,
+    pointsReward: 10,
+    type: AchievementType.scanCount,
+  ),
+
+  AchievementDefinition(
+    id: 'receipt_master_2',
+    title: 'Receipt Rookie',
+    subtitle: 'Scan 10 receipts',
+    icon: Icons.receipt_long,
+    goal: 10,
+    pointsReward: 30,
+    type: AchievementType.scanCount,
+  ),
+  AchievementDefinition(
+    id: 'receipt_master_3',
+    title: 'Receipt Master',
+    subtitle: 'Scan 50 receipts',
+    icon: Icons.receipt_long,
+    goal: 50,
+    pointsReward: 75,
+    type: AchievementType.scanCount,
+  ),
+];

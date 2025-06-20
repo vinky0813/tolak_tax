@@ -21,6 +21,8 @@ import 'package:tolak_tax/themes/app_theme.dart';
 import 'package:tolak_tax/utils/transitions.dart';
 import 'package:tolak_tax/screens/camera_page.dart';
 
+import 'services/achievement_service.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeFirebase();
@@ -33,6 +35,9 @@ Future<void> main() async {
       StreamProvider<User?>(
         create: (context) => context.read<AuthService>().authStateChanges,
         initialData: null,
+      ),
+      ChangeNotifierProvider<AchievementService>(
+        create: (_) => AchievementService()..initialize(),
       ),
     ],
     child: MyApp(),
