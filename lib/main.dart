@@ -24,24 +24,27 @@ import 'package:tolak_tax/utils/transitions.dart';
 import 'package:tolak_tax/screens/camera_page.dart';
 import 'package:tolak_tax/screens/receipt_confirm_screen.dart';
 
+import 'services/achievement_service.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeFirebase();
   // adding provider
-  runApp(
-    MultiProvider(
-      providers: [
-        Provider<AuthService>(
-          create: (_) => AuthService(),
-        ),
-        StreamProvider<User?>(
-          create: (context) => context.read<AuthService>().authStateChanges,
-          initialData: null,
-        ),
-      ],
-      child: MyApp(),
-    ),
-  );
+  runApp(MultiProvider(
+    providers: [
+      Provider<AuthService>(
+        create: (_) => AuthService(),
+      ),
+      StreamProvider<User?>(
+        create: (context) => context.read<AuthService>().authStateChanges,
+        initialData: null,
+      ),
+      ChangeNotifierProvider<AchievementService>(
+        create: (_) => AchievementService()..initialize(),
+      ),
+    ],
+    child: MyApp(),
+  ),);
 }
 
 class MyApp extends StatelessWidget {
