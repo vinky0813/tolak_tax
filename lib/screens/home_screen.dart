@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/screens/dashboard_screen.dart';
 import 'package:tolak_tax/screens/expense_screen.dart';
 import 'package:tolak_tax/screens/profile_screen.dart';
 import 'package:tolak_tax/screens/reports_screen.dart';
 import 'package:tolak_tax/widgets/bottom_scanned_file_sheet.dart';
 import 'package:tolak_tax/services/api_service.dart';
+import 'package:tolak_tax/services/receipt_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -65,8 +67,13 @@ class _HomeScreenState extends State<HomeScreen> {
     final user = FirebaseAuth.instance.currentUser;
     final theme = Theme.of(context);
     final apiService = Provider.of<ApiService>(context, listen: false);
+    final receiptService = ReceiptService();
 
-    fetchAndPrintUserReceipts(context, apiService);
+    receiptService.fetchAndPrintUserReceipts(context, apiService);
+
+    print(receiptService.getCachedReceiptsCount());
+    print(receiptService.getCachedReceipts());
+    print(receiptService.getTotalAmountSpent());
 
     return Scaffold(
       extendBody: true,
