@@ -39,13 +39,13 @@ class AchievementProgress {
   });
 
   Map<String, dynamic> toJson() => {
-    'id': achievementId,
+    'achievementId': achievementId,
     'progress': progress,
     'isCompleted': isCompleted,
   };
 
   factory AchievementProgress.fromJson(Map<String, dynamic> json) => AchievementProgress(
-    achievementId: json['id'],
+    achievementId: json['achievementId'],
     progress: (json['progress'] as num).toDouble(),
     isCompleted: json['isCompleted'] as bool,
   );

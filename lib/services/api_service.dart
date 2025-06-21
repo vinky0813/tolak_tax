@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:tolak_tax/models/achievement_model.dart';
 import 'auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -68,6 +69,67 @@ class ApiService {
       return responseBody;
     } catch (e) {
       throw Exception('Error sending request to read receipt: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>?> getAchievements(String? idToken) async {
+    if (idToken == null || idToken.isEmpty) {
+      throw Exception('ID token is required to get achievements.');
+    }
+
+    var url = Uri.http(apiUrl, '/get-achievements-by-user', {'id_token': idToken});
+
+    try {
+      print('ApiService: Calling GET ${url.toString()}');
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body) as Map<String, dynamic>;
+      } else if (response.statusCode == 404) {
+        print('ApiService: No achievement data found for user (404).');
+        return null;
+      } else {
+        print('ApiService Error: Failed to load achievements. Status: ${response.statusCode}, Body: ${response.body}');
+        throw Exception('Failed to load achievements from server.');
+      }
+    } catch (e) {
+      print('ApiService Network Error on GET: $e');
+      throw Exception('Could not connect to the server.');
+    }
+  }
+
+  Future<void> saveAchievements({
+    required String? idToken,
+    required int totalPoints,
+    required Map<String, AchievementProgress> userAchievements,
+  }) async {
+    if (idToken == null || idToken.isEmpty) {
+      throw Exception('ID token is required to save achievements.');
+    }
+
+    final Map<String, dynamic> payload = {
+      'totalPoints': totalPoints,
+      'progress': userAchievements.values.map((p) => p.toJson()).toList(),
+    };
+
+    var url = Uri.http(apiUrl, '/save-achievements-by-user', {'id_token': idToken});
+
+    try {
+      print('ApiService: Calling POST ${url.toString()}');
+      var response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: json.encode(payload),
+      );
+
+      if (response.statusCode != 200) {
+        print('ApiService Error: Failed to save achievements. Status: ${response.statusCode}, Body: ${response.body}');
+        throw Exception('Failed to save achievements to server.');
+      }
+      print('ApiService: Achievements saved successfully.');
+    } catch (e) {
+      print('ApiService Network Error on POST: $e');
+      throw Exception('Could not connect to the server to save progress.');
     }
   }
 }
