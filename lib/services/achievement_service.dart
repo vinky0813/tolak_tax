@@ -29,6 +29,8 @@ class AchievementService with ChangeNotifier {
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/$_fileName');
 
+    bool needsSave = false;
+
     // if there is no progress file then just start with empty progress
     if (await file.exists() == false) {
       _userAchievements = {
@@ -36,36 +38,43 @@ class AchievementService with ChangeNotifier {
           def.id: AchievementProgress(achievementId: def.id)
       };
       _totalPoints = 0;
-      return;
+      needsSave = true;
+    } else {
+      final content = await file.readAsString();
+      if (content.isEmpty) {
+        _userAchievements = {
+          for (var def in allAchievementDefinitions)
+            def.id: AchievementProgress(achievementId: def.id)
+        };
+        _totalPoints = 0;
+        needsSave = true;
+      } else {
+        final data = Map<String, dynamic>.from(json.decode(content));
+        _totalPoints = data['totalPoints'] ?? 0;
+        final progressList = (data['progress'] as List)
+            .map((item) => AchievementProgress.fromJson(item))
+            .toList();
+        _userAchievements = {for (var p in progressList) p.achievementId: p};
+      }
     }
-
-    // if the file is empty then just start with empty progress
-    final content = await file.readAsString();
-    print("content $content");
-    if (content.isEmpty) {
-      _userAchievements = {
-        for (var def in allAchievementDefinitions)
-          def.id: AchievementProgress(achievementId: def.id)
-      };
-      _totalPoints = 0;
-      return;
-    }
-
-    // read the file and map it
-    final data = Map<String, dynamic>.from(json.decode(content));
-
-    _totalPoints = data['totalPoints'] ?? 0;
-
-    final progressList = (data['progress'] as List)
-        .map((item) => AchievementProgress.fromJson(item))
-        .toList();
-
-    _userAchievements = {for (var p in progressList) p.achievementId: p};
 
     for (final def in allAchievementDefinitions) {
-      if (!userAchievements.containsKey(def.id)) {
-        userAchievements[def.id] = AchievementProgress(achievementId: def.id);
+      if (!_userAchievements.containsKey(def.id)) {
+        _userAchievements[def.id] = AchievementProgress(achievementId: def.id);
+        needsSave = true;
       }
+    }
+
+    if (needsSave) {
+      await _saveUserAchievements();
+    }
+  }
+
+  Future<void> deleteUserProgress() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/$_fileName');
+    if (await file.exists()) {
+      await file.delete();
     }
   }
 
