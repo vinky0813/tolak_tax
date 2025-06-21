@@ -402,8 +402,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     });
     _showSuccessSnackBar('Receipt saved successfully!');
 
-    // Navigate back with the receipt data
-    Navigator.pop(context, receiptData);
+    // Navigate back to homepage
+    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 
   void _showErrorSnackBar(String message) {
