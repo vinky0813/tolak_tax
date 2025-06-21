@@ -145,134 +145,16 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
 
     return Scaffold(
         backgroundColor: colorScheme.primary,
-        body: Column(children: [
-          Expanded(
-            child: CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  automaticallyImplyLeading: false,
-                  floating: true,
-                  pinned: true,
-                  expandedHeight: 120,
-                  backgroundColor: theme.primaryColor,
-                  actions: [
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isEditing = !isEditing;
-                        });
-                      },
-                      icon: Icon(
-                        isEditing ? Icons.visibility : Icons.edit,
-                      ),
-                      tooltip: isEditing ? 'View Mode' : 'Edit Mode',
-                    ),
-                  ],
-                  flexibleSpace: FlexibleSpaceBar(
-                    title: Text(
-                      'Receipt Details',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: colorScheme.onPrimary,
-                      ),
-                    ),
-                    titlePadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                  ),
-                  foregroundColor: colorScheme.onPrimary,
-                ),
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  fillOverscroll: true,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: colorScheme.surface,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(24),
-                        topRight: Radius.circular(24),
-                      ),
-                    ),
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Status Indicator
-                        PageStatusCard(isEditing),
-                        const SizedBox(height: 16),
-
-                        // Receipt Image Card
-                        ReceiptImageCard(
-                          receiptImagePath: widget.receiptImagePath,
-                        ),
-
-                        const SizedBox(height: 16), // Merchant Information Card
-
-                        MerchantInfoCard(
-                          merchantNameController: merchantNameController,
-                          merchantAddressController: merchantAddressController,
-                          isEditing: isEditing,
-                        ),
-                        const SizedBox(height: 16), // Transaction Details Card
-
-                        TransactionDetailsCard(
-                          dateController: dateController,
-                          paymentMethodController: paymentMethodController,
-                          currencyController: currencyController,
-                          isEditing: isEditing,
-                        ),
-                        const SizedBox(height: 16),
-
-                        const SizedBox(height: 16),
-
-                        // Line Items Card (if available)
-                        if (widget.receiptData?.line_items.isNotEmpty == true)
-                          LineItemsCard(
-                            lineItems: widget.receiptData!.line_items,
-                            isEditing: isEditing,
-                            descriptionControllers:
-                                lineItemDescriptionControllers,
-                            quantityControllers: lineItemQuantityControllers,
-                            priceControllers: lineItemPriceControllers,
-                          ),
-                        const SizedBox(height: 16),
-
-                        FinancialDetailsCard(
-                          subtotalController: subtotalController,
-                          taxAmountController: taxAmountController,
-                          totalAmountController: totalAmountController,
-                          isEditing: isEditing,
-                        ),
-
-                        // Discounts Card (if available)
-                        if (widget.receiptData?.overall_discounts?.isNotEmpty ==
-                            true)
-                          DiscountsCard(
-                            discounts: widget.receiptData!.overall_discounts!,
-                          ),
-                        const SizedBox(height: 16),
-
-                        // Additional Information Card
-                        AdditionalInfoCard(
-                          expenseCategoryController: expenseCategoryController,
-                          isEditing: isEditing,
-                        ),
-                        const SizedBox(height: 24),
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          Container(
+        bottomNavigationBar: SafeArea(
+          top: false,
+          child: Container(
             color: colorScheme.surface,
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
             child: Row(
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.arrow_back),
                     label: const Text('Back'),
                     style: OutlinedButton.styleFrom(
@@ -295,7 +177,119 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
               ],
             ),
           ),
-        ]));
+        ),
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              floating: true,
+              pinned: true,
+              expandedHeight: 120,
+              backgroundColor: theme.primaryColor,
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      isEditing = !isEditing;
+                    });
+                  },
+                  icon: Icon(
+                    isEditing ? Icons.visibility : Icons.edit,
+                  ),
+                  tooltip: isEditing ? 'View Mode' : 'Edit Mode',
+                ),
+              ],
+              flexibleSpace: FlexibleSpaceBar(
+                title: Text(
+                  'Receipt Details',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: colorScheme.onPrimary,
+                  ),
+                ),
+                titlePadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+              foregroundColor: colorScheme.onPrimary,
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colorScheme.surface,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                ),
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Status Indicator
+                    PageStatusCard(isEditing),
+                    const SizedBox(height: 16),
+
+                    // Receipt Image Card
+                    ReceiptImageCard(
+                      receiptImagePath: widget.receiptImagePath,
+                    ),
+
+                    const SizedBox(height: 16), // Merchant Information Card
+
+                    MerchantInfoCard(
+                      merchantNameController: merchantNameController,
+                      merchantAddressController: merchantAddressController,
+                      isEditing: isEditing,
+                    ),
+                    const SizedBox(height: 16), // Transaction Details Card
+
+                    TransactionDetailsCard(
+                      dateController: dateController,
+                      paymentMethodController: paymentMethodController,
+                      currencyController: currencyController,
+                      isEditing: isEditing,
+                    ),
+                    const SizedBox(height: 16),
+
+                    const SizedBox(height: 16),
+
+                    // Line Items Card (if available)
+                    if (widget.receiptData?.line_items.isNotEmpty == true)
+                      LineItemsCard(
+                        lineItems: widget.receiptData!.line_items,
+                        isEditing: isEditing,
+                        descriptionControllers: lineItemDescriptionControllers,
+                        quantityControllers: lineItemQuantityControllers,
+                        priceControllers: lineItemPriceControllers,
+                      ),
+                    const SizedBox(height: 16),
+
+                    FinancialDetailsCard(
+                      subtotalController: subtotalController,
+                      taxAmountController: taxAmountController,
+                      totalAmountController: totalAmountController,
+                      isEditing: isEditing,
+                    ),
+
+                    // Discounts Card (if available)
+                    if (widget.receiptData?.overall_discounts?.isNotEmpty ==
+                        true)
+                      DiscountsCard(
+                        discounts: widget.receiptData!.overall_discounts!,
+                      ),
+                    const SizedBox(height: 16),
+
+                    // Additional Information Card
+                    AdditionalInfoCard(
+                      expenseCategoryController: expenseCategoryController,
+                      isEditing: isEditing,
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ));
   }
 
   void _saveReceipt() {

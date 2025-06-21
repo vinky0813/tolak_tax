@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:tolak_tax/services/api_service.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
+import 'package:tolak_tax/widgets/section_container.dart';
 
 class DisplayPictureScreen extends StatefulWidget {
   final String imagePath;
@@ -47,72 +48,103 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final ApiService apiService = ApiService();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Captured Picture'),
-        actions: [
-          TextButton(
-            onPressed: _isLoading
-                ? null
-                : () async {
-                    setState(() {
-                      _isLoading = true;
-                    });
+      backgroundColor: colorScheme.primary,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                      TextButton(
+                        onPressed: _isLoading
+                            ? null
+                            : () async {
+                          setState(() {
+                            _isLoading = true;
+                          });
 
-                    try {
-                      Receipt? receipt = await confirmReadReceipt(
-                          context, apiService, widget.imagePath);
+                          try {
+                            final receipt = await confirmReadReceipt(
+                                context, apiService, widget.imagePath);
 
-                      if (receipt != null) {
-                        Navigator.pushNamed(context, '/receipt-confirm',
-                            arguments: {
-                              'receiptImagePath': widget.imagePath,
-                              'receiptData': receipt,
+                            if (receipt != null) {
+                              Navigator.pushNamed(
+                                context,
+                                '/receipt-confirm',
+                                arguments: {
+                                  'receiptImagePath': widget.imagePath,
+                                  'receiptData': receipt,
+                                },
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Failed to read receipt. Please try again.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          } finally {
+                            setState(() {
+                              _isLoading = false;
                             });
-                      } else {
-                        print("Failed to read receipt data");
-                        // Show error message to user
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                                'Failed to read receipt. Please try again.'),
-                            backgroundColor: Colors.red,
+                          }
+                        },
+                        child: Text(
+                          'Confirm',
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: _isLoading ? Colors.grey : colorScheme.onPrimary,
+                            fontWeight: FontWeight.bold,
                           ),
-                        );
-                      }
-                    } finally {
-                      setState(() {
-                        _isLoading = false;
-                      });
-                    }
-                  },
-            child: Text(
-              'Confirm',
-              style: TextStyle(
-                color: _isLoading ? Colors.grey : Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    child: SectionContainer(
+                      title: 'Confirm Captured Receipt',
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.file(
+                          File(widget.imagePath),
+                          width: double.infinity,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          Center(
-            child: Image.file(File(widget.imagePath)),
-          ),
-          if (_isLoading)
-            Container(
-              color: Colors.black.withOpacity(0.5),
-              child: const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+
+            if (_isLoading)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
