@@ -7,7 +7,7 @@ import 'package:tolak_tax/models/achievement_model.dart';
 
 class AchievementService with ChangeNotifier {
   int _totalPoints = 0;
-  static const String _fileName = 'user_achievement.json';
+  late final String _fileName;
   Map<String, AchievementProgress> _userAchievements = {};
   bool _isInitialized = false;
 
@@ -15,6 +15,14 @@ class AchievementService with ChangeNotifier {
   int get totalPoints => _totalPoints;
   Map<String, AchievementProgress> get userAchievements => _userAchievements;
   bool get isInitialized => _isInitialized;
+  String get fileName => _fileName;
+
+  AchievementService({required String uid}) {
+    assert(uid.isNotEmpty, 'AchievementService requires a valid user ID.');
+    _fileName = 'user_achievements_$uid.json';
+
+    initialize();
+  }
 
   Future<void> initialize() async {
     if (_isInitialized) return;
