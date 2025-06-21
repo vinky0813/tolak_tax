@@ -39,8 +39,19 @@ Future<void> main() async {
         create: (context) => context.read<AuthService>().authStateChanges,
         initialData: null,
       ),
-      ChangeNotifierProvider<AchievementService>(
-        create: (_) => AchievementService()..initialize(),
+      ChangeNotifierProxyProvider<User?, AchievementService?>(
+        create: (_) => null,
+        update: (context, user, previousAchievementService) {
+          if (user == null) {
+            return null;
+          }
+          if (previousAchievementService != null && previousAchievementService.fileName.contains(user.uid)) {
+            return previousAchievementService;
+          }
+
+          print('Creating new AchievementService for user: ${user.uid}');
+          return AchievementService(uid: user.uid);
+        },
       ),
     ],
     child: MyApp(),
