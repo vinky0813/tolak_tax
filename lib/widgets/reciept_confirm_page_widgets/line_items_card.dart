@@ -3,10 +3,19 @@ import 'package:tolak_tax/models/receipt_model.dart';
 
 class LineItemsCard extends StatelessWidget {
   final List<LineItem> lineItems;
+  final bool isEditing;
+  final List<TextEditingController> descriptionControllers;
+  final List<TextEditingController> quantityControllers;
+  final List<TextEditingController> priceControllers;
 
   const LineItemsCard({
     Key? key,
     required this.lineItems,
+    required this.isEditing,
+    required this.descriptionControllers,
+    required this.quantityControllers,
+    required this.priceControllers,
+
   }) : super(key: key);
 
   @override
@@ -36,15 +45,55 @@ class LineItemsCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            ...lineItems.map((item) => _buildLineItem(item, theme)),
+            for (int i = 0; i < lineItems.length; i++)
+              _buildLineItem(i, theme),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildLineItem(LineItem item, ThemeData theme) {
-    return Container(
+  Widget _buildLineItem(int index, ThemeData theme) {
+    final currentItem = lineItems[index];
+
+    return isEditing ?
+    Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: theme.dividerColor),
+      ),
+      child: Column(
+        children: [
+          TextFormField(
+            controller: descriptionControllers[index],
+            decoration: const InputDecoration(labelText: 'Description', border: InputBorder.none, isDense: true),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: quantityControllers[index],
+                  decoration: const InputDecoration(labelText: 'Qty', border: InputBorder.none, isDense: true),
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextFormField(
+                  controller: priceControllers[index],
+                  decoration: const InputDecoration(labelText: 'Price', prefixText: '\$', border: InputBorder.none, isDense: true),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    )
+    : Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -56,7 +105,7 @@ class LineItemsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            item.description,
+            currentItem.description,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
             ),
@@ -66,21 +115,21 @@ class LineItemsCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Qty: ${item.quantity} × \$${item.original_unit_price.toStringAsFixed(2)}',
+                'Qty: ${currentItem.quantity} × \$${currentItem.original_unit_price.toStringAsFixed(2)}',
                 style: theme.textTheme.bodySmall,
               ),
               Text(
-                '\$${item.total_price.toStringAsFixed(2)}',
+                '\$${currentItem.total_price.toStringAsFixed(2)}',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          if (item.line_item_discount_amount != null &&
-              item.line_item_discount_amount! > 0)
+          if (currentItem.line_item_discount_amount != null &&
+              currentItem.line_item_discount_amount! > 0)
             Text(
-              'Discount: -\$${item.line_item_discount_amount!.toStringAsFixed(2)}',
+              'Discount: -\$${currentItem.line_item_discount_amount!.toStringAsFixed(2)}',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: Colors.red,
               ),

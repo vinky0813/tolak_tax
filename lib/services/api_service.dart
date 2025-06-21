@@ -6,7 +6,9 @@ import 'dart:convert';
 
 class ApiService {
   //final apiUrl = 'tolaktaxapi-291467312481.asia-east1.run.app';
-  final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
+  //final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
+  final apiUrl = '192.168.0.6:8000';
+
 
   Future<String?> getIdToken(BuildContext context) async {
     final String? token =

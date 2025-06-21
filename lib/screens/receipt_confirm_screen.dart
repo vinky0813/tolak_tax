@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
+import 'package:tolak_tax/widgets/back_button.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/page_status_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/reciept_image_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/merchant_info_card.dart';
@@ -9,6 +10,7 @@ import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/line_items_card.d
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/discounts_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/additional_info_card.dart';
 import 'package:tolak_tax/services/api_service.dart';
+import 'package:tolak_tax/widgets/section_container.dart';
 
 class ReceiptConfirmScreen extends StatefulWidget {
   final Receipt? receiptData;
@@ -33,6 +35,9 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
   late TextEditingController currencyController;
   late TextEditingController paymentMethodController;
   late TextEditingController expenseCategoryController;
+  late List<TextEditingController> lineItemDescriptionControllers;
+  late List<TextEditingController> lineItemQuantityControllers;
+  late List<TextEditingController> lineItemPriceControllers;
 
   @override
   void initState() {
@@ -71,6 +76,24 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         TextEditingController(text: widget.receiptData?.payment_method ?? '');
     expenseCategoryController =
         TextEditingController(text: widget.receiptData?.expense_category ?? '');
+
+    lineItemDescriptionControllers = [];
+    lineItemQuantityControllers = [];
+    lineItemPriceControllers = [];
+
+    if (widget.receiptData?.line_items != null) {
+      for (var item in widget.receiptData!.line_items) {
+        lineItemDescriptionControllers.add(
+          TextEditingController(text: item.description),
+        );
+        lineItemQuantityControllers.add(
+          TextEditingController(text: item.quantity.toString()),
+        );
+        lineItemPriceControllers.add(
+          TextEditingController(text: item.original_unit_price.toStringAsFixed(2)),
+        );
+      }
+    }
   }
 
   @override
@@ -84,6 +107,15 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     currencyController.dispose();
     paymentMethodController.dispose();
     expenseCategoryController.dispose();
+    for (var controller in lineItemDescriptionControllers) {
+      controller.dispose();
+    }
+    for (var controller in lineItemQuantityControllers) {
+      controller.dispose();
+    }
+    for (var controller in lineItemPriceControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -117,6 +149,7 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         backgroundColor: theme.colorScheme.surface,
         foregroundColor: theme.colorScheme.onSurface,
         elevation: 0,
+        leading: BackButtonWidget(),
         actions: [
           IconButton(
             onPressed: () {
@@ -170,6 +203,11 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
             if (widget.receiptData?.line_items.isNotEmpty == true)
               LineItemsCard(
                 lineItems: widget.receiptData!.line_items,
+                isEditing: isEditing,
+                descriptionControllers: lineItemDescriptionControllers,
+                quantityControllers: lineItemQuantityControllers,
+                priceControllers: lineItemPriceControllers,
+
               ),
             const SizedBox(height: 16),
 
@@ -246,6 +284,20 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     if (totalAmountController.text.trim().isEmpty) {
       _showErrorSnackBar('Please enter total amount');
       return;
+    }
+
+    final List<LineItem> updatedLineItems = [];
+    for (int i = 0; i < lineItemDescriptionControllers.length; i++) {
+      final description = lineItemDescriptionControllers[i].text;
+      final quantity = double.tryParse(lineItemQuantityControllers[i].text) ?? 1.0;
+      final price = double.tryParse(lineItemPriceControllers[i].text) ?? 0.0;
+
+      updatedLineItems.add(LineItem(
+        description: description,
+        quantity: quantity,
+        original_unit_price: price,
+        total_price: quantity * price,
+      ));
     }
 
     // Parse and validate amounts
