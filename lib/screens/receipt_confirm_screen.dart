@@ -10,7 +10,6 @@ import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/line_items_card.d
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/discounts_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/additional_info_card.dart';
 import 'package:tolak_tax/services/api_service.dart';
-import 'package:tolak_tax/widgets/section_container.dart';
 
 class ReceiptConfirmScreen extends StatefulWidget {
   final Receipt? receiptData;
@@ -90,7 +89,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
           TextEditingController(text: item.quantity.toString()),
         );
         lineItemPriceControllers.add(
-          TextEditingController(text: item.original_unit_price.toStringAsFixed(2)),
+          TextEditingController(
+              text: item.original_unit_price.toStringAsFixed(2)),
         );
       }
     }
@@ -140,100 +140,133 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     print('receiptData: ${widget.receiptData?.toMap()}');
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      appBar: AppBar(
-        title: const Text('Receipt Details'),
-        backgroundColor: theme.colorScheme.surface,
-        foregroundColor: theme.colorScheme.onSurface,
-        elevation: 0,
-        leading: BackButtonWidget(),
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                isEditing = !isEditing;
-              });
-            },
-            icon: Icon(
-              isEditing ? Icons.visibility : Icons.edit,
-              color: theme.primaryColor,
+        backgroundColor: colorScheme.primary,
+        body: Column(children: [
+          Expanded(
+            child: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  automaticallyImplyLeading: false,
+                  floating: true,
+                  pinned: true,
+                  expandedHeight: 120,
+                  backgroundColor: theme.primaryColor,
+                  actions: [
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          isEditing = !isEditing;
+                        });
+                      },
+                      icon: Icon(
+                        isEditing ? Icons.visibility : Icons.edit,
+                      ),
+                      tooltip: isEditing ? 'View Mode' : 'Edit Mode',
+                    ),
+                  ],
+                  flexibleSpace: FlexibleSpaceBar(
+                    title: Text(
+                      'Receipt Details',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: colorScheme.onPrimary,
+                      ),
+                    ),
+                    titlePadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                  ),
+                  foregroundColor: colorScheme.onPrimary,
+                ),
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  fillOverscroll: true,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: colorScheme.surface,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Status Indicator
+                        PageStatusCard(isEditing),
+                        const SizedBox(height: 16),
+
+                        // Receipt Image Card
+                        ReceiptImageCard(
+                          receiptImagePath: widget.receiptImagePath,
+                        ),
+
+                        const SizedBox(height: 16), // Merchant Information Card
+
+                        MerchantInfoCard(
+                          merchantNameController: merchantNameController,
+                          merchantAddressController: merchantAddressController,
+                          isEditing: isEditing,
+                        ),
+                        const SizedBox(height: 16), // Transaction Details Card
+
+                        TransactionDetailsCard(
+                          dateController: dateController,
+                          paymentMethodController: paymentMethodController,
+                          currencyController: currencyController,
+                          isEditing: isEditing,
+                        ),
+                        const SizedBox(height: 16),
+
+                        const SizedBox(height: 16),
+
+                        // Line Items Card (if available)
+                        if (widget.receiptData?.line_items.isNotEmpty == true)
+                          LineItemsCard(
+                            lineItems: widget.receiptData!.line_items,
+                            isEditing: isEditing,
+                            descriptionControllers:
+                                lineItemDescriptionControllers,
+                            quantityControllers: lineItemQuantityControllers,
+                            priceControllers: lineItemPriceControllers,
+                          ),
+                        const SizedBox(height: 16),
+
+                        FinancialDetailsCard(
+                          subtotalController: subtotalController,
+                          taxAmountController: taxAmountController,
+                          totalAmountController: totalAmountController,
+                          isEditing: isEditing,
+                        ),
+
+                        // Discounts Card (if available)
+                        if (widget.receiptData?.overall_discounts?.isNotEmpty ==
+                            true)
+                          DiscountsCard(
+                            discounts: widget.receiptData!.overall_discounts!,
+                          ),
+                        const SizedBox(height: 16),
+
+                        // Additional Information Card
+                        AdditionalInfoCard(
+                          expenseCategoryController: expenseCategoryController,
+                          isEditing: isEditing,
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  ),
+                )
+              ],
             ),
-            tooltip: isEditing ? 'View Mode' : 'Edit Mode',
           ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Status Indicator
-            PageStatusCard(isEditing),
-            const SizedBox(height: 16),
-
-            // Receipt Image Card
-            ReceiptImageCard(
-              receiptImagePath: widget.receiptImagePath,
-            ),
-
-            const SizedBox(height: 16), // Merchant Information Card
-
-            MerchantInfoCard(
-              merchantNameController: merchantNameController,
-              merchantAddressController: merchantAddressController,
-              isEditing: isEditing,
-            ),
-            const SizedBox(height: 16), // Transaction Details Card
-
-            TransactionDetailsCard(
-              dateController: dateController,
-              paymentMethodController: paymentMethodController,
-              currencyController: currencyController,
-              isEditing: isEditing,
-            ),
-            const SizedBox(height: 16),
-
-            const SizedBox(height: 16),
-
-            // Line Items Card (if available)
-            if (widget.receiptData?.line_items.isNotEmpty == true)
-              LineItemsCard(
-                lineItems: widget.receiptData!.line_items,
-                isEditing: isEditing,
-                descriptionControllers: lineItemDescriptionControllers,
-                quantityControllers: lineItemQuantityControllers,
-                priceControllers: lineItemPriceControllers,
-
-              ),
-            const SizedBox(height: 16),
-
-            FinancialDetailsCard(
-              subtotalController: subtotalController,
-              taxAmountController: taxAmountController,
-              totalAmountController: totalAmountController,
-              isEditing: isEditing,
-            ),
-
-            // Discounts Card (if available)
-            if (widget.receiptData?.overall_discounts?.isNotEmpty == true)
-              DiscountsCard(
-                discounts: widget.receiptData!.overall_discounts!,
-              ),
-            const SizedBox(height: 16),
-
-            // Additional Information Card
-            AdditionalInfoCard(
-              expenseCategoryController: expenseCategoryController,
-              isEditing: isEditing,
-            ),
-            const SizedBox(height: 24),
-
-            // Action Buttons
-            Row(
+          Container(
+            color: colorScheme.surface,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: Row(
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
@@ -261,12 +294,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                 ),
               ],
             ),
-
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
-    );
+          ),
+        ]));
   }
 
   void _saveReceipt() {
@@ -289,7 +318,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     final List<LineItem> updatedLineItems = [];
     for (int i = 0; i < lineItemDescriptionControllers.length; i++) {
       final description = lineItemDescriptionControllers[i].text;
-      final quantity = double.tryParse(lineItemQuantityControllers[i].text) ?? 1.0;
+      final quantity =
+          double.tryParse(lineItemQuantityControllers[i].text) ?? 1.0;
       final price = double.tryParse(lineItemPriceControllers[i].text) ?? 0.0;
 
       updatedLineItems.add(LineItem(
