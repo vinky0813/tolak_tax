@@ -22,6 +22,7 @@ import 'package:tolak_tax/utils/transitions.dart';
 import 'package:tolak_tax/screens/camera_page.dart';
 
 import 'services/achievement_service.dart';
+import 'services/api_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,22 +33,24 @@ Future<void> main() async {
       Provider<AuthService>(
         create: (_) => AuthService(),
       ),
+      Provider<ApiService>(
+        create: (_) => ApiService(),
+      ),
       StreamProvider<User?>(
         create: (context) => context.read<AuthService>().authStateChanges,
         initialData: null,
       ),
-      ChangeNotifierProxyProvider<User?, AchievementService?>(
+      ChangeNotifierProxyProvider2<User?, ApiService, AchievementService?>(
         create: (_) => null,
-        update: (context, user, previousAchievementService) {
+        update: (context, user, apiService, previousAchievementService) {
           if (user == null) {
             return null;
           }
-          if (previousAchievementService != null && previousAchievementService.fileName.contains(user.uid)) {
-            return previousAchievementService;
-          }
-
-          print('Creating new AchievementService for user: ${user.uid}');
-          return AchievementService(uid: user.uid);
+          print('Providing AchievementService for user: ${user.uid}');
+          return AchievementService(
+            apiService: apiService,
+            authService: context.read<AuthService>(),
+          );
         },
       ),
     ],

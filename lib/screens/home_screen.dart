@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:tolak_tax/screens/dashboard_screen.dart';
 import 'package:tolak_tax/screens/expense_screen.dart';
 import 'package:tolak_tax/screens/profile_screen.dart';
@@ -63,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     final theme = Theme.of(context);
-    final apiService = ApiService();
+    final apiService = Provider.of<ApiService>(context, listen: false);
 
     fetchAndPrintUserReceipts(context, apiService);
 
