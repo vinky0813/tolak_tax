@@ -71,10 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     receiptService.fetchAndPrintUserReceipts(context, apiService);
 
-    print(receiptService.getCachedReceiptsCount());
-    print(receiptService.getCachedReceipts());
-    print(receiptService.getTotalAmountSpent());
-
     return Scaffold(
       extendBody: true,
       resizeToAvoidBottomInset: false,

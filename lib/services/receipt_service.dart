@@ -50,4 +50,14 @@ class ReceiptService {
   double getTotalAmountSpent() {
     return _cachedReceipts.fold(0, (sum, receipt) => sum + receipt.totalAmount);
   }
+
+  /*List<Receipt> getRecentReceipts() {
+    if (_cachedReceipts.isEmpty) {
+      return <Receipt>[];
+    }
+    // Sort receipts by date in descending order
+    _cachedReceipts.sort((a, b) => b.date.compareTo(a.date));
+    // Return the most recent 5 receipts
+    return _cachedReceipts.take(5).toList();
+  }*/
 }
