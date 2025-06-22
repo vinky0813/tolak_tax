@@ -68,7 +68,7 @@ class ApiService {
       String responseBody = await response.stream.bytesToString();
       return responseBody;
     } catch (e) {
-      throw Exception('Error sending request to read receipt: $e');
+      throw Exception('Error sending request to add receipt: $e');
     }
   }
 
@@ -103,7 +103,7 @@ class ApiService {
     required int totalPoints,
     required Map<String, AchievementProgress> userAchievements,
     required int currentScanStreak,
-    required String? lastScanTimestamp
+    required String? lastScanTimestamp,
   }) async {
     if (idToken == null || idToken.isEmpty) {
       throw Exception('ID token is required to save achievements.');

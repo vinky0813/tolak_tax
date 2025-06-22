@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/data/dummy_receipt_data.dart';
 import 'package:tolak_tax/models/achievement_model.dart';
+import 'package:tolak_tax/services/achievement_service.dart';
+import 'package:tolak_tax/models/achievement_model.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/services/achievement_service.dart';
 import 'package:tolak_tax/services/auth_service.dart';

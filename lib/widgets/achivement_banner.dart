@@ -17,9 +17,10 @@ class AchievementBanner {
     final TextTheme textTheme = theme.textTheme;
 
     final Color bannerBackgroundColorStart = colorScheme.secondary; // Asparagus
-    final Color bannerBackgroundColorEnd = colorScheme.tertiary;     // Yellow Green
-    final Color bannerTextColor = colorScheme.onSecondary;           // White
-    final Color bannerIconColor = Colors.white; // A bright white icon stands out best
+    final Color bannerBackgroundColorEnd = colorScheme.tertiary; // Yellow Green
+    final Color bannerTextColor = colorScheme.onSecondary; // White
+    final Color bannerIconColor = Colors
+        .white; // A bright white icon stands out best
 
     Flushbar(
       titleText: Text(

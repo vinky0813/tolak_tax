@@ -28,6 +28,9 @@ import 'package:tolak_tax/screens/receipt_confirm_screen.dart';
 import 'services/achievement_service.dart';
 import 'services/api_service.dart';
 
+import 'services/achievement_service.dart';
+import 'services/api_service.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeFirebase();
