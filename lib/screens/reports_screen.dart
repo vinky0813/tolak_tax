@@ -26,21 +26,23 @@ class _ReportsScreenState extends State<ReportsScreen> {
     });
   }
 
-  final receipts = dummyReceipts;
+  List<Receipt> receipts = dummyReceiptsData;
 
   List<Receipt> get filteredReceipts {
     return receipts.where((receipt) {
       if (startDate == null || endDate == null) return true;
-      return receipt.transactionDate
+      final transactionDatetime = DateTime.parse(receipt.transactionDatetime);
+      return transactionDatetime
               .isAfter(startDate!.subtract(const Duration(days: 1))) &&
-          receipt.transactionDate.isBefore(endDate!.add(const Duration(days: 1)));
+          transactionDatetime.isBefore(endDate!.add(const Duration(days: 1)));
     }).toList();
   }
 
   Map<String, double> _groupReceipts() {
     final Map<String, double> groupedData = {};
     for (var receipt in filteredReceipts) {
-      groupedData.update(receipt.expenseCategory, (value) => value + receipt.totalAmount,
+      groupedData.update(
+          receipt.expenseCategory, (value) => value + receipt.totalAmount,
           ifAbsent: () => receipt.totalAmount);
     }
     return groupedData;
@@ -186,7 +188,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
                                   icon: Icons.calculate,
                                   label: 'Generate Report',
                                   onPressed: () {
-                                    Navigator.pushNamed(context, '/generate-report');
+                                    Navigator.pushNamed(
+                                        context, '/generate-report');
                                   },
                                 ),
                               ),
@@ -228,53 +231,55 @@ class _ReportsScreenState extends State<ReportsScreen> {
                         ],
                       ),
                     ),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 6,
-                        offset: Offset(0, 3),
-                      )
-                    ],
-                  ),
-                  child: Column(
-                    children: groupedData.entries.map((entry) {
-                      final color = CategoryHelper.getCategoryColor(entry.key);
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 18,
-                              height: 18,
-                              decoration: BoxDecoration(
-                                color: color,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 6,
+                            offset: Offset(0, 3),
+                          )
+                        ],
+                      ),
+                      child: Column(
+                        children: groupedData.entries.map((entry) {
+                          final color =
+                              CategoryHelper.getCategoryColor(entry.key);
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 18,
+                                  height: 18,
+                                  decoration: BoxDecoration(
+                                    color: color,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    entry.key,
+                                    style: theme.textTheme.bodyLarge
+                                        ?.copyWith(fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                Text(
+                                  'RM ${entry.value.toStringAsFixed(2)}',
+                                  style: theme.textTheme.bodyLarge,
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                entry.key,
-                                style: theme.textTheme.bodyLarge
-                                    ?.copyWith(fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            Text(
-                              'RM ${entry.value.toStringAsFixed(2)}',
-                              style: theme.textTheme.bodyLarge,
-                            ),
-                          ],
-                        ),
-                      );
-                            }).toList(),
-                        ),),
+                          );
+                        }).toList(),
+                      ),
+                    ),
 
                     Container(
                       width: double.infinity,

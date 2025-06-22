@@ -21,7 +21,8 @@ class _RecentReceiptsListState extends State<RecentReceiptsList> {
     final sortableReceipts = List<Receipt>.from(widget.receipts);
 
     sortableReceipts.sort((a, b) {
-      return b.transactionDate.compareTo(a.transactionDate);
+      return DateTime.parse(b.transactionDatetime)
+          .compareTo(DateTime.parse(a.transactionDatetime));
     });
 
     final recentThree = sortableReceipts.take(3).toList();
@@ -48,9 +49,11 @@ class _RecentReceiptsListState extends State<RecentReceiptsList> {
                   CategoryHelper.getCategoryColor(receipt.expenseCategory);
               final categoryIcon =
                   CategoryHelper.getIcon(receipt.expenseCategory);
-              final formattedDate = receipt.transactionDate != null
-                  ? DateFormat.yMMMd().format(receipt.transactionDate)
-                  : '';
+              final formattedDate =
+                  DateTime.parse(receipt.transactionDatetime) != null
+                      ? DateFormat.yMMMd()
+                          .format(DateTime.parse(receipt.transactionDatetime))
+                      : '';
               return ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 9),
                   leading: Icon(

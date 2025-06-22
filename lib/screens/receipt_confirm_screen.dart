@@ -46,42 +46,42 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
 
   void _initializeControllers() {
     merchantNameController =
-        TextEditingController(text: widget.receiptData?.merchant_name ?? '');
+        TextEditingController(text: widget.receiptData?.merchantName ?? '');
     merchantAddressController =
-        TextEditingController(text: widget.receiptData?.merchant_address ?? '');
+        TextEditingController(text: widget.receiptData?.merchantAddress ?? '');
 
     // Handle date formatting - convert from ISO 8601 to display format if needed
     String dateText = '';
-    if (widget.receiptData?.transaction_datetime != null) {
+    if (widget.receiptData?.transactionDatetime != null) {
       try {
         final DateTime parsedDate =
-            DateTime.parse(widget.receiptData!.transaction_datetime);
+            DateTime.parse(widget.receiptData!.transactionDatetime);
         dateText = parsedDate.toString().split(' ')[0]; // YYYY-MM-DD format
       } catch (e) {
-        dateText = widget.receiptData!.transaction_datetime;
+        dateText = widget.receiptData!.transactionDatetime;
       }
     }
     dateController = TextEditingController(text: dateText);
 
     totalAmountController = TextEditingController(
-        text: widget.receiptData?.total_amount.toString() ?? '');
+        text: widget.receiptData?.totalAmount.toString() ?? '');
     taxAmountController = TextEditingController(
-        text: widget.receiptData?.tax_amount?.toString() ?? '');
+        text: widget.receiptData?.taxAmount?.toString() ?? '');
     subtotalController = TextEditingController(
         text: widget.receiptData?.subtotal?.toString() ?? '');
     currencyController =
-        TextEditingController(text: widget.receiptData?.currency_code ?? 'USD');
+        TextEditingController(text: widget.receiptData?.currencyCode ?? 'USD');
     paymentMethodController =
-        TextEditingController(text: widget.receiptData?.payment_method ?? '');
+        TextEditingController(text: widget.receiptData?.paymentMethod ?? '');
     expenseCategoryController =
-        TextEditingController(text: widget.receiptData?.expense_category ?? '');
+        TextEditingController(text: widget.receiptData?.expenseCategory ?? '');
 
     lineItemDescriptionControllers = [];
     lineItemQuantityControllers = [];
     lineItemPriceControllers = [];
 
-    if (widget.receiptData?.line_items != null) {
-      for (var item in widget.receiptData!.line_items) {
+    if (widget.receiptData?.lineItems != null) {
+      for (var item in widget.receiptData!.lineItems) {
         lineItemDescriptionControllers.add(
           TextEditingController(text: item.description),
         );
@@ -90,7 +90,7 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         );
         lineItemPriceControllers.add(
           TextEditingController(
-              text: item.original_unit_price.toStringAsFixed(2)),
+              text: item.originalUnitPrice.toStringAsFixed(2)),
         );
       }
     }
@@ -166,7 +166,15 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                 Expanded(
                   flex: 2,
                   child: ElevatedButton.icon(
-                    onPressed: _saveReceipt,
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (_) =>
+                            const Center(child: CircularProgressIndicator()),
+                      );
+                      _saveReceipt();
+                    },
                     icon: const Icon(Icons.save),
                     label: const Text('Save Receipt'),
                     style: ElevatedButton.styleFrom(
@@ -253,9 +261,9 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                     const SizedBox(height: 16),
 
                     // Line Items Card (if available)
-                    if (widget.receiptData?.line_items.isNotEmpty == true)
+                    if (widget.receiptData?.lineItems.isNotEmpty == true)
                       LineItemsCard(
-                        lineItems: widget.receiptData!.line_items,
+                        lineItems: widget.receiptData!.lineItems,
                         isEditing: isEditing,
                         descriptionControllers: lineItemDescriptionControllers,
                         quantityControllers: lineItemQuantityControllers,
@@ -271,10 +279,10 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                     ),
 
                     // Discounts Card (if available)
-                    if (widget.receiptData?.overall_discounts?.isNotEmpty ==
+                    if (widget.receiptData?.overallDiscounts?.isNotEmpty ==
                         true)
                       DiscountsCard(
-                        discounts: widget.receiptData!.overall_discounts!,
+                        discounts: widget.receiptData!.overallDiscounts!,
                       ),
                     const SizedBox(height: 16),
 
@@ -319,8 +327,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
       updatedLineItems.add(LineItem(
         description: description,
         quantity: quantity,
-        original_unit_price: price,
-        total_price: quantity * price,
+        originalUnitPrice: price,
+        totalPrice: quantity * price,
       ));
     }
 
@@ -368,25 +376,24 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     }
 
     final receiptData = Receipt(
-      merchant_name: merchantNameController.text.trim(),
-      merchant_address: merchantAddressController.text.trim().isNotEmpty
+      merchantName: merchantNameController.text.trim(),
+      merchantAddress: merchantAddressController.text.trim().isNotEmpty
           ? merchantAddressController.text.trim()
           : null,
-      transaction_datetime: transactionDatetime,
-      total_amount: totalAmount,
-      tax_amount: taxAmount,
+      transactionDatetime: transactionDatetime,
+      totalAmount: totalAmount,
+      taxAmount: taxAmount,
       subtotal: subtotal,
-      currency_code: currencyController.text.trim().isNotEmpty
+      currencyCode: currencyController.text.trim().isNotEmpty
           ? currencyController.text.trim()
           : null,
-      payment_method: paymentMethodController.text.trim().isNotEmpty
+      paymentMethod: paymentMethodController.text.trim().isNotEmpty
           ? paymentMethodController.text.trim()
           : null,
-      expense_category: expenseCategoryController.text.trim().isNotEmpty
-          ? expenseCategoryController.text.trim()
-          : null,
-      line_items: widget.receiptData?.line_items ?? [],
-      overall_discounts: widget.receiptData?.overall_discounts ?? [],
+      expenseCategory: expenseCategoryController.text.trim(),
+      lineItems: widget.receiptData?.lineItems ?? [],
+      overallDiscounts: widget.receiptData?.overallDiscounts ?? [],
+      imageUrl: '',
     );
 
     final ApiService apiService = ApiService();
@@ -394,16 +401,13 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         .then((success) {
       if (success == true) {
         _showSuccessSnackBar('Receipt saved successfully!');
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       } else {
         _showErrorSnackBar('Failed to save receipt. Please try again.');
       }
     }).catchError((error) {
       _showErrorSnackBar('An error occurred while saving the receipt: $error');
     });
-    _showSuccessSnackBar('Receipt saved successfully!');
-
-    // Navigate back to homepage
-    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 
   void _showErrorSnackBar(String message) {

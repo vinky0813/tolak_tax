@@ -14,6 +14,7 @@ import 'package:tolak_tax/widgets/section_container.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
 import 'package:tolak_tax/widgets/weekly_barchart.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:tolak_tax/data/dummy_receipt_data.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -23,11 +24,11 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-
   late Map<String, double> _budgets;
   late Map<String, double> _spentAmounts;
 
-  final List<String> _displayCategories = allCategories.where((c) => c != 'All').toList();
+  final List<String> _displayCategories =
+      allCategories.where((c) => c != 'All').toList();
 
   @override
   void initState() {
@@ -49,6 +50,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       'transport': 120.0,
     };
   }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -56,17 +58,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final user = Provider.of<AuthService>(context).currentUser;
     final String? photoUrl = user?.photoURL;
     final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
+    final List<Receipt> dummyReceipts = dummyReceiptsData;
 
     // Dummy data for demo
     final int totalReceipts = dummyReceipts.length;
-    final double totalExpenses = dummyReceipts.fold(0.0, (sum, receipt) => sum + receipt.totalAmount);
-    final double totalTax = dummyReceipts.fold(0.0, (sum, receipt) => sum + (receipt.taxAmount ?? 0.0));
+    final double totalExpenses =
+        dummyReceipts.fold(0.0, (sum, receipt) => sum + receipt.totalAmount);
+    final double totalTax = dummyReceipts.fold(
+        0.0, (sum, receipt) => sum + (receipt.taxAmount ?? 0.0));
     const double taxDue = 40.00;
 
     final recentReceipts = dummyReceipts;
 
     final userName = Provider.of<AuthService>(context).currentUser?.displayName;
-
 
     return Scaffold(
       backgroundColor: colorScheme.primary,
@@ -106,16 +110,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               backgroundColor: Colors.white,
                               child: hasAvatar
                                   ? ClipOval(
-                                child: CachedNetworkSvg(
-                                  url: photoUrl,
-                                  fit: BoxFit.cover,
-                                  placeholder: const CircularProgressIndicator.adaptive(),
-                                ),
-                              )
+                                      child: CachedNetworkSvg(
+                                        url: photoUrl,
+                                        fit: BoxFit.cover,
+                                        placeholder:
+                                            const CircularProgressIndicator
+                                                .adaptive(),
+                                      ),
+                                    )
                                   : Icon(
-                                Icons.person,
-                                color: colorScheme.primary,
-                              ),
+                                      Icons.person,
+                                      color: colorScheme.primary,
+                                    ),
                             ),
                             const SizedBox(width: 16),
                             Column(
@@ -128,7 +134,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ),
                                 ),
                                 Text(
-                                  userName?.isNotEmpty == true ? userName! : 'No name',
+                                  userName?.isNotEmpty == true
+                                      ? userName!
+                                      : 'No name',
                                   style:
                                       theme.textTheme.headlineSmall?.copyWith(
                                     color: colorScheme.onPrimary,
@@ -212,33 +220,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                       const SizedBox(height: 20),
 
-                      SectionContainer(title: 'Quick Actions', child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          QuickActionButton(
-                            icon: Icons.camera_alt,
-                            label: 'Scan Receipt',
-                            onPressed: () {
-                              // TODO: Add scan logic
-                            },
-                          ),
-                          QuickActionButton(
-                            icon: Icons.receipt,
-                            label: 'View Receipts',
-                            onPressed: () {
-                              // TODO: Navigate to receipts list
-                            },
-                          ),
-                          QuickActionButton(
-                            icon: Icons.calculate,
-                            label: 'Generate Report',
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/generate-report');
-                            },
-                          ),
-                        ],
-                      ),),
-                      
+                      SectionContainer(
+                        title: 'Quick Actions',
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            QuickActionButton(
+                              icon: Icons.camera_alt,
+                              label: 'Scan Receipt',
+                              onPressed: () {
+                                // TODO: Add scan logic
+                              },
+                            ),
+                            QuickActionButton(
+                              icon: Icons.receipt,
+                              label: 'View Receipts',
+                              onPressed: () {
+                                // TODO: Navigate to receipts list
+                              },
+                            ),
+                            QuickActionButton(
+                              icon: Icons.calculate,
+                              label: 'Generate Report',
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, '/generate-report');
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+
                       const SizedBox(height: 20),
 
                       CarouselSlider.builder(
@@ -248,22 +260,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             final budget = _budgets[category] ?? 0.0;
                             final spent = _spentAmounts[category] ?? 0.0;
                             final icon = CategoryHelper.getIcon(category);
-                            final label = CategoryHelper.getDisplayName(category);
-                            final color = CategoryHelper.getCategoryColor(category);
+                            final label =
+                                CategoryHelper.getDisplayName(category);
+                            final color =
+                                CategoryHelper.getCategoryColor(category);
 
                             return GamifiedProgress(
-                                label: label,
-                                icon: icon,
-                                budget: budget,
-                                spent: spent,
-                                color: color,
-                                onTap: () {
-                                  Navigator.pushNamed(context, '/budget-overview', arguments: {
-                                    'initialFocusedCategoryKey': category,
-                                    'budgets': _budgets,
-                                    'spentAmounts': _spentAmounts,
-                                  });
-                                },);
+                              label: label,
+                              icon: icon,
+                              budget: budget,
+                              spent: spent,
+                              color: color,
+                              onTap: () {
+                                Navigator.pushNamed(context, '/budget-overview',
+                                    arguments: {
+                                      'initialFocusedCategoryKey': category,
+                                      'budgets': _budgets,
+                                      'spentAmounts': _spentAmounts,
+                                    });
+                              },
+                            );
                           },
                           options: CarouselOptions(
                             autoPlay: true,

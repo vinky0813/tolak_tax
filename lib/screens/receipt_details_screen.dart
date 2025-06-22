@@ -44,13 +44,13 @@ class ReceiptDetailsScreen extends StatelessWidget {
                       ReceiptItem(
                           icon: Icons.calendar_today,
                           label: "Date",
-                          value: DateFormat.yMMMd()
-                              .format(receipt.transactionDate)),
+                          value: DateFormat.yMMMd().format(
+                              DateTime.parse(receipt.transactionDatetime))),
                       ReceiptItem(
                           icon: Icons.access_time,
                           label: "Time",
-                          value:
-                              DateFormat.jm().format(receipt.transactionDate)),
+                          value: DateFormat.jm().format(
+                              DateTime.parse(receipt.transactionDatetime))),
                       ReceiptItem(
                           icon: Icons.category,
                           label: "Category",
@@ -64,8 +64,7 @@ class ReceiptDetailsScreen extends StatelessWidget {
                       const SizedBox(
                         height: 12,
                       ),
-                      if (receipt.lineItems != null &&
-                          receipt.lineItems!.isNotEmpty)
+                      if (receipt.lineItems!.isNotEmpty)
                         SectionContainer(
                           title: 'Items',
                           child: Column(
@@ -99,12 +98,6 @@ class ReceiptDetailsScreen extends StatelessWidget {
                                   label: "Tax",
                                   value:
                                       'RM ${receipt.taxAmount?.toStringAsFixed(2)}'),
-                            if (receipt.tipAmount != null)
-                              ReceiptItem(
-                                  icon: Icons.wallet_giftcard,
-                                  label: "Tip",
-                                  value:
-                                      'RM ${receipt.tipAmount?.toStringAsFixed(2)}'),
                             if (receipt.overallDiscounts != null &&
                                 receipt.overallDiscounts!.isNotEmpty)
                               ...receipt.overallDiscounts!.map((discount) =>
@@ -128,54 +121,52 @@ class ReceiptDetailsScreen extends StatelessWidget {
                       Center(
                         child: GestureDetector(
                           onTap: () {
-                            if (receipt.imageUrl != null) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => Dialog(
-                                  backgroundColor: Colors.black,
-                                  insetPadding: EdgeInsets.zero,
-                                  child: GestureDetector(
-                                    onTap: () => Navigator.of(context).pop(),
-                                    child: InteractiveViewer(
-                                      child: CachedNetworkImage(
-                                        url: receipt.imageUrl!,
-                                        fit: BoxFit.contain,
-                                        placeholder: Container(
-                                          color: Colors.black,
-                                          child: const Center(
-                                            child: CircularProgressIndicator(
-                                                color: Colors.white),
-                                          ),
+                            showDialog(
+                              context: context,
+                              builder: (context) => Dialog(
+                                backgroundColor: Colors.black,
+                                insetPadding: EdgeInsets.zero,
+                                child: GestureDetector(
+                                  onTap: () => Navigator.of(context).pop(),
+                                  child: InteractiveViewer(
+                                    child: CachedNetworkImage(
+                                      url: receipt.imageUrl!,
+                                      fit: BoxFit.contain,
+                                      placeholder: Container(
+                                        color: Colors.black,
+                                        child: const Center(
+                                          child: CircularProgressIndicator(
+                                              color: Colors.white),
                                         ),
-                                        errorWidget: Container(
-                                          color: Colors.black,
-                                          child: Center(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: const [
-                                                Icon(Icons.broken_image,
-                                                    color: Colors.white,
-                                                    size: 48),
-                                                SizedBox(height: 8),
-                                                Text(
-                                                  'Image not available',
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                              ],
-                                            ),
+                                      ),
+                                      errorWidget: Container(
+                                        color: Colors.black,
+                                        child: const Center(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: const [
+                                              Icon(Icons.broken_image,
+                                                  color: Colors.white,
+                                                  size: 48),
+                                              SizedBox(height: 8),
+                                              Text(
+                                                'Image not available',
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              );
-                            }
+                              ),
+                            );
                           },
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: receipt.imageUrl != null
+                            child: receipt.imageUrl != ''
                                 ? CachedNetworkImage(
                                     url: receipt.imageUrl!,
                                     fit: BoxFit.cover,

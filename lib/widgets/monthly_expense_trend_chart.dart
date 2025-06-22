@@ -15,7 +15,7 @@ class MonthlyExpenseTrendChart extends StatelessWidget {
     final Map<int, double> monthlyTotals = {};
 
     for (var receipt in receipts) {
-      final month = receipt.transactionDate.month;
+      final month = DateTime.parse(receipt.transactionDatetime).month;
       monthlyTotals.update(month, (value) => value + receipt.totalAmount,
           ifAbsent: () => receipt.totalAmount);
     }
