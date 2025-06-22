@@ -19,29 +19,50 @@ import 'package:tolak_tax/screens/reset_password_screen.dart';
 import 'package:tolak_tax/screens/signup_screen.dart';
 import 'package:tolak_tax/screens/splash_screen.dart';
 import 'package:tolak_tax/services/auth_service.dart';
+import 'package:tolak_tax/services/navigation_service.dart';
 import 'package:tolak_tax/themes/app_theme.dart';
 import 'package:tolak_tax/utils/transitions.dart';
 import 'package:tolak_tax/screens/camera_page.dart';
 import 'package:tolak_tax/screens/receipt_confirm_screen.dart';
 
+import 'services/achievement_service.dart';
+import 'services/api_service.dart';
+
+import 'services/achievement_service.dart';
+import 'services/api_service.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeFirebase();
   // adding provider
-  runApp(
-    MultiProvider(
-      providers: [
-        Provider<AuthService>(
-          create: (_) => AuthService(),
-        ),
-        StreamProvider<User?>(
-          create: (context) => context.read<AuthService>().authStateChanges,
-          initialData: null,
-        ),
-      ],
-      child: MyApp(),
-    ),
-  );
+  runApp(MultiProvider(
+    providers: [
+      Provider<AuthService>(
+        create: (_) => AuthService(),
+      ),
+      Provider<ApiService>(
+        create: (_) => ApiService(),
+      ),
+      StreamProvider<User?>(
+        create: (context) => context.read<AuthService>().authStateChanges,
+        initialData: null,
+      ),
+      ChangeNotifierProxyProvider2<User?, ApiService, AchievementService?>(
+        create: (_) => null,
+        update: (context, user, apiService, previousAchievementService) {
+          if (user == null) {
+            return null;
+          }
+          print('Providing AchievementService for user: ${user.uid}');
+          return AchievementService(
+            apiService: apiService,
+            authService: context.read<AuthService>(),
+          );
+        },
+      ),
+    ],
+    child: MyApp(),
+  ),);
 }
 
 class MyApp extends StatelessWidget {
@@ -51,6 +72,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'TolakTax',
+      navigatorKey: navigatorKey,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,

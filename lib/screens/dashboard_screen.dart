@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/data/dummy_receipt_data.dart';
+import 'package:tolak_tax/models/achievement_model.dart';
+import 'package:tolak_tax/services/achievement_service.dart';
+import 'package:tolak_tax/models/achievement_model.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
+import 'package:tolak_tax/services/achievement_service.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/data/category_constants.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
+import 'package:tolak_tax/widgets/achivement_banner.dart';
 import 'package:tolak_tax/widgets/cached_network_svg.dart';
 import 'package:tolak_tax/widgets/gamified_progress.dart';
 import 'package:tolak_tax/widgets/quick_actionbutton.dart';
@@ -34,6 +38,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showPendingAchievementBanners();
+    });
+
     _budgets = {
       'food': 500.0,
       'shopping': 300.0,
@@ -51,6 +59,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
     };
   }
 
+  void _showPendingAchievementBanners() {
+    final achievementService = context.read<AchievementService?>();
+    if (achievementService == null) return;
+
+    final achievementsToShow = achievementService.newlyUnlocked;
+
+    if (achievementsToShow.isNotEmpty) {
+      for (final achievement in achievementsToShow) {
+        AchievementBanner.show(achievement);
+      }
+      achievementService.clearNewlyUnlocked();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -59,6 +81,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final String? photoUrl = user?.photoURL;
     final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
     final List<Receipt> dummyReceipts = dummyReceiptsData;
+    final achievementService = context.watch<AchievementService?>();
+    final streakCount = achievementService?.currentScanStreak ?? 0;
 
     // Dummy data for demo
     final int totalReceipts = dummyReceipts.length;
@@ -210,9 +234,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 color: Colors.green),
                             SummaryCard(
                                 width: 70,
-                                icon: Icons.attach_money,
-                                label: 'Tax Due',
-                                value: 'RM ${taxDue.toStringAsFixed(2)}',
+                                icon: Icons.local_fire_department,
+                                label: 'Scan Streak',
+                                value: '$streakCount ${streakCount == 1 ? "day" : "days"}',
                                 color: Colors.orange),
                           ],
                         ),

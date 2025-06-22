@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:provider/provider.dart';
 import 'package:tolak_tax/widgets/back_button.dart';
 import 'package:tolak_tax/services/api_service.dart';
 
@@ -110,7 +111,9 @@ class CameraPageState extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = ApiService();
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final apiService = Provider.of<ApiService>(context, listen: false);
 
     return Scaffold(
       extendBodyBehindAppBar: true,

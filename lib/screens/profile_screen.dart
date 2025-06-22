@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:tolak_tax/services/achievement_service.dart';
 import 'package:tolak_tax/widgets/achievement_tile.dart';
 import 'package:tolak_tax/widgets/cached_network_svg.dart';
 import 'package:tolak_tax/widgets/settings_item.dart';
@@ -16,6 +16,13 @@ class ProfileScreen extends StatelessWidget {
     final user = Provider.of<AuthService>(context).currentUser;
     final String? photoUrl = user?.photoURL;
     final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
+
+    final achievementService = context.watch<AchievementService?>();
+
+    final totalPoints = achievementService?.totalPoints ?? 0;
+    final streakCount = achievementService?.currentScanStreak ?? 0;
+
+    final userRank = achievementService?.getRankFromPoints() ?? 'No Rank';
    
     return Scaffold(
       backgroundColor: colorScheme.primary,
@@ -112,23 +119,23 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 12),
-                            const Row(
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 AchievementTile(
-                                    icon: Icons.savings,
-                                    label: 'RM 123.12',
-                                    subtitle: 'Total Savings',
+                                    icon: Icons.star_outline,
+                                    label: totalPoints.toString(),
+                                    subtitle: 'Total Points',
                                     width: 80,),
                                 AchievementTile(
                                   icon: Icons.local_fire_department,
-                                  label: '12 Days',
+                                  label: '$streakCount days',
                                   subtitle: 'Streak',
                                   width: 80,
                                 ),
                                 AchievementTile(
-                                  icon: Icons.emoji_events,
-                                  label: 'Gold',
+                                  icon: Icons.emoji_events_outlined,
+                                  label: userRank,
                                   subtitle: 'Rank',
                                   width: 80,
                                 ),
