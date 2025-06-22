@@ -71,7 +71,7 @@ class _RecentReceiptsListState extends State<RecentReceiptsList> {
                         color: colorScheme.onSurfaceVariant,
                       )),
                   trailing: Text(
-                    'RM ${receipt.totalAmount.toString()}',
+                    'RM ${receipt.totalAmount.toStringAsFixed(2)}',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: theme.colorScheme.primary,
