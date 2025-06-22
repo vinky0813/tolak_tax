@@ -1,101 +1,205 @@
-// lib/data/dummy_receipt_data.dart
-
+import 'package:flutter/material.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 
-final List<Receipt> dummyReceipts = [
-  // 1. Detailed Tech Store Receipt - January 2025
+final DateTime now = DateTime.now();
+
+final List<Receipt> dummyReceiptsData = [
   Receipt(
-    merchantName: "Tech Gadgets Store",
-    merchantAddress: "456 Innovation Dr, Silicon City, TX 75001",
-    transactionDate: DateTime(2025, 1, 22, 14, 30, 0),
+    merchantName: "Fresh Mart",
+    merchantAddress: "123 Green Aisle, Food City, FC 12345",
+    transactionDatetime:
+        now.subtract(Duration(days: 1, hours: 2)).toIso8601String(),
     lineItems: [
       LineItem(
-        description: "Wireless Mouse",
-        quantity: 1,
-        originalUnitPrice: 25.00,
-        lineItemDiscountAmount: 5.00,
-        lineItemDiscountDescription: "New Year Special",
-        totalPrice: 20.00,
-      ),
-      LineItem(description: "USB-C Cable", quantity: 2, originalUnitPrice: 10.00, totalPrice: 20.00),
-      LineItem(description: "Keyboard", quantity: 1, originalUnitPrice: 70.00, totalPrice: 70.00),
-    ],
-    subtotal: 110.00,
-    overallDiscounts: [
-      OverallDiscount(description: "Loyalty Member 10% Off", amount: 11.00),
-      OverallDiscount(description: "Holiday Coupon", amount: 5.00),
-    ],
-    taxAmount: 7.52,
-    tipAmount: null,
-    totalAmount: 91.52,
-    currencyCode: "USD",
-    paymentMethod: "Visa ****4321",
-    expenseCategory: "shopping",
-    imageUrl: "https://images.pexels.com/photos/39284/macbook-apple-imac-computer-39284.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  ),
-
-  // 2. Standard Grocery Receipt - February 2025
-  Receipt(
-    merchantName: "Green Grocer",
-    merchantAddress: "123 Produce Lane, Farmville, CA 90210",
-    transactionDate: DateTime(2025, 2, 10, 10, 5, 0),
-    lineItems: [
-      LineItem(description: "Organic Milk", quantity: 1, totalPrice: 3.50),
-      LineItem(description: "Sourdough Bread", quantity: 1, totalPrice: 4.75),
-      LineItem(description: "Avocados", quantity: 3, totalPrice: 5.97),
-      LineItem(description: "Chicken Breast", quantity: 1, totalPrice: 8.99),
-    ],
-    subtotal: 23.21,
-    taxAmount: 1.86,
-    totalAmount: 25.07,
-    paymentMethod: "Mastercard ****1122",
-    expenseCategory: "food",
-    imageUrl: "https://images.pexels.com/photos/3962294/pexels-photo-3962294.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  ),
-
-  // 3. Cafe Receipt with a Tip - February 2025
-  Receipt(
-    merchantName: "The Corner Cafe",
-    merchantAddress: "789 Coffee Bean Blvd, Metro City, NY 10001",
-    transactionDate: DateTime(2025, 2, 28, 8, 45, 10),
-    lineItems: [
-      LineItem(description: "Large Cappuccino", quantity: 1, totalPrice: 4.50),
-      LineItem(description: "Almond Croissant", quantity: 1, totalPrice: 3.25),
-    ],
-    subtotal: 7.75,
-    taxAmount: 0.69,
-    tipAmount: 1.55,
-    totalAmount: 9.99,
-    paymentMethod: "Amex ****9000",
-    expenseCategory: "food",
-    imageUrl: "https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  ),
-
-  // 4. Simple Receipt with Minimal Data - April 2025
-  Receipt(
-    merchantName: "Quick Mart",
-    transactionDate: DateTime(2025, 4, 5, 15, 20, 0),
-    totalAmount: 2.50,
-    expenseCategory: "Snacks",
-    // All other fields are null: no address, items, tax, etc.
-    // No imageUrl to test the errorBuilder/placeholder.
-  ),
-
-  // 5. Digital Service / Subscription - May 2025
-  Receipt(
-      merchantName: "CloudServices Inc.",
-      transactionDate: DateTime(2025, 5, 1, 0, 0, 0),
-      lineItems: [
-        LineItem(
-          description: "Pro Plan Monthly Subscription",
+          description: "Organic Milk",
           quantity: 1,
-          totalPrice: 15.00,
-        ),
-      ],
-      subtotal: 15.00,
-      totalAmount: 15.00, // No tax on this digital service
-      paymentMethod: "PayPal",
-      expenseCategory: "utilities",
-      imageUrl: "https://images.pexels.com/photos/1779487/pexels-photo-1779487.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          originalUnitPrice: 3.50,
+          totalPrice: 3.50),
+      LineItem(
+          description: "Whole Wheat Bread",
+          quantity: 1,
+          originalUnitPrice: 2.75,
+          totalPrice: 2.75),
+      LineItem(
+          description: "Free-Range Eggs (Dozen)",
+          quantity: 1,
+          originalUnitPrice: 4.20,
+          totalPrice: 4.20),
+      LineItem(
+          description: "Apples (Granny Smith)",
+          quantity: 0.5,
+          originalUnitPrice: 3.00,
+          totalPrice: 1.50), // 0.5 kg @ $3/kg
+    ],
+    subtotal: 3.50 + 2.75 + 4.20 + 1.50,
+    taxAmount: 0.85, // Example tax
+    totalAmount: (3.50 + 2.75 + 4.20 + 1.50) + 0.85,
+    currencyCode: "USD",
+    paymentMethod: "Credit Card (Visa ****4567)",
+    expenseCategory: "Groceries",
+    imageUrl: "https://example.com/receipts/grocery_mart_01.png",
+  ),
+
+  // Receipt 2: Cafe Receipt with Line Item Discount
+  Receipt(
+    merchantName: "The Daily Grind Cafe",
+    transactionDatetime:
+        now.subtract(Duration(days: 2, hours: 5)).toIso8601String(),
+    lineItems: [
+      LineItem(
+          description: "Large Cappuccino",
+          quantity: 1,
+          originalUnitPrice: 4.50,
+          totalPrice: 4.50),
+      LineItem(
+        description: "Almond Croissant",
+        quantity: 1,
+        originalUnitPrice: 3.00,
+        lineItemDiscountAmount: 0.50,
+        lineItemDiscountDescription: "Morning Special",
+        totalPrice: 2.50, // 3.00 - 0.50
+      ),
+      LineItem(
+          description: "Blueberry Muffin",
+          quantity: 2,
+          originalUnitPrice: 2.25,
+          totalPrice: 4.50), // 2 * 2.25
+    ],
+    subtotal: 4.50 + 2.50 + 4.50,
+    taxAmount: 0.90, // Example tax
+    totalAmount: (4.50 + 2.50 + 4.50) + 0.90,
+    currencyCode: "EUR",
+    paymentMethod: "Contactless (Apple Pay)",
+    expenseCategory: "Food & Drink",
+    imageUrl: "https://example.com/receipts/cafe_grind_02.jpg",
+  ),
+
+  // Receipt 3: Electronics Store with Overall Discount and Tax
+  Receipt(
+    merchantName: "Tech World",
+    merchantAddress: "789 Circuit Board Rd, Silicon Valley, CA 94000",
+    transactionDatetime:
+        now.subtract(Duration(days: 7, hours: 10)).toIso8601String(),
+    lineItems: [
+      LineItem(
+          description: "Wireless Noise-Cancelling Headphones",
+          quantity: 1,
+          originalUnitPrice: 199.99,
+          totalPrice: 199.99),
+      LineItem(
+          description: "Ergonomic Mouse",
+          quantity: 1,
+          originalUnitPrice: 49.50,
+          totalPrice: 49.50),
+    ],
+    subtotal: 199.99 + 49.50,
+    overallDiscounts: [
+      OverallDiscount(description: "Loyalty Member Discount", amount: 25.00),
+    ],
+    taxAmount:
+        ((199.99 + 49.50) - 25.00) * 0.08, // 8% tax on discounted subtotal
+    totalAmount: ((199.99 + 49.50) - 25.00) * 1.08,
+    currencyCode: "USD",
+    paymentMethod: "Amex ****1001",
+    expenseCategory: "Electronics",
+    imageUrl: "https://example.com/receipts/tech_world_03.png",
+  ),
+
+  // Receipt 4: Minimal Receipt (e.g., Parking)
+  Receipt(
+    merchantName: "City Parking Lot B",
+    transactionDatetime: now.subtract(Duration(hours: 3)).toIso8601String(),
+    lineItems: [
+      LineItem(
+          description: "Parking Fee (2 hours)",
+          quantity: 1,
+          originalUnitPrice: 8.00,
+          totalPrice: 8.00),
+    ],
+    subtotal: 8.00,
+    totalAmount: 8.00,
+    paymentMethod: "Cash",
+    expenseCategory: "Transportation",
+    imageUrl: "https://example.com/receipts/parking_04.pdf",
+  ),
+
+  // Receipt 5: Restaurant Bill with Multiple Items, Some Discounts, Overall Discount, and Tax
+  Receipt(
+    merchantName: "Luigi's Italian Place",
+    merchantAddress: "123 Pasta Lane, Foodville, FV 67890",
+    transactionDatetime:
+        now.subtract(Duration(days: 3, hours: 19)).toIso8601String(),
+    lineItems: [
+      LineItem(
+          description: "Spaghetti Carbonara",
+          quantity: 2,
+          originalUnitPrice: 18.00,
+          totalPrice: 36.00), // 2 * 18.00
+      LineItem(
+        description: "Garlic Bread Supreme",
+        quantity: 1,
+        originalUnitPrice: 7.50,
+        lineItemDiscountAmount: 1.50,
+        lineItemDiscountDescription: "Happy Hour Appetizer",
+        totalPrice: 6.00, // 7.50 - 1.50
+      ),
+      LineItem(
+          description: "Bottle of Chianti",
+          quantity: 1,
+          originalUnitPrice: 25.00,
+          totalPrice: 25.00),
+      LineItem(
+          description: "Tiramisu",
+          quantity: 2,
+          originalUnitPrice: 8.00,
+          totalPrice: 16.00), // 2 * 8.00
+    ],
+    subtotal: 36.00 + 6.00 + 25.00 + 16.00,
+    overallDiscounts: [
+      OverallDiscount(description: "Weekend Special Coupon", amount: 10.00),
+    ],
+    // Tax on (subtotal - overall_discount)
+    taxAmount: ((36.00 + 6.00 + 25.00 + 16.00) - 10.00) * 0.07, // 7% tax
+    totalAmount: ((36.00 + 6.00 + 25.00 + 16.00) - 10.00) * 1.07,
+    currencyCode: "USD",
+    paymentMethod: "Mastercard ****3456",
+    expenseCategory: "Dining",
+    imageUrl: "https://example.com/receipts/luigis_italian_05.jpeg",
+  ),
+
+  // Receipt 6: Online Subscription
+  Receipt(
+    merchantName: "CloudServices Pro",
+    transactionDatetime: now
+        .subtract(Duration(days: 15))
+        .toIso8601String(), // Typically a recurring date
+    lineItems: [
+      LineItem(
+          description: "Monthly Subscription - Pro Plan",
+          quantity: 1,
+          originalUnitPrice: 19.99,
+          totalPrice: 19.99),
+    ],
+    subtotal: 19.99,
+    // No tax or tax included depending on region, keeping it simple here
+    totalAmount: 19.99,
+    currencyCode: "USD",
+    paymentMethod: "PayPal (user@example.com)",
+    expenseCategory: "Software & Subscriptions",
+    imageUrl:
+        "https://example.com/receipts/cloud_pro_06.png", // Often no physical image, but a link to an invoice pdf
+  ),
+
+  // Receipt 7: Simple receipt with no line items (total amount directly given)
+  Receipt(
+    merchantName: "Corner Store Quick Buy",
+    transactionDatetime: now.subtract(Duration(minutes: 30)).toIso8601String(),
+    lineItems: [], // No individual line items parsed
+    // Subtotal might be unknown if line items are missing
+    totalAmount: 5.75,
+    currencyCode: "CAD",
+    paymentMethod: "Debit",
+    expenseCategory: "Snacks",
+    imageUrl: "https://example.com/receipts/corner_store_07.jpg",
   ),
 ];

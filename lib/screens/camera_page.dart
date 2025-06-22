@@ -87,18 +87,13 @@ class CameraPageState extends State<CameraPage> {
       final XFile imageFile =
           await controller!.takePicture(); // Use 'controller'
 
-      apiService.uploadReceipt(
-        await apiService.getIdToken(context),
-        imageFile.path,
-      );
-
       if (!mounted) return imageFile; // context is available here
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => DisplayPictureScreen(
-            imagePath: imageFile.path,
-          ),
-        ),
+      Navigator.pushNamed(
+        context,
+        '/display-picture',
+        arguments: {
+          'imagePath': imageFile.path,
+        },
       );
       return imageFile;
     } catch (e) {
@@ -109,13 +104,12 @@ class CameraPageState extends State<CameraPage> {
           SnackBar(content: Text("Error taking picture: $e")),
         );
       }
+      return null;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final apiService = ApiService();
 
     return Scaffold(
@@ -195,19 +189,6 @@ class CameraPageState extends State<CameraPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       resizeToAvoidBottomInset: false,
-    );
-  }
-}
-
-class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
-  const DisplayPictureScreen({super.key, required this.imagePath});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Display the Picture')),
-      body: Center(child: Image.file(File(imagePath))),
     );
   }
 }

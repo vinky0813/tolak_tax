@@ -5,7 +5,9 @@ import 'package:tolak_tax/firebase/firebase_initializer.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/screens/achievement_screen.dart';
 import 'package:tolak_tax/screens/budget_overview_screen.dart';
+import 'package:tolak_tax/screens/display_picture_screen.dart';
 import 'package:tolak_tax/screens/create_profile_screen.dart';
+import 'package:tolak_tax/screens/display_picture_screen.dart';
 import 'package:tolak_tax/screens/forgot_password_screen.dart';
 import 'package:tolak_tax/screens/generate_report_screen.dart';
 import 'package:tolak_tax/screens/home_screen.dart';
@@ -20,23 +22,26 @@ import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/themes/app_theme.dart';
 import 'package:tolak_tax/utils/transitions.dart';
 import 'package:tolak_tax/screens/camera_page.dart';
+import 'package:tolak_tax/screens/receipt_confirm_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeFirebase();
   // adding provider
-  runApp(MultiProvider(
-    providers: [
-      Provider<AuthService>(
-        create: (_) => AuthService(),
-      ),
-      StreamProvider<User?>(
-        create: (context) => context.read<AuthService>().authStateChanges,
-        initialData: null,
-      ),
-    ],
-    child: MyApp(),
-  ),);
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<AuthService>(
+          create: (_) => AuthService(),
+        ),
+        StreamProvider<User?>(
+          create: (context) => context.read<AuthService>().authStateChanges,
+          initialData: null,
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -65,7 +70,9 @@ class MyApp extends StatelessWidget {
           case '/input-phone':
             return fadeRoute(const PhoneNumberInputScreen());
           case '/camera':
-            return scaleRoute(const CameraPage(),);
+            return scaleRoute(
+              const CameraPage(),
+            );
           case '/otp-verification':
             final args = settings.arguments as Map<String, dynamic>;
             return fadeRoute(
@@ -91,11 +98,28 @@ class MyApp extends StatelessWidget {
             final args = settings.arguments as Map<String, dynamic>;
             return fadeThroughRoute(
               BudgetOverviewScreen(
-                initialFocusedCategoryKey: args['initialFocusedCategoryKey'] ?? '',
+                initialFocusedCategoryKey:
+                    args['initialFocusedCategoryKey'] ?? '',
                 budgets: args['budgets'] ?? {},
                 spentAmounts: args['spentAmounts'] ?? {},
               ),
             );
+          case '/display-picture':
+            final args = settings.arguments as Map<String, dynamic>;
+            return fadeThroughRoute(
+              DisplayPictureScreen(
+                imagePath: args['imagePath'],
+              ),
+            );
+          case '/receipt-confirm':
+            final args = settings.arguments as Map<String, dynamic>;
+            return fadeThroughRoute(
+              ReceiptConfirmScreen(
+                receiptData: args['receiptData'],
+                receiptImagePath: args['receiptImagePath'],
+              ),
+            );
+
           default:
             // make a real 404 error page when free
             return MaterialPageRoute(

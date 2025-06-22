@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
       BuildContext context, ApiService apiService) async {
     try {
       final String? idToken = await apiService.getIdToken(context);
-
+      print('ID Token: $idToken');
       if (idToken == null || idToken.isEmpty) {
         print('Error: Could not retrieve ID token.');
         return;

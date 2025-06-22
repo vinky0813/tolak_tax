@@ -5,7 +5,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiService {
-  final apiUrl = '10.0.2.2:8000';
+  //final apiUrl = 'tolaktaxapi-291467312481.asia-east1.run.app';
+  final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
+  //final apiUrl = '192.168.0.6:8000';
 
   Future<String?> getIdToken(BuildContext context) async {
     final String? token =
@@ -26,13 +28,17 @@ class ApiService {
     }
   }
 
-  Future<void> uploadReceipt(String? idToken, String imagePath) async {
+  Future<String> uploadReceipt(
+      String? idToken, String imagePath, Map<String?, dynamic> receipt) async {
     if (idToken == null || idToken.isEmpty) {
       throw Exception('ID token is required to add a receipt.');
     }
 
-    // Send id_token as a query parameter
-    var url = Uri.http(apiUrl, '/upload-reciept-image/');
+    // Send both id_token and receipt as query parameters with proper JSON encoding
+    var url = Uri.http(apiUrl, '/add-receipt/', {
+      'id_token': idToken,
+      'receipt': jsonEncode(receipt),
+    });
     var request = http.MultipartRequest('POST', url);
 
     var multipartFile = await http.MultipartFile.fromPath('file', imagePath);
@@ -41,9 +47,27 @@ class ApiService {
     try {
       http.StreamedResponse response = await request.send();
       String responseBody = await response.stream.bytesToString();
-      print(responseBody);
+      print('Response from uploadReceipt: $responseBody');
+      return responseBody;
     } catch (e) {
       throw Exception('Error sending request to add receipt: $e');
+    }
+  }
+
+  Future<String> readReceipt(String imagePath) async {
+    // Send id_token as a query parameter
+    var url = Uri.http(apiUrl, '/read-receipt-image/');
+    var request = http.MultipartRequest('POST', url);
+
+    var multipartFile = await http.MultipartFile.fromPath('file', imagePath);
+    request.files.add(multipartFile);
+
+    try {
+      http.StreamedResponse response = await request.send();
+      String responseBody = await response.stream.bytesToString();
+      return responseBody;
+    } catch (e) {
+      throw Exception('Error sending request to read receipt: $e');
     }
   }
 }

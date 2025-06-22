@@ -23,7 +23,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
   int? selectedMonth;
   int? selectedYear = DateTime.now().year;
 
-  final receipts = dummyReceipts;
+  final List<Receipt> receipts = dummyReceiptsData;
 
   List<Receipt> get filteredReceipts {
     return receipts.where((receipt) {
@@ -34,7 +34,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
       final matchesCategory =
           selectedCategory == 'All' || selectedCategory == category;
 
-      final date = receipt.transactionDate;
+      final date = DateTime.parse(receipt.transactionDatetime);
 
       final matchesYear = selectedYear == null || (date.year == selectedYear);
       final matchesMonth =
@@ -225,42 +225,44 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                       else
                         ...filteredReceipts.map((receipt) {
                           final category = (receipt.expenseCategory);
-                          final categoryColor = CategoryHelper.getCategoryColor(category);
+                          final categoryColor =
+                              CategoryHelper.getCategoryColor(category);
                           final categoryIcon = CategoryHelper.getIcon(category);
-                          final date = receipt.transactionDate;
+                          final date =
+                              DateTime.parse(receipt.transactionDatetime);
                           final formattedDate = date != null
                               ? DateFormat.yMMMd().format(date)
-                              : receipt.transactionDate;
+                              : receipt.transactionDatetime;
 
                           return ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: Icon(categoryIcon, color: categoryColor),
-                            title: Text(
-                              receipt.merchantName,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: colorScheme.onSurface,
+                              contentPadding: EdgeInsets.zero,
+                              leading: Icon(categoryIcon, color: categoryColor),
+                              title: Text(
+                                receipt.merchantName,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: colorScheme.onSurface,
+                                ),
                               ),
-                            ),
-                            subtitle: Text(
-                              formattedDate.toString(),
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
+                              subtitle: Text(
+                                formattedDate.toString(),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
                               ),
-                            ),
-                            trailing: Text(
-                              'RM ${receipt.totalAmount.toString()}',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: theme.colorScheme.primary,
+                              trailing: Text(
+                                'RM ${receipt.totalAmount.toString()}',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: theme.colorScheme.primary,
+                                ),
                               ),
-                            ),
-                            onTap:() {
-                              Navigator.pushNamed(
-                                context,
-                                '/receipt-details',
-                                arguments: receipt,
-                              );}
-                          );
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/receipt-details',
+                                  arguments: receipt,
+                                );
+                              });
                         }),
                     ],
                   ),
