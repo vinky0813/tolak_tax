@@ -15,10 +15,14 @@ class AchievementService with ChangeNotifier {
   Map<String, AchievementProgress> _userAchievements = {};
   bool _isInitialized = false;
 
+  int _currentScanStreak = 0;
+  DateTime? _lastScanTimestamp;
+
   // getter for these private variables
   int get totalPoints => _totalPoints;
   Map<String, AchievementProgress> get userAchievements => _userAchievements;
   bool get isInitialized => _isInitialized;
+  int get currentScanStreak => _currentScanStreak;
 
   AchievementService({
     required ApiService apiService,
@@ -48,6 +52,8 @@ class AchievementService with ChangeNotifier {
             def.id: AchievementProgress(achievementId: def.id)
         };
         _totalPoints = 0;
+        _currentScanStreak = 0;
+        _lastScanTimestamp = null;
         await _saveUserAchievements();
 
       } else {
@@ -56,6 +62,10 @@ class AchievementService with ChangeNotifier {
             .map((item) => AchievementProgress.fromJson(item))
             .toList();
         _userAchievements = {for (var p in progressList) p.achievementId: p};
+        _currentScanStreak = apiData['currentScanStreak'] ?? 0;
+        if (apiData['lastScanTimestamp'] != null) {
+          _lastScanTimestamp = DateTime.parse(apiData['lastScanTimestamp']);
+        }
       }
     } catch (e) {
       print('Error loading user achievements: $e');
@@ -64,6 +74,8 @@ class AchievementService with ChangeNotifier {
           def.id: AchievementProgress(achievementId: def.id)
       };
       _totalPoints = 0;
+      _currentScanStreak = 0;
+      _lastScanTimestamp = null;
     }
 
     bool needsSave = false;
@@ -99,6 +111,8 @@ class AchievementService with ChangeNotifier {
         idToken: idToken,
         totalPoints: _totalPoints,
         userAchievements: _userAchievements,
+        currentScanStreak: _currentScanStreak,
+        lastScanTimestamp: _lastScanTimestamp?.toIso8601String(),
       );
     } catch (e) {
       print('AchievementService ERROR on save: $e. Changes are not persisted on server.');
@@ -168,5 +182,35 @@ class AchievementService with ChangeNotifier {
       notifyListeners();
     }
     return unlockedAchievements;
+  }
+
+  Future<void> processDailyScan() async {
+    final now = DateTime.now();
+    final lastScan = _lastScanTimestamp;
+
+    if (lastScan == null) {
+      print("First scan ever. Starting streak at 1.");
+      _currentScanStreak = 1;
+    } else {
+      final lastScanDate = DateTime(lastScan.year, lastScan.month, lastScan.day);
+      final todayDate = DateTime(now.year, now.month, now.day);
+      final yesterdayDate = todayDate.subtract(const Duration(days: 1));
+
+      if (lastScanDate == todayDate) {
+        print("Already scanned today. Streak remains at $_currentScanStreak.");
+        return;
+      } else if (lastScanDate == yesterdayDate) {
+        _currentScanStreak++;
+        print("Consecutive day scan! Streak is now $_currentScanStreak.");
+      } else {
+        print("Missed a day. Resetting streak to 1.");
+        _currentScanStreak = 1;
+      }
+    }
+    _lastScanTimestamp = now;
+    await updateProgress(
+      type: AchievementType.scanStreak,
+      setAs: _currentScanStreak.toDouble(),
+    );
   }
 }

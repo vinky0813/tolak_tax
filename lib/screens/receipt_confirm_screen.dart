@@ -177,17 +177,13 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                         builder: (_) =>
                             const Center(child: CircularProgressIndicator()),
                       );
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (_) => const Center(child: CircularProgressIndicator()),
-                      );
 
                       try {
                         await achievementService?.updateProgress(
                           type: AchievementType.scanCount,
                           incrementBy: 1,
                         );
+                        await achievementService?.processDailyScan();
 
                         _saveReceipt();
 

@@ -102,6 +102,8 @@ class ApiService {
     required String? idToken,
     required int totalPoints,
     required Map<String, AchievementProgress> userAchievements,
+    required int currentScanStreak,
+    required String? lastScanTimestamp
   }) async {
     if (idToken == null || idToken.isEmpty) {
       throw Exception('ID token is required to save achievements.');
@@ -110,6 +112,8 @@ class ApiService {
     final Map<String, dynamic> payload = {
       'totalPoints': totalPoints,
       'progress': userAchievements.values.map((p) => p.toJson()).toList(),
+      'currentScanStreak': currentScanStreak,
+      'lastScanTimestamp': lastScanTimestamp,
     };
 
     var url = Uri.http(apiUrl, '/save-achievements-by-user', {'id_token': idToken});
