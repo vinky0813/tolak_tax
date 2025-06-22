@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:tolak_tax/models/achievement_model.dart';
+import 'package:tolak_tax/services/navigation_service.dart';
 
 class AchievementBanner {
-  static void show(BuildContext context, AchievementDefinition achievement) {
+  static void show(AchievementDefinition achievement) {
+    final BuildContext? context = navigatorKey.currentContext;
+
+    if (context == null) {
+      print("Could not show achievement banner: context is null.");
+      return;
+    }
+
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;

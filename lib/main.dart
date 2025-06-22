@@ -19,6 +19,7 @@ import 'package:tolak_tax/screens/reset_password_screen.dart';
 import 'package:tolak_tax/screens/signup_screen.dart';
 import 'package:tolak_tax/screens/splash_screen.dart';
 import 'package:tolak_tax/services/auth_service.dart';
+import 'package:tolak_tax/services/navigation_service.dart';
 import 'package:tolak_tax/themes/app_theme.dart';
 import 'package:tolak_tax/utils/transitions.dart';
 import 'package:tolak_tax/screens/camera_page.dart';
@@ -68,6 +69,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'TolakTax',
+      navigatorKey: navigatorKey,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,

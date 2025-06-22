@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tolak_tax/models/achievement_model.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
+import 'package:tolak_tax/services/achievement_service.dart';
 import 'package:tolak_tax/widgets/back_button.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/page_status_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/reciept_image_card.dart';
@@ -166,14 +169,40 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                 Expanded(
                   flex: 2,
                   child: ElevatedButton.icon(
-                    onPressed: () {
+                    onPressed: () async {
+                      final achievementService = context.read<AchievementService?>();
                       showDialog(
                         context: context,
                         barrierDismissible: false,
                         builder: (_) =>
                             const Center(child: CircularProgressIndicator()),
                       );
-                      _saveReceipt();
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (_) => const Center(child: CircularProgressIndicator()),
+                      );
+
+                      try {
+                        await achievementService?.updateProgress(
+                          type: AchievementType.scanCount,
+                          incrementBy: 1,
+                        );
+
+                        _saveReceipt();
+
+                        Navigator.of(context).pop();
+                        if (mounted) {
+                          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                        }
+
+                      } catch (e) {
+                        print("An error occurred during save: $e");
+                        if (Navigator.canPop(context)) {
+                          Navigator.of(context).pop();
+                        }
+                      }
+
                     },
                     icon: const Icon(Icons.save),
                     label: const Text('Save Receipt'),
@@ -401,7 +430,6 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         .then((success) {
       if (success == true) {
         _showSuccessSnackBar('Receipt saved successfully!');
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       } else {
         _showErrorSnackBar('Failed to save receipt. Please try again.');
       }

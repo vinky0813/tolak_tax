@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:tolak_tax/data/achievement_definitions.dart';
 import 'package:tolak_tax/models/achievement_model.dart';
 import 'package:tolak_tax/services/api_service.dart';
 import 'package:tolak_tax/services/auth_service.dart';
+import 'package:tolak_tax/widgets/achivement_banner.dart';
 
 class AchievementService with ChangeNotifier {
 
@@ -103,6 +105,13 @@ class AchievementService with ChangeNotifier {
     }
   }
 
+  final List<AchievementDefinition> _newlyUnlocked = [];
+  List<AchievementDefinition> get newlyUnlocked => _newlyUnlocked;
+
+  void clearNewlyUnlocked() {
+    _newlyUnlocked.clear();
+  }
+
   // call setAs to set the progress to a specific value
   // probably will be used for resetting scanning streak
   // isInternalCall can just ignore. its not even required let it be defaulted to false
@@ -135,6 +144,8 @@ class AchievementService with ChangeNotifier {
         userProgress.isCompleted = true;
         pointsGainedThisUpdate += relAchievement.pointsReward;
         unlockedAchievements.add(relAchievement);
+
+        _newlyUnlocked.add(relAchievement);
       }
     }
 
