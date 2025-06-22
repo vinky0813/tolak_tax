@@ -39,6 +39,19 @@ class AchievementService with ChangeNotifier {
     notifyListeners();
   }
 
+  String getRankFromPoints() {
+    if (_totalPoints >= 1500) {
+      return 'Gold';
+    }
+    if (_totalPoints >= 1000) {
+      return 'Silver';
+    }
+    if (_totalPoints >= 700) {
+      return 'Bronze';
+    }
+    return 'Iron';
+  }
+
   // used in initialization
   Future<void> _loadUserAchievements() async {
     try {

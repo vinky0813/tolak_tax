@@ -81,6 +81,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final String? photoUrl = user?.photoURL;
     final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
     final List<Receipt> dummyReceipts = dummyReceiptsData;
+    final achievementService = context.watch<AchievementService?>();
+    final streakCount = achievementService?.currentScanStreak ?? 0;
 
     // Dummy data for demo
     final int totalReceipts = dummyReceipts.length;
@@ -232,9 +234,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 color: Colors.green),
                             SummaryCard(
                                 width: 70,
-                                icon: Icons.attach_money,
-                                label: 'Tax Due',
-                                value: 'RM ${taxDue.toStringAsFixed(2)}',
+                                icon: Icons.local_fire_department,
+                                label: 'Scan Streak',
+                                value: '$streakCount ${streakCount == 1 ? "day" : "days"}',
                                 color: Colors.orange),
                           ],
                         ),
