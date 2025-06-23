@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/data/dummy_receipt_data.dart';
-import 'package:tolak_tax/models/achievement_model.dart';
 import 'package:tolak_tax/services/achievement_service.dart';
-import 'package:tolak_tax/models/achievement_model.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
-import 'package:tolak_tax/services/achievement_service.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/data/category_constants.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
@@ -18,7 +15,6 @@ import 'package:tolak_tax/widgets/section_container.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
 import 'package:tolak_tax/widgets/weekly_barchart.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:tolak_tax/data/dummy_receipt_data.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -28,8 +24,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  late Map<String, double> _budgets;
-  late Map<String, double> _spentAmounts;
+
+  final Map<String, Map<String, double>> _budgets = {};
 
   final List<String> _displayCategories =
       allCategories.where((c) => c != 'All').toList();
@@ -42,21 +38,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       _showPendingAchievementBanners();
     });
 
-    _budgets = {
-      'food': 500.0,
-      'shopping': 300.0,
-      'utilities': 400.0,
-      'entertainment': 150.0,
-      'transport': 200.0,
-    };
-
-    _spentAmounts = {
-      'food': 285.50,
-      'shopping': 310.75,
-      'utilities': 150.0,
-      'entertainment': 95.20,
-      'transport': 120.0,
-    };
+    _displayCategories.forEach((category) {
+      _budgets[category] = {
+        'budget': 500.0,
+        'spentAmount': 100.0,
+      };
+    });
+    print(_budgets);
   }
 
   void _showPendingAchievementBanners() {
@@ -84,13 +72,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final achievementService = context.watch<AchievementService?>();
     final streakCount = achievementService?.currentScanStreak ?? 0;
 
-    // Dummy data for demo
     final int totalReceipts = dummyReceipts.length;
     final double totalExpenses =
         dummyReceipts.fold(0.0, (sum, receipt) => sum + receipt.totalAmount);
     final double totalTax = dummyReceipts.fold(
         0.0, (sum, receipt) => sum + (receipt.taxAmount ?? 0.0));
-    const double taxDue = 40.00;
 
     final recentReceipts = dummyReceipts;
 
@@ -281,8 +267,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           itemCount: _displayCategories.length,
                           itemBuilder: (context, index, realIndex) {
                             final category = _displayCategories[index];
-                            final budget = _budgets[category] ?? 0.0;
-                            final spent = _spentAmounts[category] ?? 0.0;
+
+                            final Map<String, double>? categorySpecificBudgetData = _budgets[category];
+
+                            final double budget = categorySpecificBudgetData?['budget'] ?? 0.0;
+                            final double spent = categorySpecificBudgetData?['spentAmount'] ?? 0.0;
+
                             final icon = CategoryHelper.getIcon(category);
                             final label =
                                 CategoryHelper.getDisplayName(category);
@@ -300,7 +290,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     arguments: {
                                       'initialFocusedCategoryKey': category,
                                       'budgets': _budgets,
-                                      'spentAmounts': _spentAmounts,
                                     });
                               },
                             );
@@ -312,6 +301,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             viewportFraction: 0.85,
                             height: 170,
                           )),
+
+
 
                       const SizedBox(height: 20),
 

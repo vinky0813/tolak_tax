@@ -5,9 +5,9 @@ import 'package:tolak_tax/firebase/firebase_initializer.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/screens/achievement_screen.dart';
 import 'package:tolak_tax/screens/budget_overview_screen.dart';
+import 'package:tolak_tax/screens/budget_settings_screen.dart';
 import 'package:tolak_tax/screens/display_picture_screen.dart';
 import 'package:tolak_tax/screens/create_profile_screen.dart';
-import 'package:tolak_tax/screens/display_picture_screen.dart';
 import 'package:tolak_tax/screens/forgot_password_screen.dart';
 import 'package:tolak_tax/screens/generate_report_screen.dart';
 import 'package:tolak_tax/screens/home_screen.dart';
@@ -28,8 +28,6 @@ import 'package:tolak_tax/screens/receipt_confirm_screen.dart';
 import 'services/achievement_service.dart';
 import 'services/api_service.dart';
 
-import 'services/achievement_service.dart';
-import 'services/api_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -123,9 +121,12 @@ class MyApp extends StatelessWidget {
                 initialFocusedCategoryKey:
                     args['initialFocusedCategoryKey'] ?? '',
                 budgets: args['budgets'] ?? {},
-                spentAmounts: args['spentAmounts'] ?? {},
               ),
             );
+          case 'budget-settings':
+            final budgets = settings.arguments as Map<String, Map<String, double>>;
+            return fadeThroughRoute(
+                BudgetSettingsScreen(budgets: budgets,));
           case '/display-picture':
             final args = settings.arguments as Map<String, dynamic>;
             return fadeThroughRoute(

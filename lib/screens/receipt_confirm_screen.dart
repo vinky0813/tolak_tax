@@ -187,6 +187,7 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
 
                         _saveReceipt();
 
+                        Future.delayed(200 as Duration);
                         Navigator.of(context).pop();
                         if (mounted) {
                           Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
@@ -421,7 +422,7 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
       imageUrl: '',
     );
 
-    final ApiService apiService = ApiService();
+    final apiService = Provider.of<ApiService>(context, listen: false);
     addReceipt(context, apiService, widget.receiptImagePath, receiptData)
         .then((success) {
       if (success == true) {
