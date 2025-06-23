@@ -177,6 +177,7 @@ class ApiService {
   Future<void> saveBudget({
     required String? idToken,
     required Map<String, Map<String, double>> budgets,
+    String? budgetPeriod
   }) async {
     if (idToken == null || idToken.isEmpty) {
       throw Exception('ID token is required to save budgets.');
@@ -185,6 +186,9 @@ class ApiService {
     final Map<String, dynamic> payload = {
       'budgets': budgets,
     };
+    if (budgetPeriod != null) {
+      payload['budgetPeriod'] = budgetPeriod;
+    }
 
     var url = Uri.http(apiUrl, '/save-budgets-by-user', {'id_token': idToken});
 
