@@ -19,6 +19,7 @@ import 'package:tolak_tax/screens/reset_password_screen.dart';
 import 'package:tolak_tax/screens/signup_screen.dart';
 import 'package:tolak_tax/screens/splash_screen.dart';
 import 'package:tolak_tax/services/auth_service.dart';
+import 'package:tolak_tax/services/budget_service.dart';
 import 'package:tolak_tax/services/navigation_service.dart';
 import 'package:tolak_tax/themes/app_theme.dart';
 import 'package:tolak_tax/utils/transitions.dart';
@@ -53,6 +54,17 @@ Future<void> main() async {
           }
           print('Providing AchievementService for user: ${user.uid}');
           return AchievementService(
+            apiService: apiService,
+            authService: context.read<AuthService>(),
+          );
+        },
+      ),
+      ChangeNotifierProxyProvider2<User?, ApiService, BudgetService?>(
+        create: (_) => null,
+        update: (context, user, apiService, _) {
+          if (user == null) return null;
+          print('Providing BudgetService for user: ${user.uid}');
+          return BudgetService(
             apiService: apiService,
             authService: context.read<AuthService>(),
           );
@@ -120,13 +132,11 @@ class MyApp extends StatelessWidget {
               BudgetOverviewScreen(
                 initialFocusedCategoryKey:
                     args['initialFocusedCategoryKey'] ?? '',
-                budgets: args['budgets'] ?? {},
               ),
             );
           case 'budget-settings':
-            final budgets = settings.arguments as Map<String, Map<String, double>>;
             return fadeThroughRoute(
-                BudgetSettingsScreen(budgets: budgets,));
+                BudgetSettingsScreen());
           case '/display-picture':
             final args = settings.arguments as Map<String, dynamic>;
             return fadeThroughRoute(

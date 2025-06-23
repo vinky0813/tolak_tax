@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tolak_tax/services/budget_service.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
 
 class BudgetSettingsScreen extends StatefulWidget {
-  final Map<String, Map<String, double>> budgets;
 
-  const BudgetSettingsScreen({super.key, required this.budgets});
+  const BudgetSettingsScreen({super.key});
 
   @override
   State<BudgetSettingsScreen> createState() => _BudgetSettingsScreenState();
@@ -19,10 +20,13 @@ class _BudgetSettingsScreenState extends State<BudgetSettingsScreen> {
   void initState() {
     super.initState();
     _focusedCategoryKey = null;
-    _categoryKeys = widget.budgets.keys.toList();
+
+    final budgetService = Provider.of<BudgetService?>(context, listen: false);
+    final budgets = budgetService!.budgets;
+    _categoryKeys = budgets.keys.toList();
 
     for (var category in _categoryKeys) {
-      final budget = widget.budgets[category]?['budget'] ?? 0.0;
+      final budget = budgets[category]?['budget'] ?? 0.0;
       _budgetControllers[category] =
           TextEditingController(text: budget.toStringAsFixed(2));
     }
@@ -35,6 +39,41 @@ class _BudgetSettingsScreenState extends State<BudgetSettingsScreen> {
       total += parsed;
     }
     return total;
+  }
+
+  Future<void> saveBudgetSettings() async {
+    try {
+      final budgetService = Provider.of<BudgetService?>(context, listen: false);
+
+      final updatedBudgets = <String, Map<String, double>>{};
+
+      if (budgetService == null) {
+        print('BudgetService not available');
+        return;
+      }
+
+      for (var key in _categoryKeys) {
+        final parsedBudget = double.tryParse(_budgetControllers[key]?.text ?? '0') ?? 0.0;
+        final spent = budgetService.budgets[key]?['spentAmount'] ?? 0.0;
+
+        updatedBudgets[key] = {
+          'budget': parsedBudget,
+          'spentAmount': spent,
+        };
+      }
+      print(updatedBudgets);
+
+      await budgetService.saveBudgets(updatedBudgets);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Budgets saved successfully!')),
+      );
+    } catch (e) {
+      print('Error saving budgets: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save budgets.')),
+      );
+    }
   }
 
   @override
@@ -50,7 +89,11 @@ class _BudgetSettingsScreenState extends State<BudgetSettingsScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    double totalSpent = widget.budgets.values.fold(
+    final budgetService = Provider.of<BudgetService?>(context);
+
+    final budgets = budgetService?.budgets ?? {};
+
+    double totalSpent = budgets.values.fold(
       0.0,
           (sum, data) => sum + (data['spentAmount'] ?? 0.0),
     );
@@ -87,13 +130,29 @@ class _BudgetSettingsScreenState extends State<BudgetSettingsScreen> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('save here'),
-                        backgroundColor: colorScheme.secondary,
+                  onPressed: () async {
+                    final save = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Confirm Save'),
+                        content: Text('Are you sure you want to save your budget settings?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: Text('Cancel'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: Text('Save'),
+                          ),
+                        ],
                       ),
                     );
+
+                    if (save == true) {
+                      await saveBudgetSettings();
+                      Navigator.pop(context);
+                    }
                   },
                   child: Text(
                     'Save',
@@ -210,7 +269,7 @@ class _BudgetSettingsScreenState extends State<BudgetSettingsScreen> {
                               children: _categoryKeys.map((categoryKey) {
                                 final controller =
                                     _budgetControllers[categoryKey]!;
-                                final spentAmount = widget.budgets[categoryKey]
+                                final spentAmount = budgets[categoryKey]
                                         ?['spentAmount'] ??
                                     0.0;
                                 final currentBudget =

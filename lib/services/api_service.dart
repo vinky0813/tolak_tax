@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/models/achievement_model.dart';
+import '../data/category_constants.dart';
 import 'auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -8,8 +9,8 @@ import 'dart:convert';
 class ApiService {
   //final apiUrl = 'tolaktaxapi-291467312481.asia-east1.run.app';
   //final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
-  //final apiUrl = '192.168.0.117:8000'; // kelvin's home at penang
-  final apiUrl = '10.3.226.75:8000';
+  final apiUrl = '192.168.0.117:8000'; // kelvin's home at penang
+  //final apiUrl = '10.3.226.75:8000'; // inti ip
 
   Future<String?> getIdToken(BuildContext context) async {
     final String? token =
@@ -78,7 +79,8 @@ class ApiService {
       throw Exception('ID token is required to get achievements.');
     }
 
-    var url = Uri.http(apiUrl, '/get-achievements-by-user', {'id_token': idToken});
+    var url =
+        Uri.http(apiUrl, '/get-achievements-by-user', {'id_token': idToken});
 
     try {
       print('ApiService: Calling GET ${url.toString()}');
@@ -90,7 +92,8 @@ class ApiService {
         print('ApiService: No achievement data found for user (404).');
         return null;
       } else {
-        print('ApiService Error: Failed to load achievements. Status: ${response.statusCode}, Body: ${response.body}');
+        print(
+            'ApiService Error: Failed to load achievements. Status: ${response.statusCode}, Body: ${response.body}');
         throw Exception('Failed to load achievements from server.');
       }
     } catch (e) {
@@ -117,7 +120,8 @@ class ApiService {
       'lastScanTimestamp': lastScanTimestamp,
     };
 
-    var url = Uri.http(apiUrl, '/save-achievements-by-user', {'id_token': idToken});
+    var url =
+        Uri.http(apiUrl, '/save-achievements-by-user', {'id_token': idToken});
 
     try {
       print('ApiService: Calling POST ${url.toString()}');
@@ -128,13 +132,80 @@ class ApiService {
       );
 
       if (response.statusCode != 200) {
-        print('ApiService Error: Failed to save achievements. Status: ${response.statusCode}, Body: ${response.body}');
+        print(
+            'ApiService Error: Failed to save achievements. Status: ${response.statusCode}, Body: ${response.body}');
         throw Exception('Failed to save achievements to server.');
       }
       print('ApiService: Achievements saved successfully.');
     } catch (e) {
       print('ApiService Network Error on POST: $e');
       throw Exception('Could not connect to the server to save progress.');
+    }
+  }
+
+  Future<Map<String, dynamic>> getBudget({
+    required String? idToken,
+  }) async {
+    if (idToken == null || idToken.isEmpty) {
+      throw Exception('ID token is required to fetch budgets.');
+    }
+
+    var url = Uri.http(apiUrl, '/get-budgets-by-user', {'id_token': idToken});
+
+    print('ApiService: Calling GET ${url.toString()}');
+    var response = await http.get(url);
+
+    try {
+      print('ApiService: Calling GET ${url.toString()}');
+      var response = await http.get(url);
+
+      if (response.statusCode != 200) {
+        print(
+            'ApiService Error: Failed to get budgets. Status: ${response.statusCode}, Body: ${response.body}');
+        throw Exception('Failed to load budgets from server.');
+      }
+
+      final decoded = json.decode(response.body) as Map<String, dynamic>;
+      print('ApiService: Budgets fetched successfully.');
+      return decoded;
+    } catch (e) {
+      print('ApiService Network Error on GET: $e');
+      throw Exception('Could not connect to the server to load budgets.');
+    }
+  }
+
+  Future<void> saveBudget({
+    required String? idToken,
+    required Map<String, Map<String, double>> budgets,
+  }) async {
+    if (idToken == null || idToken.isEmpty) {
+      throw Exception('ID token is required to save budgets.');
+    }
+
+    final Map<String, dynamic> payload = {
+      'budgets': budgets,
+    };
+
+    var url = Uri.http(apiUrl, '/save-budgets-by-user', {'id_token': idToken});
+
+    try {
+      print('ApiService: Calling POST ${url.toString()}');
+      var response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: json.encode(payload),
+      );
+
+      if (response.statusCode != 200) {
+        print(
+            'ApiService Error: Failed to save budgets. Status: ${response.statusCode}, Body: ${response.body}');
+        throw Exception('Failed to save budgets to server.');
+      }
+
+      print('ApiService: Budgets saved successfully.');
+    } catch (e) {
+      print('ApiService Network Error on POST: $e');
+      throw Exception('Could not connect to the server to save budgets.');
     }
   }
 }

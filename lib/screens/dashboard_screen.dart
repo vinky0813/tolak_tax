@@ -5,6 +5,7 @@ import 'package:tolak_tax/services/achievement_service.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/data/category_constants.dart';
+import 'package:tolak_tax/services/budget_service.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
 import 'package:tolak_tax/widgets/achivement_banner.dart';
 import 'package:tolak_tax/widgets/cached_network_svg.dart';
@@ -25,7 +26,6 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
 
-  final Map<String, Map<String, double>> _budgets = {};
 
   final List<String> _displayCategories =
       allCategories.where((c) => c != 'All').toList();
@@ -37,14 +37,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showPendingAchievementBanners();
     });
-
-    _displayCategories.forEach((category) {
-      _budgets[category] = {
-        'budget': 500.0,
-        'spentAmount': 100.0,
-      };
-    });
-    print(_budgets);
   }
 
   void _showPendingAchievementBanners() {
@@ -65,12 +57,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final user = Provider.of<AuthService>(context).currentUser;
+    final user = Provider.of<AuthService>(context, listen: false).currentUser;
     final String? photoUrl = user?.photoURL;
     final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
     final List<Receipt> dummyReceipts = dummyReceiptsData;
     final achievementService = context.watch<AchievementService?>();
     final streakCount = achievementService?.currentScanStreak ?? 0;
+    final budgetService = Provider.of<BudgetService?>(context);
+    final _budgets = budgetService?.budgets ?? {};
 
     final int totalReceipts = dummyReceipts.length;
     final double totalExpenses =
