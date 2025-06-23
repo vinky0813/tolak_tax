@@ -74,6 +74,60 @@ class BudgetService with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> recordReceipt({
+    required String category,
+    required double amountSpent,
+  }) async {
+    final idToken = await _authService.getIdToken();
+    if (idToken == null || idToken.isEmpty) {
+      return;
+    }
+    Map<String, Map<String, double>> currentServerBudgets;
+    try {
+      final apiData = await _apiService.getBudget(idToken: idToken);
+
+      if (apiData == null || apiData['budgets'] == null) {
+        return;
+      }
+
+      final budgetsFromApi = apiData['budgets'] as Map<String, dynamic>;
+      currentServerBudgets = budgetsFromApi.map((cat, data) {
+        return MapEntry(
+          cat,
+          {
+            'budget': (data['budget'] as num?)?.toDouble() ?? 0.0,
+            'spentAmount': (data['spentAmount'] as num?)?.toDouble() ?? 0.0,
+          },
+        );
+      });
+
+    } catch (e) {
+      print("BudgetService: Error fetching latest budget data: $e");
+      return;
+    }
+
+    if (!currentServerBudgets.containsKey(category)) {
+      print("BudgetService: Category '$category' not found in current budget data.");
+      return;
+    }
+
+    Map<String, Map<String, double>> updatedBudgets = Map.from(currentServerBudgets.map(
+          (key, value) => MapEntry(key, Map<String, double>.from(value)),
+    ));
+
+    final currentSpentOnServer = updatedBudgets[category]!['spentAmount'] ?? 0.0;
+    updatedBudgets[category]!['spentAmount'] = currentSpentOnServer + amountSpent;
+    try {
+      await _apiService.saveBudget(idToken: idToken, budgets: updatedBudgets);
+      _budgets = updatedBudgets;
+      notifyListeners();
+
+    } catch (e) {
+      print("BudgetService: Error saving updated budget data: $e");
+      throw e;
+    }
+  }
+
   Map<String, Map<String, double>> _generateDefaultBudget() {
     return {
       for (final category in allCategories)

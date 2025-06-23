@@ -43,6 +43,7 @@ class AdditionalInfoCard extends StatelessWidget {
               controller: expenseCategoryController,
               icon: Icons.category,
               isEditing: isEditing,
+              isCategoryDropdown: true,
             ),
           ],
         ),

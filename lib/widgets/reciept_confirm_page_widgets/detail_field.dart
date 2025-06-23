@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tolak_tax/data/category_constants.dart';
 
 class DetailField extends StatelessWidget {
   final String label;
@@ -8,6 +9,7 @@ class DetailField extends StatelessWidget {
   final bool isEditing;
   final bool isAmount;
   final bool isTotal;
+  final bool isCategoryDropdown;
 
   const DetailField({
     Key? key,
@@ -18,15 +20,60 @@ class DetailField extends StatelessWidget {
     required this.isEditing,
     this.isAmount = false,
     this.isTotal = false,
+    this.isCategoryDropdown = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     if (isEditing) {
-      return _buildEditableField(context);
+      if (isCategoryDropdown) {
+        return _buildCategoryDropdownField(context);
+      } else {
+        return _buildEditableField(context);
+      }
     } else {
       return _buildReadOnlyField(context);
     }
+  }
+
+  Widget _buildCategoryDropdownField(BuildContext context) {
+    final theme = Theme.of(context);
+    final dropdownCategories =
+    allCategories.where((category) => category != 'All').toList();
+
+    String? currentValue = controller.text;
+    if (currentValue.isEmpty || !dropdownCategories.contains(currentValue)) {
+      currentValue = null;
+    }
+
+    return DropdownButtonFormField<String>(
+      value: currentValue,
+      items: dropdownCategories.map((String category) {
+        return DropdownMenuItem<String>(
+          value: category,
+          child: Text(category),
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+        if (newValue != null) {
+          controller.text = newValue;
+        }
+      },
+      decoration: InputDecoration(
+        labelText: label + (isRequired ? ' *' : ''),
+        border: const OutlineInputBorder(),
+        prefixIcon: Icon(icon),
+        filled: true,
+        fillColor: theme.colorScheme.surface,
+      ),
+      validator: (value) {
+        if (isRequired && (value == null || value.isEmpty)) {
+          return 'Please select a category';
+        }
+        return null;
+      },
+      hint: Text('Select $label'),
+    );
   }
 
   Widget _buildEditableField(BuildContext context) {
