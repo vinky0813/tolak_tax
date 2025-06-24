@@ -52,7 +52,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final receiptService = Provider.of<ReceiptService>(context, listen: false);
+    final receiptService = Provider.of<ReceiptService>(context, listen: true);
 
     final receipts = receiptService.getCachedReceipts();
     final filteredReceipts = getFilteredReceipts(receipts);

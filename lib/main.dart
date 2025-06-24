@@ -47,15 +47,17 @@ Future<void> main() async {
           initialData: null,
         ),
         ChangeNotifierProxyProvider<ApiService, ReceiptService>(
-          create: (_) => ReceiptService(
-            apiService: ApiService(),
-            authService: AuthService(),
+          create: (context) => ReceiptService(
+            apiService: context.read<ApiService>(),
+            authService: context.read<AuthService>(),
           ),
-          update: (context, apiService, _) {
-            return ReceiptService(
-              apiService: apiService,
-              authService: context.read<AuthService>(),
-            );
+          update: (context, apiService, previousReceiptService) {
+            // Return the existing service if it exists, otherwise create a new one
+            return previousReceiptService ??
+                ReceiptService(
+                  apiService: apiService,
+                  authService: context.read<AuthService>(),
+                );
           },
         ),
         ChangeNotifierProxyProvider2<User?, ApiService, AchievementService?>(

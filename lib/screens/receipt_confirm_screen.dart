@@ -419,12 +419,11 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
 
     final apiService = Provider.of<ApiService>(context, listen: false);
     final receiptService = Provider.of<ReceiptService>(context, listen: false);
-
     addReceipt(context, apiService, widget.receiptImagePath, receiptData)
         .then((success) {
       if (success == true) {
         _showSuccessSnackBar('Receipt saved successfully!');
-        receiptService.fetchReceipts(apiService);
+        receiptService.refreshReceipts(apiService);
         Navigator.of(context).pop();
         if (mounted) {
           Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
