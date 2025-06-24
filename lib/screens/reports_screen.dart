@@ -7,6 +7,8 @@ import 'package:tolak_tax/widgets/monthly_expense_trend_chart.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
 import '../widgets/expenses_by_category_chart.dart';
 import '../widgets/quick_actionbutton.dart';
+import 'package:tolak_tax/services/receipt_service.dart';
+import 'package:provider/provider.dart';
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -26,9 +28,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
     });
   }
 
-  List<Receipt> receipts = dummyReceiptsData;
-
-  List<Receipt> get filteredReceipts {
+  List<Receipt> getfilteredReceipts(List<Receipt> receipts) {
     return receipts.where((receipt) {
       if (startDate == null || endDate == null) return true;
       final transactionDatetime = DateTime.parse(receipt.transactionDatetime);
@@ -38,7 +38,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
     }).toList();
   }
 
-  Map<String, double> _groupReceipts() {
+  Map<String, double> _groupReceipts(filteredReceipts) {
     final Map<String, double> groupedData = {};
     for (var receipt in filteredReceipts) {
       groupedData.update(
@@ -51,7 +51,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final groupedData = _groupReceipts();
+    final receiptService = Provider.of<ReceiptService>(context, listen: true);
+
+    List<Receipt> receipts = receiptService.getCachedReceipts();
+    List<Receipt> filteredReceipts = getfilteredReceipts(receipts);
+
+    final groupedData = _groupReceipts(filteredReceipts);
     final colorScheme = theme.colorScheme;
     final totalAmount = getTotalAmount(filteredReceipts);
 
