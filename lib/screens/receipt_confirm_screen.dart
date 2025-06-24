@@ -13,6 +13,7 @@ import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/line_items_card.d
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/discounts_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/additional_info_card.dart';
 import 'package:tolak_tax/services/api_service.dart';
+import 'package:tolak_tax/services/receipt_service.dart';
 
 class ReceiptConfirmScreen extends StatefulWidget {
   final Receipt? receiptData;
@@ -144,6 +145,7 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
     print('receiptData: ${widget.receiptData?.toMap()}');
 
     return Scaffold(
@@ -415,11 +417,14 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
       imageUrl: '',
     );
 
-    final ApiService apiService = ApiService();
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final receiptService = Provider.of<ReceiptService>(context, listen: false);
+
     addReceipt(context, apiService, widget.receiptImagePath, receiptData)
         .then((success) {
       if (success == true) {
         _showSuccessSnackBar('Receipt saved successfully!');
+        receiptService.fetchReceipts(apiService);
         Navigator.of(context).pop();
         if (mounted) {
           Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
