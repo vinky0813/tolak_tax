@@ -2,18 +2,34 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'api_service.dart';
 import '../models/receipt_model.dart';
+import '../services/auth_service.dart';
 import 'package:provider/provider.dart';
 
-class ReceiptService {
+class ReceiptService with ChangeNotifier {
+  final ApiService _apiService;
+  final AuthService _authService;
+
+  ReceiptService({
+    required ApiService apiService,
+    required AuthService authService,
+  })  : _apiService = apiService,
+        _authService = authService {
+    initialize();
+  }
+
+  void initialize() {
+    fetchReceipts(_apiService);
+    print('ReceiptService initialized');
+  }
+
   static List<Receipt> _cachedReceipts = [];
 
-  Future<List<Receipt>> fetchReceipts(
-      BuildContext context, ApiService apiService) async {
-    final String? idToken = await apiService.getIdToken(context);
+  Future<void> fetchReceipts(ApiService apiService) async {
+    final String? idToken = await _authService.getIdToken();
 
     if (idToken == null || idToken.isEmpty) {
       print('Error: Could not retrieve ID token.');
-      return <Receipt>[];
+      _cachedReceipts = [];
     }
 
     String receiptsJson = await apiService.getUserReciepts(idToken);
@@ -28,9 +44,6 @@ class ReceiptService {
 
     // Cache the receipts
     _cachedReceipts = receipts;
-
-    print('Successfully fetched ${receipts.length} receipts');
-    return receipts;
   }
 
   int getCachedReceiptsCount() {

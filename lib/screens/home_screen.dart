@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final apiService = Provider.of<ApiService>(context, listen: false);
     final receiptService = Provider.of<ReceiptService>(context, listen: false);
 
-    receiptService.fetchReceipts(context, apiService);
+    receiptService.fetchReceipts(apiService);
 
     return Scaffold(
       extendBody: true,

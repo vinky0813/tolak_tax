@@ -42,12 +42,21 @@ Future<void> main() async {
         Provider<ApiService>(
           create: (_) => ApiService(),
         ),
-        Provider<ReceiptService>(
-          create: (_) => ReceiptService(),
-        ),
         StreamProvider<User?>(
           create: (context) => context.read<AuthService>().authStateChanges,
           initialData: null,
+        ),
+        ChangeNotifierProxyProvider<ApiService, ReceiptService>(
+          create: (_) => ReceiptService(
+            apiService: ApiService(),
+            authService: AuthService(),
+          ),
+          update: (context, apiService, _) {
+            return ReceiptService(
+              apiService: apiService,
+              authService: context.read<AuthService>(),
+            );
+          },
         ),
         ChangeNotifierProxyProvider2<User?, ApiService, AchievementService?>(
           create: (_) => null,

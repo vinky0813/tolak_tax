@@ -6,6 +6,7 @@ import 'package:tolak_tax/services/achievement_service.dart';
 import 'package:tolak_tax/models/achievement_model.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/services/achievement_service.dart';
+import 'package:tolak_tax/services/api_service.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/data/category_constants.dart';
 import 'package:tolak_tax/services/receipt_service.dart';
@@ -80,11 +81,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final colorScheme = theme.colorScheme;
     final user = Provider.of<AuthService>(context).currentUser;
     final String? photoUrl = user?.photoURL;
-    final receiptService = ReceiptService();
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final receiptService = Provider.of<ReceiptService>(context, listen: false);
     final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
     final List<Receipt> dummyReceipts = dummyReceiptsData;
     final achievementService = context.watch<AchievementService?>();
     final streakCount = achievementService?.currentScanStreak ?? 0;
+
+    receiptService.fetchReceipts(apiService);
 
     // Dummy data for demo
     final int totalReceipts = receiptService.getCachedReceiptsCount();
