@@ -91,7 +91,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           (sum, receipt) => sum + (receipt.taxAmount ?? 0.0),
         );
 
-    final recentReceipts = dummyReceipts;
+    final recentReceipts = receiptService.getRecentReceipts();
 
     final userName = Provider.of<AuthService>(context).currentUser?.displayName;
 

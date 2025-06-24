@@ -135,7 +135,7 @@ class Receipt {
         currencyCode: map['currency_code'],
         paymentMethod: map['payment_method'],
         expenseCategory: map['expense_category'] ?? map['category'],
-        imageUrl: map['image_url'] is String ? map['image_url'] as String : '',
+        imageUrl: map['image_url']['image_url'] as String? ?? '',
         taxSummary: map['tax_summary'] != null
             ? TaxSummary(
                 totalTaxSaved: (map['tax_summary']['total_tax_saved'] as num?)

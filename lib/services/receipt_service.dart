@@ -23,7 +23,7 @@ class ReceiptService with ChangeNotifier {
   // Cache duration - 5 minutes
   static const Duration _cacheDuration = Duration(minutes: 5);
 
-  Future<void> fetchReceipts(ApiService? apiService) async {
+  Future<void> fetchReceipts([ApiService? apiService]) async {
     // Prevent multiple simultaneous calls
     if (_isLoading) {
       print('ReceiptService: Already fetching receipts, skipping...');
@@ -77,7 +77,7 @@ class ReceiptService with ChangeNotifier {
   }
 
   // Method to force refresh (bypass cache)
-  Future<void> refreshReceipts(ApiService? apiService) async {
+  Future<void> refreshReceipts([ApiService? apiService]) async {
     _lastFetchTime = null;
     await fetchReceipts(apiService);
   }
@@ -109,13 +109,14 @@ class ReceiptService with ChangeNotifier {
     return _cachedReceipts.fold(0, (sum, receipt) => sum + receipt.totalAmount);
   }
 
-  /*List<Receipt> getRecentReceipts() {
+  List<Receipt> getRecentReceipts() {
     if (_cachedReceipts.isEmpty) {
       return <Receipt>[];
     }
     // Sort receipts by date in descending order
-    _cachedReceipts.sort((a, b) => b.date.compareTo(a.date));
+    _cachedReceipts
+        .sort((a, b) => b.transactionDatetime.compareTo(a.transactionDatetime));
     // Return the most recent 5 receipts
     return _cachedReceipts.take(5).toList();
-  }*/
+  }
 }
