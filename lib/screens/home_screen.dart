@@ -44,32 +44,14 @@ class _HomeScreenState extends State<HomeScreen> {
         });
   }
 
-  Future<void> fetchAndPrintUserReceipts(
-      BuildContext context, ApiService apiService) async {
-    try {
-      final String? idToken = await apiService.getIdToken(context);
-      print('ID Token: $idToken');
-      if (idToken == null || idToken.isEmpty) {
-        print('Error: Could not retrieve ID token.');
-        return;
-      }
-
-      final userReceiptsData = await apiService.getUserReciepts(idToken);
-
-      print('User Receipts: $userReceiptsData');
-    } catch (e) {
-      print('An error occurred: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     final theme = Theme.of(context);
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final receiptService = ReceiptService();
+    final receiptService = Provider.of<ReceiptService>(context, listen: false);
 
-    receiptService.fetchAndPrintUserReceipts(context, apiService);
+    receiptService.fetchReceipts(context, apiService);
 
     return Scaffold(
       extendBody: true,

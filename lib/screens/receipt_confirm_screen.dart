@@ -170,7 +170,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                   flex: 2,
                   child: ElevatedButton.icon(
                     onPressed: () async {
-                      final achievementService = context.read<AchievementService?>();
+                      final achievementService =
+                          context.read<AchievementService?>();
                       showDialog(
                         context: context,
                         barrierDismissible: false,
@@ -186,19 +187,12 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                         await achievementService?.processDailyScan();
 
                         _saveReceipt();
-
-                        Navigator.of(context).pop();
-                        if (mounted) {
-                          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-                        }
-
                       } catch (e) {
                         print("An error occurred during save: $e");
                         if (Navigator.canPop(context)) {
                           Navigator.of(context).pop();
                         }
                       }
-
                     },
                     icon: const Icon(Icons.save),
                     label: const Text('Save Receipt'),
@@ -426,6 +420,10 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         .then((success) {
       if (success == true) {
         _showSuccessSnackBar('Receipt saved successfully!');
+        Navigator.of(context).pop();
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        }
       } else {
         _showErrorSnackBar('Failed to save receipt. Please try again.');
       }

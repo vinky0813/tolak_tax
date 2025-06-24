@@ -6,7 +6,8 @@ import 'package:tolak_tax/data/category_constants.dart';
 import 'package:tolak_tax/widgets/month_dropdown.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
 import 'package:tolak_tax/widgets/year_dropdown.dart';
-
+import 'package:provider/provider.dart';
+import 'package:tolak_tax/services/receipt_service.dart';
 import '../data/dummy_receipt_data.dart';
 
 class ExpenseScreen extends StatefulWidget {
@@ -23,9 +24,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
   int? selectedMonth;
   int? selectedYear = DateTime.now().year;
 
-  final List<Receipt> receipts = dummyReceiptsData;
-
-  List<Receipt> get filteredReceipts {
+  List<Receipt> getFilteredReceipts(receipts) {
     return receipts.where((receipt) {
       final title = (receipt.merchantName).toString().toLowerCase();
       final category = (receipt.expenseCategory).toString();
@@ -53,6 +52,11 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final receiptService = Provider.of<ReceiptService>(context, listen: false);
+
+    final receipts = receiptService.getCachedReceipts();
+    final filteredReceipts = getFilteredReceipts(receipts);
+
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final totalAmount = getTotalAmount(filteredReceipts);
@@ -173,8 +177,11 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                       // Search Bar
                       TextField(
                         controller: searchController,
-                        onChanged: (value) =>
-                            setState(() => searchText = value),
+                        onChanged: (value) {
+                          setState(() => searchText = value);
+                          getFilteredReceipts(receipts);
+                          setState(() {});
+                        },
                         decoration: InputDecoration(
                           hintText: 'Search receipts',
                           prefixIcon: const Icon(Icons.search),

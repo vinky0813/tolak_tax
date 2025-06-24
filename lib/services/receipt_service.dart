@@ -2,41 +2,35 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'api_service.dart';
 import '../models/receipt_model.dart';
+import 'package:provider/provider.dart';
 
 class ReceiptService {
   static List<Receipt> _cachedReceipts = [];
 
-  Future<List<Receipt>> fetchAndPrintUserReceipts(
+  Future<List<Receipt>> fetchReceipts(
       BuildContext context, ApiService apiService) async {
-    try {
-      final String? idToken = await apiService.getIdToken(context);
+    final String? idToken = await apiService.getIdToken(context);
 
-      if (idToken == null || idToken.isEmpty) {
-        print('Error: Could not retrieve ID token.');
-        return <Receipt>[];
-      }
-
-      String receiptsJson = await apiService.getUserReciepts(idToken);
-
-      final Map<String, dynamic> jsonResponse = json.decode(receiptsJson);
-
-      final List<dynamic> receiptsData = jsonResponse['receipts'] ?? [];
-
-      // Convert each receipt JSON to Receipt object
-      List<Receipt> receipts = receiptsData.map((receiptJson) {
-        return Receipt.fromMap(receiptJson as Map<String, dynamic>);
-      }).toList();
-
-      print('Successfully fetched ${receipts.length} receipts');
-
-      // Cache the receipts
-      _cachedReceipts = receipts;
-
-      return receipts;
-    } catch (e) {
-      print('An error occurred while fetching receipts: $e');
+    if (idToken == null || idToken.isEmpty) {
+      print('Error: Could not retrieve ID token.');
       return <Receipt>[];
     }
+
+    String receiptsJson = await apiService.getUserReciepts(idToken);
+
+    // Parse the JSON response
+    final Map<String, dynamic> responseData = jsonDecode(receiptsJson);
+    final receiptsData = responseData['receipts'] ?? [];
+
+    // Convert to Receipt objects
+    List<Receipt> receipts = List<Receipt>.from(
+        receiptsData.map((receiptData) => Receipt.fromMap(receiptData)));
+
+    // Cache the receipts
+    _cachedReceipts = receipts;
+
+    print('Successfully fetched ${receipts.length} receipts');
+    return receipts;
   }
 
   int getCachedReceiptsCount() {

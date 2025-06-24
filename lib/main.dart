@@ -25,9 +25,7 @@ import 'package:tolak_tax/utils/transitions.dart';
 import 'package:tolak_tax/screens/camera_page.dart';
 import 'package:tolak_tax/screens/receipt_confirm_screen.dart';
 
-import 'services/achievement_service.dart';
-import 'services/api_service.dart';
-
+import 'services/receipt_service.dart';
 import 'services/achievement_service.dart';
 import 'services/api_service.dart';
 
@@ -35,34 +33,39 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeFirebase();
   // adding provider
-  runApp(MultiProvider(
-    providers: [
-      Provider<AuthService>(
-        create: (_) => AuthService(),
-      ),
-      Provider<ApiService>(
-        create: (_) => ApiService(),
-      ),
-      StreamProvider<User?>(
-        create: (context) => context.read<AuthService>().authStateChanges,
-        initialData: null,
-      ),
-      ChangeNotifierProxyProvider2<User?, ApiService, AchievementService?>(
-        create: (_) => null,
-        update: (context, user, apiService, previousAchievementService) {
-          if (user == null) {
-            return null;
-          }
-          print('Providing AchievementService for user: ${user.uid}');
-          return AchievementService(
-            apiService: apiService,
-            authService: context.read<AuthService>(),
-          );
-        },
-      ),
-    ],
-    child: MyApp(),
-  ),);
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<AuthService>(
+          create: (_) => AuthService(),
+        ),
+        Provider<ApiService>(
+          create: (_) => ApiService(),
+        ),
+        Provider<ReceiptService>(
+          create: (_) => ReceiptService(),
+        ),
+        StreamProvider<User?>(
+          create: (context) => context.read<AuthService>().authStateChanges,
+          initialData: null,
+        ),
+        ChangeNotifierProxyProvider2<User?, ApiService, AchievementService?>(
+          create: (_) => null,
+          update: (context, user, apiService, previousAchievementService) {
+            if (user == null) {
+              return null;
+            }
+            print('Providing AchievementService for user: ${user.uid}');
+            return AchievementService(
+              apiService: apiService,
+              authService: context.read<AuthService>(),
+            );
+          },
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

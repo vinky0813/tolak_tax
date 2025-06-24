@@ -7,8 +7,8 @@ import 'dart:convert';
 
 class ApiService {
   //final apiUrl = 'tolaktaxapi-291467312481.asia-east1.run.app';
-  //final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
-  final apiUrl = '192.168.0.117:8000';
+  final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
+  //final apiUrl = '192.168.0.117:8000';
 
   Future<String?> getIdToken(BuildContext context) async {
     final String? token =
@@ -77,7 +77,8 @@ class ApiService {
       throw Exception('ID token is required to get achievements.');
     }
 
-    var url = Uri.http(apiUrl, '/get-achievements-by-user', {'id_token': idToken});
+    var url =
+        Uri.http(apiUrl, '/get-achievements-by-user', {'id_token': idToken});
 
     try {
       print('ApiService: Calling GET ${url.toString()}');
@@ -89,7 +90,8 @@ class ApiService {
         print('ApiService: No achievement data found for user (404).');
         return null;
       } else {
-        print('ApiService Error: Failed to load achievements. Status: ${response.statusCode}, Body: ${response.body}');
+        print(
+            'ApiService Error: Failed to load achievements. Status: ${response.statusCode}, Body: ${response.body}');
         throw Exception('Failed to load achievements from server.');
       }
     } catch (e) {
@@ -116,7 +118,8 @@ class ApiService {
       'lastScanTimestamp': lastScanTimestamp,
     };
 
-    var url = Uri.http(apiUrl, '/save-achievements-by-user', {'id_token': idToken});
+    var url =
+        Uri.http(apiUrl, '/save-achievements-by-user', {'id_token': idToken});
 
     try {
       print('ApiService: Calling POST ${url.toString()}');
@@ -127,7 +130,8 @@ class ApiService {
       );
 
       if (response.statusCode != 200) {
-        print('ApiService Error: Failed to save achievements. Status: ${response.statusCode}, Body: ${response.body}');
+        print(
+            'ApiService Error: Failed to save achievements. Status: ${response.statusCode}, Body: ${response.body}');
         throw Exception('Failed to save achievements to server.');
       }
       print('ApiService: Achievements saved successfully.');

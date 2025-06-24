@@ -88,13 +88,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     // Dummy data for demo
     final int totalReceipts = receiptService.getCachedReceiptsCount();
-    print("Total Receipts: $totalReceipts");
     final double totalExpenses = receiptService.getTotalAmountSpent();
     final double totalTax = receiptService.getCachedReceipts().fold(
           0.0,
           (sum, receipt) => sum + (receipt.taxAmount ?? 0.0),
         );
-    const double taxDue = 40.00;
 
     final recentReceipts = dummyReceipts;
 
