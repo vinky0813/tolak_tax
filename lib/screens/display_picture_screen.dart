@@ -81,7 +81,6 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
                                       context, apiService, widget.imagePath);
 
                                   print("receipt : $receipt");
-
                                   if (receipt != null) {
                                     Navigator.pushNamed(
                                       context,

@@ -423,6 +423,7 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     final apiService = Provider.of<ApiService>(context, listen: false);
     final receiptService = Provider.of<ReceiptService>(context, listen: false);
     final budgetService = Provider.of<BudgetService?>(context, listen: false);
+
     addReceipt(context, apiService, widget.receiptImagePath, receiptData)
         .then((success) async {
       if (success == true) {
