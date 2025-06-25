@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/data/dummy_receipt_data.dart';
-import 'package:tolak_tax/models/achievement_model.dart';
 import 'package:tolak_tax/services/achievement_service.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/data/category_constants.dart';
+import 'package:tolak_tax/services/budget_service.dart';
 import 'package:tolak_tax/services/receipt_service.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
 import 'package:tolak_tax/widgets/achivement_banner.dart';
@@ -26,8 +26,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  late Map<String, double> _budgets;
-  late Map<String, double> _spentAmounts;
+
 
   final List<String> _displayCategories =
       allCategories.where((c) => c != 'All').toList();
@@ -39,22 +38,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showPendingAchievementBanners();
     });
-
-    _budgets = {
-      'food': 500.0,
-      'shopping': 300.0,
-      'utilities': 400.0,
-      'entertainment': 150.0,
-      'transport': 200.0,
-    };
-
-    _spentAmounts = {
-      'food': 285.50,
-      'shopping': 310.75,
-      'utilities': 150.0,
-      'entertainment': 95.20,
-      'transport': 120.0,
-    };
   }
 
   void _showPendingAchievementBanners() {
@@ -75,13 +58,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final user = Provider.of<AuthService>(context).currentUser;
+    final user = Provider.of<AuthService>(context, listen: false).currentUser;
     final String? photoUrl = user?.photoURL;
     final receiptService = Provider.of<ReceiptService>(context, listen: true);
     final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
     final List<Receipt> dummyReceipts = dummyReceiptsData;
     final achievementService = context.watch<AchievementService?>();
     final streakCount = achievementService?.currentScanStreak ?? 0;
+    final budgetService = Provider.of<BudgetService?>(context);
+    final _budgets = budgetService?.budgets ?? {};
 
     // Dummy data for demo
     final int totalReceipts = receiptService.getCachedReceiptsCount();
@@ -104,19 +89,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               pinned: true,
               expandedHeight: 260,
               backgroundColor: colorScheme.primary,
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 15, right: 10),
-                  child: IconButton(
-                    icon: const Icon(Icons.settings),
-                    color: colorScheme.onPrimary,
-                    onPressed: () {
-                      // handle go to settings
-                      print("Settings button tapped");
-                    },
-                  ),
-                ),
-              ],
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -281,8 +253,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           itemCount: _displayCategories.length,
                           itemBuilder: (context, index, realIndex) {
                             final category = _displayCategories[index];
-                            final budget = _budgets[category] ?? 0.0;
-                            final spent = _spentAmounts[category] ?? 0.0;
+
+                            final Map<String, double>? categorySpecificBudgetData = _budgets[category];
+
+                            final double budget = categorySpecificBudgetData?['budget'] ?? 0.0;
+                            final double spent = categorySpecificBudgetData?['spentAmount'] ?? 0.0;
+
                             final icon = CategoryHelper.getIcon(category);
                             final label =
                                 CategoryHelper.getDisplayName(category);
@@ -300,7 +276,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     arguments: {
                                       'initialFocusedCategoryKey': category,
                                       'budgets': _budgets,
-                                      'spentAmounts': _spentAmounts,
                                     });
                               },
                             );

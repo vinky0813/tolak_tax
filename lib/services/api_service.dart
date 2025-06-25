@@ -1,14 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/models/achievement_model.dart';
+import '../data/category_constants.dart';
 import 'auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiService {
   //final apiUrl = 'tolaktaxapi-291467312481.asia-east1.run.app';
-  final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
-  //final apiUrl = '192.168.0.117:8000';
+  //final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
+  final apiUrl = '192.168.0.117:8000'; // kelvin's home at penang
+  //final apiUrl = '10.3.226.75:8000'; // inti ip
 
   Future<String?> getIdToken(BuildContext context) async {
     final String? token =
@@ -138,6 +142,74 @@ class ApiService {
     } catch (e) {
       print('ApiService Network Error on POST: $e');
       throw Exception('Could not connect to the server to save progress.');
+    }
+  }
+
+  Future<Map<String, dynamic>> getBudget({
+    required String? idToken,
+  }) async {
+    if (idToken == null || idToken.isEmpty) {
+      throw Exception('ID token is required to fetch budgets.');
+    }
+
+    var url = Uri.http(apiUrl, '/get-budgets-by-user', {'id_token': idToken});
+
+    print('ApiService: Calling GET ${url.toString()}');
+    var response = await http.get(url);
+
+    try {
+      print('ApiService: Calling GET ${url.toString()}');
+      var response = await http.get(url);
+
+      if (response.statusCode != 200) {
+        final errorMsg = 'ApiService Error: Failed to get budgets. Status: ${response.statusCode}, Body: ${response.body}';
+        print(
+            errorMsg);
+        throw Exception(errorMsg);
+      }
+
+      final decoded = json.decode(response.body) as Map<String, dynamic>;
+      print('ApiService: Budgets fetched successfully.');
+      return decoded;
+    } catch (e) {
+      print('ApiService Network Error on GET: $e');
+      throw Exception('Could not connect to the server to load budgets. error: $e');
+    }
+  }
+
+  Future<void> saveBudget({
+    required String? idToken,
+    required Map<String, Map<String, double>> budgets,
+    String? budgetPeriod
+  }) async {
+    if (idToken == null || idToken.isEmpty) {
+      throw Exception('ID token is required to save budgets.');
+    }
+
+    final Map<String, dynamic> payload = {
+      'budgets': budgets,
+    };
+    if (budgetPeriod != null) {
+      payload['budgetPeriod'] = budgetPeriod;
+    }
+
+    var url = Uri.http(apiUrl, '/save-budgets-by-user', {'id_token': idToken});
+
+    print('payload: $payload');
+    try {
+      print('ApiService: Calling POST ${url.toString()}');
+      var response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: json.encode(payload),
+      );
+
+    } on SocketException catch (e) {
+      print('ApiService Network Error on POST (SocketException): $e');
+      throw Exception('Could not connect to the server to save budgets (Network Issue).');
+    } on http.ClientException catch (e) {
+      print('ApiService Network Error on POST (ClientException): $e');
+      throw Exception('Could not connect to the server to save budgets (Client Network Issue).');
     }
   }
 }

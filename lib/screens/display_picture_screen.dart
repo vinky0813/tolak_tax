@@ -31,7 +31,6 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
       }
 
       final String response = await apiService.readReceipt(imagePath);
-      print('Response from readReceipt: $response');
 
       // Parse the JSON string response
       final Map<String, dynamic> receiptData = jsonDecode(response);
@@ -81,6 +80,7 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
                                   final receipt = await confirmReadReceipt(
                                       context, apiService, widget.imagePath);
 
+                                  print("receipt : $receipt");
                                   if (receipt != null) {
                                     Navigator.pushNamed(
                                       context,

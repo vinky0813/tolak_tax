@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/services/achievement_service.dart';
+import 'package:tolak_tax/services/budget_service.dart';
 import 'package:tolak_tax/widgets/achievement_tile.dart';
 import 'package:tolak_tax/widgets/cached_network_svg.dart';
 import 'package:tolak_tax/widgets/settings_item.dart';
@@ -16,6 +17,8 @@ class ProfileScreen extends StatelessWidget {
     final user = Provider.of<AuthService>(context).currentUser;
     final String? photoUrl = user?.photoURL;
     final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
+    final budgetService = Provider.of<BudgetService?>(context, listen: false);
+    final budgets = budgetService!.budgets;
 
     final achievementService = context.watch<AchievementService?>();
 
@@ -156,7 +159,10 @@ class ProfileScreen extends StatelessWidget {
                     SettingsItem(
                       icon: Icons.account_balance_wallet,
                       title: 'Budget Settings',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, 'budget-settings',
+                            arguments: budgets);
+                      },
                     ),
                     SettingsItem(
                       icon: Icons.color_lens,

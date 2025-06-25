@@ -3,7 +3,6 @@ import 'package:tolak_tax/data/achievement_definitions.dart';
 import 'package:tolak_tax/models/achievement_model.dart';
 import 'package:tolak_tax/services/api_service.dart';
 import 'package:tolak_tax/services/auth_service.dart';
-import 'package:tolak_tax/widgets/achivement_banner.dart';
 
 class AchievementService with ChangeNotifier {
 

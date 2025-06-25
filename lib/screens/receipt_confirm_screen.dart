@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tolak_tax/models/achievement_model.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/services/achievement_service.dart';
-import 'package:tolak_tax/widgets/back_button.dart';
+import 'package:tolak_tax/services/budget_service.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/page_status_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/reciept_image_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/merchant_info_card.dart';
@@ -120,6 +120,9 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     for (var controller in lineItemPriceControllers) {
       controller.dispose();
     }
+    lineItemDescriptionControllers.clear();
+    lineItemQuantityControllers.clear();
+    lineItemPriceControllers.clear();
     super.dispose();
   }
 
@@ -419,9 +422,19 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
 
     final apiService = Provider.of<ApiService>(context, listen: false);
     final receiptService = Provider.of<ReceiptService>(context, listen: false);
+    final budgetService = Provider.of<BudgetService?>(context, listen: false);
+
     addReceipt(context, apiService, widget.receiptImagePath, receiptData)
-        .then((success) {
+        .then((success) async {
       if (success == true) {
+        print('totalAmount: $totalAmount');
+        print('expenseCategory: ${expenseCategoryController.text.trim()}');
+        if (totalAmount != null && totalAmount > 0 && expenseCategoryController.text.trim().isNotEmpty) {
+          await budgetService!.recordReceipt(
+            category: expenseCategoryController.text.trim(),
+            amountSpent: totalAmount,
+          );
+        }
         _showSuccessSnackBar('Receipt saved successfully!');
         receiptService.refreshReceipts(apiService);
         Navigator.of(context).pop();

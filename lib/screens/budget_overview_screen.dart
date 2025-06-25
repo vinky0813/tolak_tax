@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tolak_tax/services/budget_service.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
 import 'package:tolak_tax/widgets/budget_metric_row.dart';
 
 class BudgetOverviewScreen extends StatefulWidget {
   final String initialFocusedCategoryKey;
-  final Map<String, double> budgets;
-  final Map<String, double> spentAmounts;
 
   const BudgetOverviewScreen({
     super.key,
     required this.initialFocusedCategoryKey,
-    required this.budgets,
-    required this.spentAmounts,
   });
 
   @override
@@ -20,24 +18,40 @@ class BudgetOverviewScreen extends StatefulWidget {
 
 class _BudgetOverviewScreenState extends State<BudgetOverviewScreen> {
   late String _focusedCategoryKey;
-  late List<String> _categoryKeys;
+  late BudgetService? _budgetService;
 
   @override
   void initState() {
     super.initState();
     _focusedCategoryKey = widget.initialFocusedCategoryKey;
-    _categoryKeys = widget.budgets.keys.toList();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _budgetService = Provider.of<BudgetService?>(context, listen: false);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final budgetService = Provider.of<BudgetService?>(context, listen: false);
+    final budgets = budgetService!.budgets;
+    final _categoryKeys = budgets.keys.toList();
 
-    final double totalBudget =
-        widget.budgets.values.fold(0, (sum, item) => sum + item);
-    final double totalSpent =
-        widget.spentAmounts.values.fold(0, (sum, item) => sum + item);
+    print("_categoryKeys $_categoryKeys");
+
+    final double totalBudget = budgets.values.fold(
+      0.0,
+          (double previousSum, Map<String, double> categoryBudgetData) {
+        return previousSum + (categoryBudgetData['budget'] ?? 0.0);
+      },
+    );
+
+    final double totalSpent = budgets.values.fold(
+      0.0,
+          (double previousSum, Map<String, double> categoryBudgetData) {
+        return previousSum + (categoryBudgetData['spentAmount'] ?? 0.0);
+      },
+    );
     final double totalRemaining = totalBudget - totalSpent;
     final double totalProgress =
         (totalBudget > 0) ? totalSpent / totalBudget : 0;
@@ -57,7 +71,8 @@ class _BudgetOverviewScreenState extends State<BudgetOverviewScreen> {
                 IconButton(
                   icon: const Icon(Icons.edit, color: Colors.white,),
                   onPressed: () {
-                    print('edit button pressed');
+                    Navigator.pushNamed(context, 'budget-settings',
+                    arguments: budgets);
                   },
                   tooltip: 'Edit Budgets',
                 ),
@@ -166,7 +181,7 @@ class _BudgetOverviewScreenState extends State<BudgetOverviewScreen> {
                             elevation: 0,
                             expansionCallback: (int index, bool isExpanded) {
                               setState(() {
-                                final tappedkey = _categoryKeys[index];
+                                final tappedkey = _categoryKeys![index];
                                 if (_focusedCategoryKey == tappedkey) {
                                   _focusedCategoryKey = '';
                                 } else {
@@ -174,7 +189,7 @@ class _BudgetOverviewScreenState extends State<BudgetOverviewScreen> {
                                 }
                               });
                             },
-                            children: _categoryKeys
+                            children: _categoryKeys!
                                 .map<ExpansionPanel>((categoryKey) {
                               final isFocused =
                                   _focusedCategoryKey == categoryKey;
@@ -183,9 +198,11 @@ class _BudgetOverviewScreenState extends State<BudgetOverviewScreen> {
                               final icon = CategoryHelper.getIcon(categoryKey);
                               final categoryName =
                                   CategoryHelper.getDisplayName(categoryKey);
-                              final spentAmount =
-                                  widget.spentAmounts[categoryKey] ?? 0.0;
-                              final budget = widget.budgets[categoryKey] ?? 0.0;
+
+                              final budgetData = budgets[categoryKey];
+
+                              final budget = budgetData!['budget'] ?? 0.0;
+                              final spentAmount = budgetData['spentAmount'] ?? 0.0;
                               final remainingBudget = budget - spentAmount;
                               final progressValue = spentAmount / budget;
                               final isOverBudget = progressValue > 1;
