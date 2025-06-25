@@ -110,13 +110,13 @@ class Receipt {
                 lineItemDiscountDescription:
                     item['line_item_discount_description'],
                 totalPrice: (item['total_price'] as num?)?.toDouble() ?? 0.0,
-                taxLine: item['tax_line'] != null
+                taxLine: item['line_tax'] != null
                     ? TaxLine(
-                        taxEligible: item['tax_line']['tax_eligible'] ?? false,
-                        taxClass: item['tax_line']['tax_class'] ?? '',
+                        taxEligible: item['line_tax']['tax_eligible'] ?? false,
+                        taxClass: item['line_tax']['tax_class'] ?? '',
                         taxClassDescription:
-                            item['tax_line']['tax_class_description'] ?? '',
-                        taxAmount: (item['tax_line']['tax_amount'] as num?)
+                            item['line_tax']['tax_class_description'] ?? '',
+                        taxAmount: (item['line_tax']['tax_amount'] as num?)
                                 ?.toDouble() ??
                             0.0,
                       )
