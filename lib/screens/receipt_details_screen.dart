@@ -5,6 +5,7 @@ import 'package:tolak_tax/utils/category_helper.dart';
 import 'package:tolak_tax/widgets/cached_network_image.dart';
 import 'package:tolak_tax/widgets/receipt_item.dart';
 import 'package:tolak_tax/widgets/section_container.dart';
+import 'package:tolak_tax/screens/tax_details_screen.dart';
 
 class ReceiptDetailsScreen extends StatelessWidget {
   final Receipt receipt;
@@ -18,6 +19,15 @@ class ReceiptDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: colorScheme.primary,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.pushNamed(context, '/tax-details', arguments: receipt);
+        },
+        icon: const Icon(Icons.receipt),
+        label: const Text('Tax Details'),
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onSecondary,
+      ),
       body: SafeArea(
         child: Column(
           children: [

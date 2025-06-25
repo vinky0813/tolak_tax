@@ -18,6 +18,7 @@ import 'package:tolak_tax/screens/receipt_details_screen.dart';
 import 'package:tolak_tax/screens/reset_password_screen.dart';
 import 'package:tolak_tax/screens/signup_screen.dart';
 import 'package:tolak_tax/screens/splash_screen.dart';
+import 'package:tolak_tax/screens/tax_details_screen.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/services/budget_service.dart';
 import 'package:tolak_tax/services/navigation_service.dart';
@@ -25,6 +26,7 @@ import 'package:tolak_tax/themes/app_theme.dart';
 import 'package:tolak_tax/utils/transitions.dart';
 import 'package:tolak_tax/screens/camera_page.dart';
 import 'package:tolak_tax/screens/receipt_confirm_screen.dart';
+import 'package:tolak_tax/screens/tax_details_screen.dart';
 
 import 'services/receipt_service.dart';
 import 'services/achievement_service.dart';
@@ -151,8 +153,10 @@ class MyApp extends StatelessWidget {
               ),
             );
           case 'budget-settings':
-            return fadeThroughRoute(
-                BudgetSettingsScreen());
+            return fadeThroughRoute(BudgetSettingsScreen());
+          case '/tax-details':
+            final args = settings.arguments as Receipt;
+            return fadeThroughRoute(TaxDetailsScreen(receipt: args));
           case '/display-picture':
             final args = settings.arguments as Map<String, dynamic>;
             return fadeThroughRoute(
