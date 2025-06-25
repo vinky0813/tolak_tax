@@ -37,6 +37,8 @@ class _BudgetOverviewScreenState extends State<BudgetOverviewScreen> {
     final budgets = budgetService!.budgets;
     final _categoryKeys = budgets.keys.toList();
 
+    print("_categoryKeys $_categoryKeys");
+
     final double totalBudget = budgets.values.fold(
       0.0,
           (double previousSum, Map<String, double> categoryBudgetData) {

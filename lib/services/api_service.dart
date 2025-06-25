@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/models/achievement_model.dart';
@@ -160,9 +162,10 @@ class ApiService {
       var response = await http.get(url);
 
       if (response.statusCode != 200) {
+        final errorMsg = 'ApiService Error: Failed to get budgets. Status: ${response.statusCode}, Body: ${response.body}';
         print(
-            'ApiService Error: Failed to get budgets. Status: ${response.statusCode}, Body: ${response.body}');
-        throw Exception('Failed to load budgets from server.');
+            errorMsg);
+        throw Exception(errorMsg);
       }
 
       final decoded = json.decode(response.body) as Map<String, dynamic>;
@@ -170,7 +173,7 @@ class ApiService {
       return decoded;
     } catch (e) {
       print('ApiService Network Error on GET: $e');
-      throw Exception('Could not connect to the server to load budgets.');
+      throw Exception('Could not connect to the server to load budgets. error: $e');
     }
   }
 
@@ -192,6 +195,7 @@ class ApiService {
 
     var url = Uri.http(apiUrl, '/save-budgets-by-user', {'id_token': idToken});
 
+    print('payload: $payload');
     try {
       print('ApiService: Calling POST ${url.toString()}');
       var response = await http.post(
@@ -200,16 +204,12 @@ class ApiService {
         body: json.encode(payload),
       );
 
-      if (response.statusCode != 200) {
-        print(
-            'ApiService Error: Failed to save budgets. Status: ${response.statusCode}, Body: ${response.body}');
-        throw Exception('Failed to save budgets to server.');
-      }
-
-      print('ApiService: Budgets saved successfully.');
-    } catch (e) {
-      print('ApiService Network Error on POST: $e');
-      throw Exception('Could not connect to the server to save budgets.');
+    } on SocketException catch (e) {
+      print('ApiService Network Error on POST (SocketException): $e');
+      throw Exception('Could not connect to the server to save budgets (Network Issue).');
+    } on http.ClientException catch (e) {
+      print('ApiService Network Error on POST (ClientException): $e');
+      throw Exception('Could not connect to the server to save budgets (Client Network Issue).');
     }
   }
 }

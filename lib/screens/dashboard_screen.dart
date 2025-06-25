@@ -85,19 +85,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               pinned: true,
               expandedHeight: 260,
               backgroundColor: colorScheme.primary,
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 15, right: 10),
-                  child: IconButton(
-                    icon: const Icon(Icons.settings),
-                    color: colorScheme.onPrimary,
-                    onPressed: () {
-                      // handle go to settings
-                      print("Settings button tapped");
-                    },
-                  ),
-                ),
-              ],
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),

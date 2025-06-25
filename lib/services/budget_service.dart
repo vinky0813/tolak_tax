@@ -99,6 +99,7 @@ class BudgetService with ChangeNotifier {
       _setLoading(false);
     } catch (e) {
       final message = e.toString();
+      print("message $message");
       if (message.contains('404')) {
         print('BudgetService: No existing budget found. Creating default...');
         final defaultBudget = _generateDefaultBudget();
