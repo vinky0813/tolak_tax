@@ -3,11 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:tolak_tax/data/dummy_receipt_data.dart';
 import 'package:tolak_tax/models/achievement_model.dart';
 import 'package:tolak_tax/services/achievement_service.dart';
-import 'package:tolak_tax/models/achievement_model.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
-import 'package:tolak_tax/services/achievement_service.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/data/category_constants.dart';
+import 'package:tolak_tax/services/receipt_service.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
 import 'package:tolak_tax/widgets/achivement_banner.dart';
 import 'package:tolak_tax/widgets/cached_network_svg.dart';
@@ -18,7 +17,6 @@ import 'package:tolak_tax/widgets/section_container.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
 import 'package:tolak_tax/widgets/weekly_barchart.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:tolak_tax/data/dummy_receipt_data.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -79,20 +77,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final colorScheme = theme.colorScheme;
     final user = Provider.of<AuthService>(context).currentUser;
     final String? photoUrl = user?.photoURL;
+    final receiptService = Provider.of<ReceiptService>(context, listen: true);
     final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
     final List<Receipt> dummyReceipts = dummyReceiptsData;
     final achievementService = context.watch<AchievementService?>();
     final streakCount = achievementService?.currentScanStreak ?? 0;
 
     // Dummy data for demo
-    final int totalReceipts = dummyReceipts.length;
-    final double totalExpenses =
-        dummyReceipts.fold(0.0, (sum, receipt) => sum + receipt.totalAmount);
-    final double totalTax = dummyReceipts.fold(
-        0.0, (sum, receipt) => sum + (receipt.taxAmount ?? 0.0));
-    const double taxDue = 40.00;
+    final int totalReceipts = receiptService.getCachedReceiptsCount();
+    final double totalExpenses = receiptService.getTotalAmountSpent();
+    final double totalTax = receiptService.getCachedReceipts().fold(
+          0.0,
+          (sum, receipt) => sum + (receipt.taxAmount ?? 0.0),
+        );
 
-    final recentReceipts = dummyReceipts;
+    final recentReceipts = receiptService.getRecentReceipts();
 
     final userName = Provider.of<AuthService>(context).currentUser?.displayName;
 
@@ -236,7 +235,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 width: 70,
                                 icon: Icons.local_fire_department,
                                 label: 'Scan Streak',
-                                value: '$streakCount ${streakCount == 1 ? "day" : "days"}',
+                                value:
+                                    '$streakCount ${streakCount == 1 ? "day" : "days"}',
                                 color: Colors.orange),
                           ],
                         ),
