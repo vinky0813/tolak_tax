@@ -6,6 +6,7 @@ import 'package:tolak_tax/models/receipt_model.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/data/category_constants.dart';
 import 'package:tolak_tax/services/budget_service.dart';
+import 'package:tolak_tax/services/receipt_service.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
 import 'package:tolak_tax/widgets/achivement_banner.dart';
 import 'package:tolak_tax/widgets/cached_network_svg.dart';
@@ -59,6 +60,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final colorScheme = theme.colorScheme;
     final user = Provider.of<AuthService>(context, listen: false).currentUser;
     final String? photoUrl = user?.photoURL;
+    final receiptService = Provider.of<ReceiptService>(context, listen: true);
     final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
     final List<Receipt> dummyReceipts = dummyReceiptsData;
     final achievementService = context.watch<AchievementService?>();
@@ -66,13 +68,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final budgetService = Provider.of<BudgetService?>(context);
     final _budgets = budgetService?.budgets ?? {};
 
-    final int totalReceipts = dummyReceipts.length;
-    final double totalExpenses =
-        dummyReceipts.fold(0.0, (sum, receipt) => sum + receipt.totalAmount);
-    final double totalTax = dummyReceipts.fold(
-        0.0, (sum, receipt) => sum + (receipt.taxAmount ?? 0.0));
+    // Dummy data for demo
+    final int totalReceipts = receiptService.getCachedReceiptsCount();
+    final double totalExpenses = receiptService.getTotalAmountSpent();
+    final double totalTax = receiptService.getCachedReceipts().fold(
+          0.0,
+          (sum, receipt) => sum + (receipt.taxAmount ?? 0.0),
+        );
 
-    final recentReceipts = dummyReceipts;
+    final recentReceipts = receiptService.getRecentReceipts();
 
     final userName = Provider.of<AuthService>(context).currentUser?.displayName;
 
@@ -203,7 +207,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 width: 70,
                                 icon: Icons.local_fire_department,
                                 label: 'Scan Streak',
-                                value: '$streakCount ${streakCount == 1 ? "day" : "days"}',
+                                value:
+                                    '$streakCount ${streakCount == 1 ? "day" : "days"}',
                                 color: Colors.orange),
                           ],
                         ),
@@ -282,8 +287,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             viewportFraction: 0.85,
                             height: 170,
                           )),
-
-
 
                       const SizedBox(height: 20),
 

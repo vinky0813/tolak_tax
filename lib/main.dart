@@ -26,53 +26,69 @@ import 'package:tolak_tax/utils/transitions.dart';
 import 'package:tolak_tax/screens/camera_page.dart';
 import 'package:tolak_tax/screens/receipt_confirm_screen.dart';
 
+import 'services/receipt_service.dart';
 import 'services/achievement_service.dart';
 import 'services/api_service.dart';
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeFirebase();
   // adding provider
-  runApp(MultiProvider(
-    providers: [
-      Provider<AuthService>(
-        create: (_) => AuthService(),
-      ),
-      Provider<ApiService>(
-        create: (_) => ApiService(),
-      ),
-      StreamProvider<User?>(
-        create: (context) => context.read<AuthService>().authStateChanges,
-        initialData: null,
-      ),
-      ChangeNotifierProxyProvider2<User?, ApiService, AchievementService?>(
-        create: (_) => null,
-        update: (context, user, apiService, previousAchievementService) {
-          if (user == null) {
-            return null;
-          }
-          print('Providing AchievementService for user: ${user.uid}');
-          return AchievementService(
-            apiService: apiService,
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<AuthService>(
+          create: (_) => AuthService(),
+        ),
+        Provider<ApiService>(
+          create: (_) => ApiService(),
+        ),
+        StreamProvider<User?>(
+          create: (context) => context.read<AuthService>().authStateChanges,
+          initialData: null,
+        ),
+        ChangeNotifierProxyProvider<ApiService, ReceiptService>(
+          create: (context) => ReceiptService(
+            apiService: context.read<ApiService>(),
             authService: context.read<AuthService>(),
-          );
-        },
-      ),
-      ChangeNotifierProxyProvider2<User?, ApiService, BudgetService?>(
-        create: (_) => null,
-        update: (context, user, apiService, _) {
-          if (user == null) return null;
-          print('Providing BudgetService for user: ${user.uid}');
-          return BudgetService(
-            apiService: apiService,
-            authService: context.read<AuthService>(),
-          );
-        },
-      ),
-    ],
-    child: MyApp(),
-  ),);
+          ),
+          update: (context, apiService, previousReceiptService) {
+            // Return the existing service if it exists, otherwise create a new one
+            return previousReceiptService ??
+                ReceiptService(
+                  apiService: apiService,
+                  authService: context.read<AuthService>(),
+                );
+          },
+        ),
+        ChangeNotifierProxyProvider2<User?, ApiService, AchievementService?>(
+          create: (_) => null,
+          update: (context, user, apiService, previousAchievementService) {
+            if (user == null) {
+              return null;
+            }
+            print('Providing AchievementService for user: ${user.uid}');
+            return AchievementService(
+              apiService: apiService,
+              authService: context.read<AuthService>(),
+            );
+          },
+        ),
+        ChangeNotifierProxyProvider2<User?, ApiService, BudgetService?>(
+          create: (_) => null,
+          update: (context, user, apiService, _) {
+            if (user == null) return null;
+            print('Providing BudgetService for user: ${user.uid}');
+            return BudgetService(
+              apiService: apiService,
+              authService: context.read<AuthService>(),
+            );
+          },
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

@@ -31,7 +31,6 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
       }
 
       final String response = await apiService.readReceipt(imagePath);
-      print('Response from readReceipt: $response');
 
       // Parse the JSON string response
       final Map<String, dynamic> receiptData = jsonDecode(response);
@@ -65,48 +64,54 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary),
+                        icon: Icon(Icons.arrow_back,
+                            color: colorScheme.onPrimary),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                       TextButton(
                         onPressed: _isLoading
                             ? null
                             : () async {
-                          setState(() {
-                            _isLoading = true;
-                          });
+                                setState(() {
+                                  _isLoading = true;
+                                });
 
-                          try {
-                            final receipt = await confirmReadReceipt(
-                                context, apiService, widget.imagePath);
+                                try {
+                                  final receipt = await confirmReadReceipt(
+                                      context, apiService, widget.imagePath);
 
-                            if (receipt != null) {
-                              Navigator.pushNamed(
-                                context,
-                                '/receipt-confirm',
-                                arguments: {
-                                  'receiptImagePath': widget.imagePath,
-                                  'receiptData': receipt,
-                                },
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Failed to read receipt. Please try again.'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
-                          } finally {
-                            setState(() {
-                              _isLoading = false;
-                            });
-                          }
-                        },
+                                  print("receipt : $receipt");
+
+                                  if (receipt != null) {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/receipt-confirm',
+                                      arguments: {
+                                        'receiptImagePath': widget.imagePath,
+                                        'receiptData': receipt,
+                                      },
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            'Failed to read receipt. Please try again.'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                } finally {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                }
+                              },
                         child: Text(
                           'Confirm',
                           style: theme.textTheme.labelLarge?.copyWith(
-                            color: _isLoading ? Colors.grey : colorScheme.onPrimary,
+                            color: _isLoading
+                                ? Colors.grey
+                                : colorScheme.onPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -114,7 +119,6 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
                     ],
                   ),
                 ),
-
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(16.0),
@@ -133,7 +137,6 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
                 ),
               ],
             ),
-
             if (_isLoading)
               Container(
                 color: Colors.black.withOpacity(0.5),

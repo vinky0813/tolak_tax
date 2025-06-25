@@ -13,6 +13,7 @@ import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/line_items_card.d
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/discounts_card.dart';
 import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/additional_info_card.dart';
 import 'package:tolak_tax/services/api_service.dart';
+import 'package:tolak_tax/services/receipt_service.dart';
 
 class ReceiptConfirmScreen extends StatefulWidget {
   final Receipt? receiptData;
@@ -147,6 +148,7 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
     print('receiptData: ${widget.receiptData?.toMap()}');
 
     return Scaffold(
@@ -173,7 +175,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                   flex: 2,
                   child: ElevatedButton.icon(
                     onPressed: () async {
-                      final achievementService = context.read<AchievementService?>();
+                      final achievementService =
+                          context.read<AchievementService?>();
                       showDialog(
                         context: context,
                         barrierDismissible: false,
@@ -189,16 +192,12 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                         await achievementService?.processDailyScan();
 
                         _saveReceipt();
-                        await Future.delayed(const Duration(seconds: 2));
-                        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-
                       } catch (e) {
                         print("An error occurred during save: $e");
                         if (Navigator.canPop(context)) {
                           Navigator.of(context).pop();
                         }
                       }
-
                     },
                     icon: const Icon(Icons.save),
                     label: const Text('Save Receipt'),
@@ -422,6 +421,7 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     );
 
     final apiService = Provider.of<ApiService>(context, listen: false);
+    final receiptService = Provider.of<ReceiptService>(context, listen: false);
     final budgetService = Provider.of<BudgetService?>(context, listen: false);
     addReceipt(context, apiService, widget.receiptImagePath, receiptData)
         .then((success) async {
@@ -435,6 +435,11 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
           );
         }
         _showSuccessSnackBar('Receipt saved successfully!');
+        receiptService.refreshReceipts(apiService);
+        Navigator.of(context).pop();
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        }
       } else {
         _showErrorSnackBar('Failed to save receipt. Please try again.');
       }

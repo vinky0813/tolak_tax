@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/screens/dashboard_screen.dart';
 import 'package:tolak_tax/screens/expense_screen.dart';
 import 'package:tolak_tax/screens/profile_screen.dart';
 import 'package:tolak_tax/screens/reports_screen.dart';
 import 'package:tolak_tax/widgets/bottom_scanned_file_sheet.dart';
-import 'package:tolak_tax/services/api_service.dart';
+import 'package:tolak_tax/services/receipt_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -42,31 +41,18 @@ class _HomeScreenState extends State<HomeScreen> {
         });
   }
 
-  Future<void> fetchAndPrintUserReceipts(
-      BuildContext context, ApiService apiService) async {
-    try {
-      final String? idToken = await apiService.getIdToken(context);
-      print('ID Token: $idToken');
-      if (idToken == null || idToken.isEmpty) {
-        print('Error: Could not retrieve ID token.');
-        return;
-      }
-
-      final userReceiptsData = await apiService.getUserReciepts(idToken);
-
-      print('User Receipts: $userReceiptsData');
-    } catch (e) {
-      print('An error occurred: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
     final theme = Theme.of(context);
-    final apiService = Provider.of<ApiService>(context, listen: false);
+    final receiptService = Provider.of<ReceiptService>(context, listen: true);
 
-    fetchAndPrintUserReceipts(context, apiService);
+    // Initialize receipts if not already done
+    if (!receiptService.hasInitialized && !receiptService.isLoading) {
+      // Use a post-frame callback to avoid calling during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        receiptService.initialize();
+      });
+    }
 
     return Scaffold(
       extendBody: true,

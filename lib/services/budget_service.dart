@@ -122,9 +122,11 @@ class BudgetService with ChangeNotifier {
       throw Exception('ID token is required to save budgets.');
     }
 
-    await _apiService.saveBudget(idToken: idToken, budgets: updatedBudgets);
+    await _apiService.saveBudget(idToken: idToken, budgets: updatedBudgets, budgetPeriod: _currentBudgetPeriod, );
 
     _budgets = updatedBudgets;
+
+    print('updatedBudgets: $updatedBudgets');
 
     notifyListeners();
   }
@@ -173,7 +175,9 @@ class BudgetService with ChangeNotifier {
     final currentSpentOnServer = updatedBudgets[category]!['spentAmount'] ?? 0.0;
     updatedBudgets[category]!['spentAmount'] = currentSpentOnServer + amountSpent;
     try {
-      await _apiService.saveBudget(idToken: idToken, budgets: updatedBudgets);
+
+
+      await _apiService.saveBudget(idToken: idToken, budgets: updatedBudgets, budgetPeriod: _currentBudgetPeriod);
       _budgets = updatedBudgets;
       notifyListeners();
 
