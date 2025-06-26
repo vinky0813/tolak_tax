@@ -4,6 +4,7 @@ import 'package:tolak_tax/models/tax_classification_model.dart';
 import 'package:tolak_tax/widgets/receipt_item.dart';
 import 'package:tolak_tax/widgets/section_container.dart';
 import 'package:tolak_tax/models/tax_classification_model.dart';
+import 'package:tolak_tax/widgets/tax_widgets/tax_overview_card.dart';
 
 class TaxDetailsScreen extends StatelessWidget {
   final Receipt receipt;
@@ -46,7 +47,7 @@ class TaxDetailsScreen extends StatelessWidget {
                       title: 'Tax Overview',
                       child: Column(
                         children: [
-                          _buildTaxOverviewCard(context),
+                          TaxOverviewCard(receipt: receipt),
                           const SizedBox(height: 16),
                           _buildTaxSummaryMetrics(context),
                         ],
@@ -102,71 +103,6 @@ class TaxDetailsScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildTaxOverviewCard(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    // Calculate tax amount from individual tax lines
-    final totalTaxAmount = receipt.taxSummary?.totalTaxSaved ?? 0.0;
-
-    // Calculate total amount from line items
-    final totalAmount =
-        receipt.lineItems.fold(0.0, (sum, item) => sum + item.totalPrice);
-
-    final taxPercentage =
-        totalAmount > 0 ? (totalTaxAmount / totalAmount * 100) : 0.0;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            colorScheme.primaryContainer,
-            colorScheme.secondaryContainer
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.receipt_long,
-                  color: colorScheme.onPrimaryContainer, size: 24),
-              const SizedBox(width: 8),
-              Text(
-                'Total Tax Claimable',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: colorScheme.onPrimaryContainer,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'RM ${totalTaxAmount.toStringAsFixed(2)}',
-            style: theme.textTheme.headlineMedium?.copyWith(
-              color: colorScheme.onPrimaryContainer,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '${taxPercentage.toStringAsFixed(1)}% of total amount',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onPrimaryContainer.withOpacity(0.8),
-            ),
-          ),
-        ],
       ),
     );
   }
