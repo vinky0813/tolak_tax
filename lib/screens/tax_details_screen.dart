@@ -5,6 +5,7 @@ import 'package:tolak_tax/widgets/receipt_item.dart';
 import 'package:tolak_tax/widgets/section_container.dart';
 import 'package:tolak_tax/models/tax_classification_model.dart';
 import 'package:tolak_tax/widgets/tax_widgets/tax_overview_card.dart';
+import 'package:tolak_tax/widgets/tax_widgets/tax_summary_metrics.dart';
 
 class TaxDetailsScreen extends StatelessWidget {
   final Receipt receipt;
@@ -49,7 +50,7 @@ class TaxDetailsScreen extends StatelessWidget {
                         children: [
                           TaxOverviewCard(receipt: receipt),
                           const SizedBox(height: 16),
-                          _buildTaxSummaryMetrics(context),
+                          TaxSummaryMetrics(receipt: receipt),
                         ],
                       ),
                     ),
@@ -104,38 +105,6 @@ class TaxDetailsScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildTaxSummaryMetrics(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final taxSummary = receipt.taxSummary;
-
-    return Row(
-      children: [
-        Expanded(
-          child: _buildMetricCard(
-            context,
-            'Taxable Items',
-            '${taxSummary?.taxableItemsCount ?? 0}',
-            Icons.check_circle,
-            colorScheme.successContainer ?? Colors.green.shade100,
-            colorScheme.onSuccessContainer ?? Colors.green.shade800,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _buildMetricCard(
-            context,
-            'Non-Taxable Items',
-            '${taxSummary?.exemptItemsCount ?? 0}',
-            Icons.calculate,
-            colorScheme.errorContainer,
-            colorScheme.onErrorContainer,
-          ),
-        ),
-      ],
     );
   }
 
