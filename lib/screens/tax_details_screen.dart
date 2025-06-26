@@ -88,12 +88,11 @@ class TaxDetailsScreen extends StatelessWidget {
 
                     // Tax Insights & Tips
                     SectionContainer(
-                      title: 'Tax Insights & Tips',
+                      title: 'Tax Insights',
                       child: Column(
                         children: [
                           _buildTaxInsights(context),
                           const SizedBox(height: 12),
-                          _buildTaxTips(context),
                         ],
                       ),
                     ),
@@ -193,7 +192,7 @@ class TaxDetailsScreen extends StatelessWidget {
         Expanded(
           child: _buildMetricCard(
             context,
-            'Tax-Exempt Items',
+            'Non-Taxable Items',
             '${taxSummary?.exemptItemsCount ?? 0}',
             Icons.calculate,
             colorScheme.errorContainer,
@@ -305,7 +304,7 @@ class TaxDetailsScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        isTaxable ? 'CLAIMABLE' : 'TAX-EXEMPT',
+                        isTaxable ? 'CLAIMABLE' : 'EXEMPT',
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: isTaxable
                               ? theme.colorScheme.onSuccessContainer
@@ -373,6 +372,7 @@ class TaxDetailsScreen extends StatelessWidget {
         .map((item) => item.taxLine!.taxClass)
         .toSet()
         .toList();
+    taxClasses.remove('NA');
 
     if (taxClasses.isEmpty) {
       return Container(
@@ -432,15 +432,23 @@ class TaxDetailsScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          ...taxClasses.map((taxClass) => Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text(
-                  '${taxClass} : ${TaxClassifcation().taxReliefClasses[taxClass]}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+          if (taxClasses[0] == 'NA')
+            Text(
+              'No tax classes found',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.7),
+              ),
+            )
+          else
+            ...taxClasses.map((taxClass) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Text(
+                    '${taxClass} : ${TaxClassifcation().taxReliefClasses[taxClass]}',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              )),
+                )),
         ],
       ),
     );
@@ -494,7 +502,7 @@ class TaxDetailsScreen extends StatelessWidget {
                 ),
                 Text(
                   totalItems > 0
-                      ? '${((exemptCount / totalItems) * 100).toStringAsFixed(0)}% of items are tax-claimable'
+                      ? '${((taxableCount / totalItems) * 100).toStringAsFixed(0)}% of items are tax-claimable'
                       : 'No tax information available',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: isOverallGood
@@ -627,56 +635,6 @@ class TaxDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTaxTips(BuildContext context) {
-    final theme = Theme.of(context);
-    final tips = _generateTaxTips();
-
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.tips_and_updates,
-                  color: theme.colorScheme.onSecondaryContainer, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                'Tax Tips',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  color: theme.colorScheme.onSecondaryContainer,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          ...tips.map((tip) => Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('💡 ', style: TextStyle(fontSize: 12)),
-                    Expanded(
-                      child: Text(
-                        tip,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSecondaryContainer,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )),
-        ],
-      ),
-    );
-  }
-
   List<String> _generateTaxInsights() {
     final insights = <String>[];
 
@@ -696,17 +654,17 @@ class TaxDetailsScreen extends StatelessWidget {
     if (taxAmount > 0 && totalAmount > 0) {
       final taxRate = (taxAmount / totalAmount * 100);
       insights.add(
-          'Your effective tax rate for this transaction is ${taxRate.toStringAsFixed(1)}%');
+          'Your effective "save rate" for this transaction is ${taxRate.toStringAsFixed(1)}%');
     }
 
-    if (exemptCount > 0) {
+    if (taxableCount > 0) {
       insights.add(
-          'You have $exemptCount tax-exempt items that helped reduce your tax burden');
+          'You have $taxableCount tax-claimable items that helped reduce your tax burden');
     }
 
-    if (taxableCount > exemptCount) {
+    if (exemptCount > taxableCount) {
       insights.add(
-          'Most items in this receipt are taxable - consider tax-exempt alternatives where possible');
+          'Most items in this receipt are non-claimable - consider tax-claimable alternatives where possible');
     }
 
     if (taxSummary?.totalTaxSaved != null && taxSummary!.totalTaxSaved > 0) {
@@ -714,11 +672,12 @@ class TaxDetailsScreen extends StatelessWidget {
           'You saved RM${taxSummary.totalTaxSaved.toStringAsFixed(2)} in taxes on this purchase');
     }
 
-    // Get insights from tax classes
     final taxClasses = receipt.lineItems
         .where((item) => item.taxLine != null)
         .map((item) => item.taxLine!.taxClass)
         .toSet();
+
+    taxClasses.remove('NA');
 
     if (taxClasses.isNotEmpty) {
       insights.add('Tax classes involved: ${taxClasses.join(', ')}');
@@ -727,60 +686,6 @@ class TaxDetailsScreen extends StatelessWidget {
     return insights.isEmpty
         ? ['Keep this receipt for tax record-keeping purposes']
         : insights;
-  }
-
-  List<String> _generateTaxTips() {
-    final tips = <String>[];
-
-    tips.add('Keep all receipts organized for easy tax filing');
-    tips.add('Consider using expense tracking apps to categorize purchases');
-
-    // Get tax-related tips based on tax lines
-    final taxableItems = receipt.lineItems
-        .where((item) => item.taxLine != null && item.taxLine!.taxEligible)
-        .toList();
-    final exemptItems = receipt.lineItems
-        .where((item) => item.taxLine != null && !item.taxLine!.taxEligible)
-        .toList();
-
-    if (taxableItems.isNotEmpty) {
-      tips.add(
-          'Document business purpose for taxable items to maximize deductions');
-    }
-
-    if (exemptItems.isNotEmpty) {
-      tips.add(
-          'Tax-exempt items can help reduce overall tax burden - look for similar alternatives');
-    }
-
-    // Get specific tax class advice
-    final taxClasses = receipt.lineItems
-        .where((item) => item.taxLine != null)
-        .map((item) => item.taxLine!.taxClass)
-        .toSet();
-
-    for (final taxClass in taxClasses) {
-      switch (taxClass.toLowerCase()) {
-        case 'food':
-        case 'meals':
-          tips.add(
-              'Business meals may have special deduction rules - consult tax guidelines');
-          break;
-        case 'supplies':
-        case 'office':
-          tips.add(
-              'Office supplies are typically fully deductible for business use');
-          break;
-        case 'transport':
-        case 'travel':
-          tips.add('Keep detailed travel logs for transportation expenses');
-          break;
-      }
-    }
-
-    tips.add('Review tax regulations annually as they may change');
-
-    return tips;
   }
 }
 
