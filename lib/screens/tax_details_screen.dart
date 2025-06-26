@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
+import 'package:tolak_tax/models/tax_classification_model.dart';
 import 'package:tolak_tax/widgets/receipt_item.dart';
 import 'package:tolak_tax/widgets/section_container.dart';
+import 'package:tolak_tax/models/tax_classification_model.dart';
 
 class TaxDetailsScreen extends StatelessWidget {
   final Receipt receipt;
@@ -433,7 +435,7 @@ class TaxDetailsScreen extends StatelessWidget {
           ...taxClasses.map((taxClass) => Padding(
                 padding: const EdgeInsets.only(bottom: 4),
                 child: Text(
-                  '• ${taxClass}',
+                  '${taxClass} : ${TaxClassifcation().taxReliefClasses[taxClass]}',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -492,7 +494,7 @@ class TaxDetailsScreen extends StatelessWidget {
                 ),
                 Text(
                   totalItems > 0
-                      ? '${((exemptCount / totalItems) * 100).toStringAsFixed(0)}% of items are tax-exempt'
+                      ? '${((exemptCount / totalItems) * 100).toStringAsFixed(0)}% of items are tax-claimable'
                       : 'No tax information available',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: isOverallGood
