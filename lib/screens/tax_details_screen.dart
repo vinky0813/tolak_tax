@@ -8,6 +8,7 @@ import 'package:tolak_tax/widgets/tax_widgets/tax_breakdown_items.dart';
 import 'package:tolak_tax/widgets/tax_widgets/tax_category_info.dart';
 import 'package:tolak_tax/widgets/tax_widgets/tax_calculation_details.dart';
 import 'package:tolak_tax/widgets/tax_widgets/tax_insights.dart';
+import 'package:tolak_tax/widgets/tax_widgets/tax_classification_info.dart';
 
 class TaxDetailsScreen extends StatelessWidget {
   final Receipt receipt;
@@ -71,7 +72,7 @@ class TaxDetailsScreen extends StatelessWidget {
                       title: 'Tax Classification',
                       child: Column(
                         children: [
-                          _buildTaxClassificationInfo(context),
+                          TaxClassificationInfo(receipt: receipt),
                           const SizedBox(height: 12),
                           TaxCategoryInfo(receipt: receipt),
                         ],
@@ -105,114 +106,4 @@ class TaxDetailsScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildTaxClassificationInfo(BuildContext context) {
-    final theme = Theme.of(context);
-
-    // Get tax classes from tax lines
-    final taxClasses = receipt.lineItems
-        .where((item) => item.taxLine != null)
-        .map((item) => item.taxLine!.taxClass)
-        .toSet()
-        .toList();
-    taxClasses.remove('NA');
-
-    if (taxClasses.isEmpty) {
-      return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceVariant,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.info, color: theme.colorScheme.primary, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  'Tax Classification',
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'No tax classification available',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.category, color: theme.colorScheme.primary, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                'Tax Classifications',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          if (taxClasses[0] == 'NA')
-            Text(
-              'No tax classes found',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
-              ),
-            )
-          else
-            ...taxClasses.map((taxClass) => Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Text(
-                    '${taxClass} : ${TaxClassifcation().taxReliefClasses[taxClass]}',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                )),
-        ],
-      ),
-    );
-  }
-}
-
-// Extension to add missing color scheme properties
-extension ColorSchemeExtension on ColorScheme {
-  Color? get successContainer => brightness == Brightness.light
-      ? Colors.green.shade100
-      : Colors.green.shade900;
-
-  Color? get onSuccessContainer => brightness == Brightness.light
-      ? Colors.green.shade800
-      : Colors.green.shade100;
-
-  Color? get warningContainer => brightness == Brightness.light
-      ? Colors.orange.shade100
-      : Colors.orange.shade900;
-
-  Color? get onWarningContainer => brightness == Brightness.light
-      ? Colors.orange.shade800
-      : Colors.orange.shade100;
 }
