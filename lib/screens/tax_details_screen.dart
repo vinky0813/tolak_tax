@@ -37,7 +37,7 @@ class TaxDetailsScreen extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: IconButton(
                 icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.pop(context),
               ),
             ),
             Expanded(
