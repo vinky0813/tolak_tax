@@ -26,8 +26,6 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-
-
   final List<String> _displayCategories =
       allCategories.where((c) => c != 'All').toList();
 
@@ -237,10 +235,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                             QuickActionButton(
                               icon: Icons.calculate,
-                              label: 'Generate Report',
+                              label: 'Tax Report',
                               onPressed: () {
-                                Navigator.pushNamed(
-                                    context, '/generate-report');
+                                Navigator.pushNamed(context, '/tax-report');
                               },
                             ),
                           ],
@@ -254,10 +251,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           itemBuilder: (context, index, realIndex) {
                             final category = _displayCategories[index];
 
-                            final Map<String, double>? categorySpecificBudgetData = _budgets[category];
+                            final Map<String, double>?
+                                categorySpecificBudgetData = _budgets[category];
 
-                            final double budget = categorySpecificBudgetData?['budget'] ?? 0.0;
-                            final double spent = categorySpecificBudgetData?['spentAmount'] ?? 0.0;
+                            final double budget =
+                                categorySpecificBudgetData?['budget'] ?? 0.0;
+                            final double spent =
+                                categorySpecificBudgetData?['spentAmount'] ??
+                                    0.0;
 
                             final icon = CategoryHelper.getIcon(category);
                             final label =

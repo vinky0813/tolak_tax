@@ -19,6 +19,7 @@ import 'package:tolak_tax/screens/reset_password_screen.dart';
 import 'package:tolak_tax/screens/signup_screen.dart';
 import 'package:tolak_tax/screens/splash_screen.dart';
 import 'package:tolak_tax/screens/tax_details_screen.dart';
+import 'package:tolak_tax/screens/tax_report_screen.dart';
 import 'package:tolak_tax/services/auth_service.dart';
 import 'package:tolak_tax/services/budget_service.dart';
 import 'package:tolak_tax/services/navigation_service.dart';
@@ -172,6 +173,8 @@ class MyApp extends StatelessWidget {
                 receiptImagePath: args['receiptImagePath'],
               ),
             );
+          case '/tax-report':
+            return fadeThroughRoute(const TaxReportScreen());
 
           default:
             // make a real 404 error page when free
