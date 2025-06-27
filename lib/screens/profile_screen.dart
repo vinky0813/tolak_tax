@@ -68,7 +68,7 @@ class ProfileScreen extends StatelessWidget {
                           color: Colors.white,
                         ),
                       ),
-                      Text(user?.email ?? 'Email',
+                      Text(user?.email ?? 'No Email',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: Colors.white,
                           )),
@@ -154,7 +154,10 @@ class ProfileScreen extends StatelessWidget {
                     SettingsItem(
                       icon: Icons.edit,
                       title: 'Edit Profile',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, 'edit-profile',
+                            arguments: budgets);
+                      },
                     ),
                     SettingsItem(
                       icon: Icons.account_balance_wallet,

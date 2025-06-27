@@ -8,6 +8,7 @@ import 'package:tolak_tax/screens/budget_overview_screen.dart';
 import 'package:tolak_tax/screens/budget_settings_screen.dart';
 import 'package:tolak_tax/screens/display_picture_screen.dart';
 import 'package:tolak_tax/screens/create_profile_screen.dart';
+import 'package:tolak_tax/screens/edit_profile_screen.dart';
 import 'package:tolak_tax/screens/forgot_password_screen.dart';
 import 'package:tolak_tax/screens/generate_report_screen.dart';
 import 'package:tolak_tax/screens/home_screen.dart';
@@ -40,7 +41,7 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        Provider<AuthService>(
+        ChangeNotifierProvider<AuthService>(
           create: (_) => AuthService(),
         ),
         Provider<ApiService>(
@@ -165,6 +166,8 @@ class MyApp extends StatelessWidget {
                 imagePath: args['imagePath'],
               ),
             );
+          case 'edit-profile':
+            return fadeThroughRoute(EditProfileScreen());
           case '/receipt-confirm':
             final args = settings.arguments as Map<String, dynamic>;
             return fadeThroughRoute(
