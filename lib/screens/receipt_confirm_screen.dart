@@ -149,8 +149,6 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    print('receiptData: ${widget.receiptData?.toMap()}');
-
     return Scaffold(
         backgroundColor: colorScheme.primary,
         bottomNavigationBar: SafeArea(
@@ -429,7 +427,9 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
       if (success == true) {
         print('totalAmount: $totalAmount');
         print('expenseCategory: ${expenseCategoryController.text.trim()}');
-        if (totalAmount != null && totalAmount > 0 && expenseCategoryController.text.trim().isNotEmpty) {
+        if (totalAmount != null &&
+            totalAmount > 0 &&
+            expenseCategoryController.text.trim().isNotEmpty) {
           await budgetService!.recordReceipt(
             category: expenseCategoryController.text.trim(),
             amountSpent: totalAmount,

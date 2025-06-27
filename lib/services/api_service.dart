@@ -10,8 +10,8 @@ import 'dart:convert';
 
 class ApiService {
   //final apiUrl = 'tolaktaxapi-291467312481.asia-east1.run.app';
-  //final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
-  final apiUrl = '192.168.0.117:8000'; // kelvin's home at penang
+  final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
+  //final apiUrl = '192.168.0.117:8000'; // kelvin's home at penang
   //final apiUrl = '10.3.226.75:8000'; // inti ip
 
   Future<String?> getIdToken(BuildContext context) async {
@@ -162,9 +162,9 @@ class ApiService {
       var response = await http.get(url);
 
       if (response.statusCode != 200) {
-        final errorMsg = 'ApiService Error: Failed to get budgets. Status: ${response.statusCode}, Body: ${response.body}';
-        print(
-            errorMsg);
+        final errorMsg =
+            'ApiService Error: Failed to get budgets. Status: ${response.statusCode}, Body: ${response.body}';
+        print(errorMsg);
         throw Exception(errorMsg);
       }
 
@@ -173,15 +173,15 @@ class ApiService {
       return decoded;
     } catch (e) {
       print('ApiService Network Error on GET: $e');
-      throw Exception('Could not connect to the server to load budgets. error: $e');
+      throw Exception(
+          'Could not connect to the server to load budgets. error: $e');
     }
   }
 
-  Future<void> saveBudget({
-    required String? idToken,
-    required Map<String, Map<String, double>> budgets,
-    String? budgetPeriod
-  }) async {
+  Future<void> saveBudget(
+      {required String? idToken,
+      required Map<String, Map<String, double>> budgets,
+      String? budgetPeriod}) async {
     if (idToken == null || idToken.isEmpty) {
       throw Exception('ID token is required to save budgets.');
     }
@@ -203,13 +203,14 @@ class ApiService {
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: json.encode(payload),
       );
-
     } on SocketException catch (e) {
       print('ApiService Network Error on POST (SocketException): $e');
-      throw Exception('Could not connect to the server to save budgets (Network Issue).');
+      throw Exception(
+          'Could not connect to the server to save budgets (Network Issue).');
     } on http.ClientException catch (e) {
       print('ApiService Network Error on POST (ClientException): $e');
-      throw Exception('Could not connect to the server to save budgets (Client Network Issue).');
+      throw Exception(
+          'Could not connect to the server to save budgets (Client Network Issue).');
     }
   }
 }
