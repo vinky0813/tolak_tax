@@ -72,7 +72,6 @@ class TaxReliefClassesSection extends StatelessWidget {
                   );
                 }).toList(),
 
-                // Show unused tax relief classes (optional - you can remove this if you don't want to show them)
                 const SizedBox(height: 16),
                 ExpansionTile(
                   title: Text(

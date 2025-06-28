@@ -52,6 +52,7 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
                     ),
                   ),
                   const Spacer(),
+                  //TODO: FIX
                   _buildYearSelector(theme),
                 ],
               ),

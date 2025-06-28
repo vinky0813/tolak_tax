@@ -70,10 +70,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     // Dummy data for demo
     final int totalReceipts = receiptService.getCachedReceiptsCount();
     final double totalExpenses = receiptService.getTotalAmountSpent();
-    final double totalTax = receiptService.getCachedReceipts().fold(
-          0.0,
-          (sum, receipt) => sum + (receipt.taxAmount ?? 0.0),
-        );
+    final double totalTax =
+        receiptService.getYearlyTaxData(DateTime.now().year)['totalTaxSaved'];
 
     final recentReceipts = receiptService.getRecentReceipts();
 
