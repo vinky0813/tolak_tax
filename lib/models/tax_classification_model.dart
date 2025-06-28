@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class TaxClassifcation {
   final Map<String, String> taxReliefClasses = {
     '1': 'Self and dependent relatives.',
@@ -65,119 +67,135 @@ class TaxClassifcation {
         'EV charging facility installation, rental, purchase, or subscription fees for own (non-business) vehicle.'
   };
 
-  /// A map where the key is the classification ID and the value is the relief limit.
   final Map<String, int> reliefLimits = {
-    // --- Individual & Dependents ---
-    '1': 9000, // Self and dependent relatives
-    '2': 8000, // Parental medical expenses (Combines 2 & 2b)
-
-    // --- Disability ---
-    '3': 6000, // Basic supporting equipment
-    '4': 6000, // Individual certified disabled
-
-    // --- Education ---
-    '5':
-        7000, // Self-education fees (Combines 5 & 5b: Degree, Master's, Doctorate)
-    '5c': 2000, // DSD-recognized up-skilling courses
-
-    // --- Medical ---
-    '6': 10000, // Medical expenses (Combines 6, 6b, 6c, 6d, 7, 7b, 7c)
-    // Note: '7', '6c', '6d', '7b' have a sub-limit of RM 1,000 within the RM 10,000 limit
-    '8': 4000, // Child learning disability expenses (Combines 8 & 8b)
-
-    // --- Lifestyle ---
-    '9':
-        2500, // Lifestyle purchases (Combines 9, 9b, 9c: books, gadgets, internet)
-    '10': 500, // Sports-related expenses (Combines 10, 10b, 10c, 10d)
-
-    // --- Family & Child ---
-    '11': 1000, // Breastfeeding equipment
-    '12': 3000, // Childcare or kindergarten fees
-    '13': 8000, // National Education Savings Scheme (SSPN)
-    '14': 4000, // Spouse or alimony
-    '15': 5000, // Disabled spouse
-    '16': 2000, // Unmarried child under 18
-    '16b_i': 2000, // Unmarried child 18+ (pre-degree)
-    '16b_ii': 8000, // Unmarried child 18+ (higher education)
-    '16c_i': 6000, // Unmarried disabled child
-    '16c_ii': 14000, // Unmarried, disabled child 18+ (higher education)
-
-    // --- Retirement & Insurance ---
-    '17': 7000, // EPF and Life Insurance (Combines 17 & 17b)
-    '18': 3000, // Private Retirement Scheme (PRS) & Deferred Annuity
-    '19': 3000, // Education or medical insurance
-    '20': 350, // SOCSO / PERKESO contributions
-
-    // --- Other ---
-    '21': 2500, // EV charging facility expenses
+    '1': 9000,
+    '2': 8000,
+    '3': 6000,
+    '4': 6000,
+    '5': 7000,
+    '5c': 2000,
+    '6': 10000,
+    '8': 4000,
+    '9': 2500,
+    '10': 500,
+    '11': 1000,
+    '12': 3000,
+    '13': 8000,
+    '14': 4000,
+    '15': 5000,
+    '16': 2000,
+    '16b_i': 2000,
+    '16b_ii': 8000,
+    '16c_i': 6000,
+    '16c_ii': 14000,
+    '17': 7000,
+    '18': 3000,
+    '19': 3000,
+    '20': 350,
+    '21': 2500,
   };
 
-  /// Gets the effective relief limit for a given tax class.
-  /// Handles special cases like medical expenses with sub-limits.
   int getEffectiveReliefLimit(String taxClass) {
-    // Direct relief limits
     if (reliefLimits.containsKey(taxClass)) {
       return reliefLimits[taxClass]!;
     }
 
-    // Handle medical expenses with sub-limits
-    // Classes '7', '6c', '6d', '7b' have RM 1,000 sub-limit within the RM 10,000 main limit
     if (['7', '6c', '6d', '7b'].contains(taxClass)) {
-      return 1000; // Sub-limit for specific medical expenses
+      return 1000;
     }
 
-    // Handle combined categories that map to main categories
     if (['7c'].contains(taxClass)) {
-      return reliefLimits['6'] ??
-          0; // Mental health falls under main medical limit
+      return reliefLimits['6'] ?? 0;
     }
 
-    return 0; // Unknown tax class
+    return 0;
   }
 
-  /// Gets the main category for a tax class (used for grouping purposes)
   String getMainCategory(String taxClass) {
-    // Medical expenses that combine under category '6'
     if (['6', '6b', '6c', '6d', '7', '7b', '7c'].contains(taxClass)) {
       return '6';
     }
 
-    // Education expenses that combine under category '5'
     if (['5', '5b'].contains(taxClass)) {
       return '5';
     }
 
-    // Parental medical that combines under category '2'
     if (['2', '2b'].contains(taxClass)) {
       return '2';
     }
 
-    // Child learning disability that combines under category '8'
     if (['8', '8b'].contains(taxClass)) {
       return '8';
     }
 
-    // Lifestyle purchases that combine under category '9'
     if (['9', '9b', '9c', '9d'].contains(taxClass)) {
       return '9';
     }
 
-    // Sports expenses that combine under category '10'
     if (['10', '10b', '10c', '10d'].contains(taxClass)) {
       return '10';
     }
 
-    // EPF and Life Insurance that combine under category '17'
     if (['17', '17b'].contains(taxClass)) {
       return '17';
     }
 
-    // Child categories that have their own separate limits
     if (['16b_i', '16b_ii', '16c_i', '16c_ii'].contains(taxClass)) {
-      return taxClass; // These have their own individual limits
+      return taxClass;
     }
 
-    // Default: return the tax class itself if no grouping applies
     return taxClass;
+  }
+
+  IconData getIconForTaxClass(String taxClass) {
+    final mainCategory = getMainCategory(taxClass);
+
+    switch (mainCategory) {
+      case '1':
+      case '14':
+      case '15':
+      case '16':
+      case '16b_i':
+      case '16b_ii':
+      case '16c_i':
+      case '16c_ii':
+        return Icons.family_restroom;
+
+      case '2':
+      case '6':
+      case '7':
+        return Icons.medical_services;
+
+      case '3':
+      case '4':
+        return Icons.accessible;
+
+      case '5':
+      case '8':
+      case '13':
+        return Icons.school;
+
+      case '9':
+        return Icons.devices;
+
+      case '10':
+        return Icons.fitness_center;
+
+      case '11':
+      case '12':
+        return Icons.child_care;
+
+      case '17':
+      case '18':
+      case '19':
+      case '20':
+        return Icons.savings;
+
+      case '21':
+        return Icons.electric_car;
+
+      default:
+        return Icons.receipt;
+    }
   }
 }

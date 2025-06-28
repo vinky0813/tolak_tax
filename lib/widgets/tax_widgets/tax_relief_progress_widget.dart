@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../models/tax_classification_model.dart';
 
 class TaxReliefProgressWidget extends StatelessWidget {
   final String taxClass;
@@ -21,40 +22,13 @@ class TaxReliefProgressWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final taxClassification = TaxClassifcation();
 
     // Calculate progress values
     final progress =
         reliefLimit > 0 ? (spentAmount / reliefLimit).clamp(0.0, 1.0) : 0.0;
     final remaining = (reliefLimit - spentAmount).clamp(0, reliefLimit);
     final isOverLimit = spentAmount > reliefLimit;
-
-    // Select appropriate icon for tax class
-    IconData getIconForTaxClass(String taxClass) {
-      switch (taxClass.toUpperCase()) {
-        case 'B':
-          return Icons.library_books; // Books/Education
-        case 'C':
-          return Icons.computer; // Computer/Technology
-        case 'D':
-          return Icons.medical_services; // Medical
-        case 'E':
-          return Icons.fitness_center; // Lifestyle/Sports
-        case 'F':
-          return Icons.safety_check; // Safety/Equipment
-        case 'G':
-          return Icons.home; // Home/Property
-        case 'H':
-          return Icons.elderly; // Parents/Family
-        case 'I':
-          return Icons.school; // Education/Children
-        case 'J':
-          return Icons.savings; // Savings/Investment
-        case 'K':
-          return Icons.health_and_safety; // Insurance/Health
-        default:
-          return Icons.receipt; // Default
-      }
-    }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -162,7 +136,7 @@ class TaxReliefProgressWidget extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        getIconForTaxClass(taxClass),
+                        taxClassification.getIconForTaxClass(taxClass),
                         color: color,
                         size: 20,
                       ),

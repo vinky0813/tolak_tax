@@ -60,7 +60,7 @@ class TaxReliefClassesSection extends StatelessWidget {
                   final reliefLimit =
                       taxClassification.getEffectiveReliefLimit(taxClass);
                   final spentAmount =
-                      _calculateSpentAmountForTaxClass(receipts, taxClass);
+                      calculateSpentAmountForTaxClass(receipts, taxClass);
                   final color = Colors.blue;
 
                   return TaxReliefProgressWidget(
@@ -157,7 +157,7 @@ class TaxReliefClassesSection extends StatelessWidget {
     return Map.fromEntries(sortedEntries);
   }
 
-  double _calculateSpentAmountForTaxClass(
+  double calculateSpentAmountForTaxClass(
       List<Receipt> receipts, String taxClass) {
     double totalSpent = 0.0;
 
