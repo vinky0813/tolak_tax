@@ -4,12 +4,31 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tolak_tax/services/auth_result.dart';
 
-class AuthService {
+class AuthService with ChangeNotifier{
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   String? _verificationId;
+
+  User? _currentUser;
+  User? get currentUser => _currentUser;
+
+  AuthService() {
+    _currentUser = _auth.currentUser;
+    _auth.authStateChanges().listen((user) {
+      _currentUser = user;
+      notifyListeners();
+    });
+  }
+
+  Future<void> refreshUser() async {
+    if (_currentUser != null) {
+      await _currentUser!.reload();
+      _currentUser = _auth.currentUser;
+      notifyListeners();
+    }
+  }
 
   Future<AuthResult> signInWithEmail(String email, String password) async {
     final userCredential = await _auth.signInWithEmailAndPassword(
@@ -196,8 +215,6 @@ class AuthService {
     }
     await _auth.signOut();
   }
-
-  User? get currentUser => _auth.currentUser;
 
   Future<String?> getIdToken() async {
     final user = _auth.currentUser;
