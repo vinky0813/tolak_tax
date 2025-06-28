@@ -23,8 +23,7 @@ class TaxDetailsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: colorScheme.primary,
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.pushNamed(context, '/receipt-details',
-            arguments: receipt),
+        onPressed: () => Navigator.pop(context),
         icon: const Icon(Icons.receipt_long),
         label: const Text('Receipt Details'),
         backgroundColor: colorScheme.secondary,
