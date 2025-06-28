@@ -77,6 +77,42 @@ class ApiService {
     }
   }
 
+  Future<void> deleteReceipt({
+    required String? idToken,
+    required String receiptId,
+  }) async {
+    if (idToken == null || idToken.isEmpty) {
+      throw Exception('ID token is required to delete a receipt.');
+    }
+    var url = Uri.http(apiUrl, '/delete-receipt-by-id', {
+      'id_token': idToken,
+      'receipt_id': receiptId,
+    });
+
+    try {
+      print('ApiService: Calling DELETE ${url.toString()}');
+      final response = await http.delete(url);
+
+      if (response.statusCode == 200) {
+        // Successfully deleted
+        print('ApiService: Receipt deleted successfully. Response: ${response.body}');
+        return;
+      } else {
+        final errorBody = json.decode(response.body);
+        final errorMessage = errorBody['detail'] ?? 'An unknown error occurred.';
+        print(
+            'ApiService Error: Failed to delete receipt. Status: ${response.statusCode}, Body: ${response.body}');
+        throw Exception('Failed to delete receipt: $errorMessage');
+      }
+    } on SocketException catch (e) {
+      print('ApiService Network Error on DELETE (SocketException): $e');
+      throw Exception('Could not connect to the server to delete the receipt.');
+    } catch (e) {
+      print('ApiService Error on DELETE: $e');
+      throw Exception('An unexpected error occurred while deleting the receipt.');
+    }
+  }
+
   Future<Map<String, dynamic>?> getAchievements(String? idToken) async {
     if (idToken == null || idToken.isEmpty) {
       throw Exception('ID token is required to get achievements.');

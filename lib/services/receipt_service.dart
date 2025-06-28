@@ -19,6 +19,7 @@ class ReceiptService with ChangeNotifier {
   static bool _isLoading = false;
   static bool _hasInitialized = false;
   static DateTime? _lastFetchTime;
+  bool _isDeleting = false;
 
   // Cache duration - 5 minutes
   static const Duration _cacheDuration = Duration(minutes: 5);
@@ -153,6 +154,39 @@ class ReceiptService with ChangeNotifier {
       'totalNonClaimableItems': totalNonClaimableItems,
       'taxEfficiencyRate': taxEfficiencyRate,
     };
+  }
+
+  Future<void> deleteReceipt(String receiptId) async {
+    _isDeleting = true;
+    notifyListeners();
+
+    try {
+      final String? idToken = await _authService.getIdToken();
+
+      if (idToken == null || idToken.isEmpty) {
+        throw Exception('User is not authenticated. Cannot delete receipt.');
+      }
+      await _apiService.deleteReceipt(
+        idToken: idToken,
+        receiptId: receiptId,
+      );
+
+      final int originalLength = _cachedReceipts.length;
+      _cachedReceipts.removeWhere((receipt) => receipt.receiptId == receiptId);
+
+      if (_cachedReceipts.length < originalLength) {
+        print('ReceiptService: Successfully deleted receipt $receiptId and removed it from local cache.');
+      } else {
+        print('ReceiptService Warning: API call succeeded, but receipt $receiptId was not found in local cache.');
+      }
+
+    } catch (e) {
+      print('ReceiptService: An error occurred while deleting receipt $receiptId. Error: $e');
+      rethrow;
+    } finally {
+      _isDeleting = false;
+      notifyListeners();
+    }
   }
 
   /// Calculates the total tax saved with relief limits applied per tax class

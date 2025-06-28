@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
+import 'package:tolak_tax/services/receipt_service.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
 import 'package:tolak_tax/widgets/cached_network_image.dart';
 import 'package:tolak_tax/widgets/receipt_item.dart';
@@ -17,6 +19,39 @@ class ReceiptDetailsScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    void _showDeleteConfirmationDialog(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Delete Receipt?'),
+          content: const Text(
+            'Are you sure you want to delete this receipt? This action cannot be undone.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.error,
+              ),
+              child: const Text('Delete'),
+              onPressed: () async {
+                print('Receipt: Receipt id: ${receipt.receiptId}');
+                await Provider.of<ReceiptService>(context, listen: false).deleteReceipt(receipt.receiptId);
+
+                Navigator.of(ctx).pop();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: colorScheme.primary,
       floatingActionButton: FloatingActionButton.extended(
@@ -31,12 +66,40 @@ class ReceiptDetailsScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+                PopupMenuButton<String>(
+                  onSelected: (value) {
+                    if (value == 'delete') {
+                      _showDeleteConfirmationDialog(context);
+                    }
+                  },
+                  icon: Icon(Icons.more_vert, color: colorScheme.onPrimary),
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                    PopupMenuItem<String>(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.delete_outline,
+                            color: colorScheme.error,
+                          ),
+                          const SizedBox(width: 8),
+                          const Text('Delete'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
             Expanded(
               child: SingleChildScrollView(

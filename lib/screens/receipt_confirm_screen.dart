@@ -511,6 +511,7 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     }
 
     final receiptData = Receipt(
+      receiptId: '',
       merchantName: merchantNameController.text.trim(),
       merchantAddress: merchantAddressController.text.trim().isNotEmpty
           ? merchantAddressController.text.trim()
