@@ -8,6 +8,7 @@ import 'package:tolak_tax/data/category_constants.dart';
 import 'package:tolak_tax/services/budget_service.dart';
 import 'package:tolak_tax/services/receipt_service.dart';
 import 'package:tolak_tax/utils/category_helper.dart';
+import 'package:tolak_tax/widgets/budget_alert_banner.dart';
 import 'package:tolak_tax/widgets/achivement_banner.dart';
 import 'package:tolak_tax/widgets/cached_network_svg.dart';
 import 'package:tolak_tax/widgets/gamified_progress.dart';
@@ -36,6 +37,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showPendingAchievementBanners();
+      _showPendingBudgetAlerts();
+    });
+  }
+
+  void _showPendingBudgetAlerts() {
+    Future.delayed(Duration.zero, () {
+      if (!mounted) return;
+
+      final budgetService = context.read<BudgetService?>();
+      if (budgetService == null) return;
+
+      final categoriesToShow = budgetService.newlyOverBudgetCategories;
+
+      if (categoriesToShow.isNotEmpty) {
+        for (final categoryName in categoriesToShow) {
+          BudgetAlertBanner.show(context, categoryName);
+        }
+        budgetService.clearNewlyOverBudgetCategories();
+      }
     });
   }
 

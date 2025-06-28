@@ -17,6 +17,9 @@ class BudgetService with ChangeNotifier {
   String? get currentBudgetPeriod => _currentBudgetPeriod;
   bool get isLoading => _isLoading;
 
+  final List<String> _newlyOverBudgetCategories = [];
+  List<String> get newlyOverBudgetCategories => _newlyOverBudgetCategories;
+
   BudgetService({
     required ApiService apiService,
     required AuthService authService,
@@ -28,6 +31,10 @@ class BudgetService with ChangeNotifier {
   void _setLoading(bool loading) {
     _isLoading = loading;
     notifyListeners();
+  }
+
+  void clearNewlyOverBudgetCategories() {
+    _newlyOverBudgetCategories.clear();
   }
 
   Future<void> _performMonthlyReset(
@@ -145,6 +152,15 @@ class BudgetService with ChangeNotifier {
 
       if (apiData == null || apiData['budgets'] == null) {
         return;
+      }
+
+      final budgetForCategory = _budgets[category]!['budget'] ?? 0.0;
+      final spentAmountBefore = _budgets[category]!['spentAmount'] ?? 0.0;
+      final spentAmountAfter = spentAmountBefore + amountSpent;
+
+      if (spentAmountBefore <= budgetForCategory && spentAmountAfter > budgetForCategory) {
+        _newlyOverBudgetCategories.add(category);
+        print("BudgetService: User has gone over budget for category '$category'. Added to list.");
       }
 
       final budgetsFromApi = apiData['budgets'] as Map<String, dynamic>;
