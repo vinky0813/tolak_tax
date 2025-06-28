@@ -29,11 +29,8 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
     final colorScheme = theme.colorScheme;
     final receiptService = Provider.of<ReceiptService>(context, listen: true);
 
-    List<Receipt> allReceipts = receiptService.getCachedReceipts();
-    List<Receipt> yearReceipts =
-        _filterReceiptsByYear(allReceipts, selectedYear);
-
-    final yearlyTaxData = _calculateYearlyTaxData(yearReceipts);
+    List<Receipt> yearReceipts = receiptService.getReceiptsByYear(selectedYear);
+    final yearlyTaxData = receiptService.getYearlyTaxData(selectedYear);
 
     return Scaffold(
       backgroundColor: colorScheme.primary,
@@ -241,7 +238,7 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: MetricCard(
-                  title: 'Non-Claimable Items',
+                  title: 'Non Claimable Items',
                   value: yearlyData['totalNonClaimableItems'].toString(),
                   icon: Icons.cancel,
                   bgColor: theme.colorScheme.errorContainer,
@@ -305,20 +302,6 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
     // Get all available tax relief classes to show both used and unused ones
     final allTaxClasses = taxClassification.reliefLimits.keys.toList();
 
-    // Define colors for different tax classes
-    final taxClassColors = {
-      'B': Colors.blue,
-      'C': Colors.purple,
-      'D': Colors.green,
-      'E': Colors.orange,
-      'F': Colors.red,
-      'G': Colors.teal,
-      'H': Colors.indigo,
-      'I': Colors.amber,
-      'J': Colors.cyan,
-      'K': Colors.pink,
-    };
-
     return SectionContainer(
       title: 'Tax Relief Progress',
       child: taxReliefData.isEmpty
@@ -357,7 +340,7 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
                       taxClassification.reliefLimits[taxClass] ?? 0;
                   final spentAmount =
                       _calculateSpentAmountForTaxClass(receipts, taxClass);
-                  final color = taxClassColors[taxClass] ?? Colors.blue;
+                  final color = Colors.blue;
 
                   return TaxReliefProgressWidget(
                     taxClass: taxClass,
@@ -393,7 +376,7 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
                               'Unknown tax class';
                       final reliefLimit =
                           taxClassification.reliefLimits[taxClass] ?? 0;
-                      final color = taxClassColors[taxClass] ?? Colors.grey;
+                      final color = Colors.grey;
 
                       return TaxReliefProgressWidget(
                         taxClass: taxClass,
@@ -527,27 +510,6 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
                     ),
                   );
                 }),
-                if (claimableReceipts.length > 10)
-                  Container(
-                    margin: const EdgeInsets.only(top: 8),
-                    child: Center(
-                      child: TextButton(
-                        onPressed: () {
-                          // TODO: Navigate to full receipts list
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  'Showing top 10 of ${claimableReceipts.length} claimable receipts'),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          'View all ${claimableReceipts.length} claimable receipts',
-                          style: TextStyle(color: Colors.green.shade700),
-                        ),
-                      ),
-                    ),
-                  ),
               ],
             ),
     );
@@ -581,7 +543,6 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
       }
     }
 
-    // Convert receipt sets to counts and sort by tax saved
     final result = <String, Map<String, dynamic>>{};
     for (var entry in taxReliefData.entries) {
       result[entry.key] = {
@@ -597,7 +558,6 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
     return Map.fromEntries(sortedEntries);
   }
 
-  /// Calculate the total spent amount for a specific tax classification
   double _calculateSpentAmountForTaxClass(
       List<Receipt> receipts, String taxClass) {
     double totalSpent = 0.0;
@@ -614,39 +574,5 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
     }
 
     return totalSpent;
-  }
-
-  // Helper methods for data calculation
-  List<Receipt> _filterReceiptsByYear(List<Receipt> receipts, int year) {
-    return receipts.where((receipt) {
-      final date = DateTime.parse(receipt.transactionDatetime);
-      return date.year == year;
-    }).toList();
-  }
-
-  Map<String, dynamic> _calculateYearlyTaxData(List<Receipt> receipts) {
-    double totalTaxSaved = 0.0;
-    double totalSpent = 0.0;
-    int totalClaimableItems = 0;
-    int totalNonClaimableItems = 0;
-
-    for (var receipt in receipts) {
-      totalSpent += receipt.totalAmount;
-      totalTaxSaved += receipt.taxSummary?.totalTaxSaved ?? 0.0;
-      totalClaimableItems += receipt.taxSummary?.taxableItemsCount ?? 0;
-      totalNonClaimableItems += receipt.taxSummary?.exemptItemsCount ?? 0;
-    }
-
-    final taxEfficiencyRate =
-        totalSpent > 0 ? (totalTaxSaved / totalSpent * 100) : 0.0;
-
-    return {
-      'totalReceipts': receipts.length,
-      'totalTaxSaved': totalTaxSaved,
-      'totalSpent': totalSpent,
-      'totalClaimableItems': totalClaimableItems,
-      'totalNonClaimableItems': totalNonClaimableItems,
-      'taxEfficiencyRate': taxEfficiencyRate,
-    };
   }
 }

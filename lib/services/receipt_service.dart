@@ -119,4 +119,38 @@ class ReceiptService with ChangeNotifier {
     // Return the most recent 5 receipts
     return _cachedReceipts.take(5).toList();
   }
+
+  List<Receipt> getReceiptsByYear(int year) {
+    return _cachedReceipts.where((receipt) {
+      final date = DateTime.parse(receipt.transactionDatetime);
+      return date.year == year;
+    }).toList();
+  }
+
+  Map<String, dynamic> getYearlyTaxData(int year) {
+    List<Receipt> receipts = getReceiptsByYear(year);
+    double totalTaxSaved = 0.0;
+    double totalSpent = 0.0;
+    int totalClaimableItems = 0;
+    int totalNonClaimableItems = 0;
+
+    for (var receipt in receipts) {
+      totalSpent += receipt.totalAmount;
+      totalTaxSaved += receipt.taxSummary?.totalTaxSaved ?? 0.0;
+      totalClaimableItems += receipt.taxSummary?.taxableItemsCount ?? 0;
+      totalNonClaimableItems += receipt.taxSummary?.exemptItemsCount ?? 0;
+    }
+
+    final taxEfficiencyRate =
+        totalSpent > 0 ? (totalTaxSaved / totalSpent * 100) : 0.0;
+
+    return {
+      'totalReceipts': receipts.length,
+      'totalTaxSaved': totalTaxSaved,
+      'totalSpent': totalSpent,
+      'totalClaimableItems': totalClaimableItems,
+      'totalNonClaimableItems': totalNonClaimableItems,
+      'taxEfficiencyRate': taxEfficiencyRate,
+    };
+  }
 }
