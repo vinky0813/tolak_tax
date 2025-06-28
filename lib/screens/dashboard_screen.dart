@@ -17,6 +17,7 @@ import 'package:tolak_tax/widgets/section_container.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
 import 'package:tolak_tax/widgets/weekly_barchart.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:tolak_tax/widgets/bottom_scanned_file_sheet.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -223,14 +224,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               icon: Icons.camera_alt,
                               label: 'Scan Receipt',
                               onPressed: () {
-                                // TODO: Add scan logic
+                                showModalBottomSheet(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const BottomScannedFileSheet();
+                                    });
                               },
                             ),
                             QuickActionButton(
                               icon: Icons.receipt,
                               label: 'View Receipts',
                               onPressed: () {
-                                // TODO: Navigate to receipts list
+                                Navigator.pushNamed(context, '/expense-screen');
                               },
                             ),
                             QuickActionButton(
