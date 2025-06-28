@@ -58,7 +58,7 @@ class TaxReliefClassesSection extends StatelessWidget {
                       taxClassification.taxReliefClasses[taxClass] ??
                           'Unknown tax class';
                   final reliefLimit =
-                      taxClassification.reliefLimits[taxClass] ?? 0;
+                      taxClassification.getEffectiveReliefLimit(taxClass);
                   final spentAmount =
                       _calculateSpentAmountForTaxClass(receipts, taxClass);
                   final color = Colors.blue;
@@ -96,7 +96,7 @@ class TaxReliefClassesSection extends StatelessWidget {
                           taxClassification.taxReliefClasses[taxClass] ??
                               'Unknown tax class';
                       final reliefLimit =
-                          taxClassification.reliefLimits[taxClass] ?? 0;
+                          taxClassification.getEffectiveReliefLimit(taxClass);
                       final color = Colors.grey;
 
                       return TaxReliefProgressWidget(

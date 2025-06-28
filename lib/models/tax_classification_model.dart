@@ -82,6 +82,7 @@ class TaxClassifcation {
 
     // --- Medical ---
     '6': 10000, // Medical expenses (Combines 6, 6b, 6c, 6d, 7, 7b, 7c)
+    // Note: '7', '6c', '6d', '7b' have a sub-limit of RM 1,000 within the RM 10,000 limit
     '8': 4000, // Child learning disability expenses (Combines 8 & 8b)
 
     // --- Lifestyle ---
@@ -110,4 +111,73 @@ class TaxClassifcation {
     // --- Other ---
     '21': 2500, // EV charging facility expenses
   };
+
+  /// Gets the effective relief limit for a given tax class.
+  /// Handles special cases like medical expenses with sub-limits.
+  int getEffectiveReliefLimit(String taxClass) {
+    // Direct relief limits
+    if (reliefLimits.containsKey(taxClass)) {
+      return reliefLimits[taxClass]!;
+    }
+
+    // Handle medical expenses with sub-limits
+    // Classes '7', '6c', '6d', '7b' have RM 1,000 sub-limit within the RM 10,000 main limit
+    if (['7', '6c', '6d', '7b'].contains(taxClass)) {
+      return 1000; // Sub-limit for specific medical expenses
+    }
+
+    // Handle combined categories that map to main categories
+    if (['7c'].contains(taxClass)) {
+      return reliefLimits['6'] ??
+          0; // Mental health falls under main medical limit
+    }
+
+    return 0; // Unknown tax class
+  }
+
+  /// Gets the main category for a tax class (used for grouping purposes)
+  String getMainCategory(String taxClass) {
+    // Medical expenses that combine under category '6'
+    if (['6', '6b', '6c', '6d', '7', '7b', '7c'].contains(taxClass)) {
+      return '6';
+    }
+
+    // Education expenses that combine under category '5'
+    if (['5', '5b'].contains(taxClass)) {
+      return '5';
+    }
+
+    // Parental medical that combines under category '2'
+    if (['2', '2b'].contains(taxClass)) {
+      return '2';
+    }
+
+    // Child learning disability that combines under category '8'
+    if (['8', '8b'].contains(taxClass)) {
+      return '8';
+    }
+
+    // Lifestyle purchases that combine under category '9'
+    if (['9', '9b', '9c', '9d'].contains(taxClass)) {
+      return '9';
+    }
+
+    // Sports expenses that combine under category '10'
+    if (['10', '10b', '10c', '10d'].contains(taxClass)) {
+      return '10';
+    }
+
+    // EPF and Life Insurance that combine under category '17'
+    if (['17', '17b'].contains(taxClass)) {
+      return '17';
+    }
+
+    // Child categories that have their own separate limits
+    if (['16b_i', '16b_ii', '16c_i', '16c_ii'].contains(taxClass)) {
+      return taxClass; // These have their own individual limits
+    }
+
+    // Default: return the tax class itself if no grouping applies
+    return taxClass;
+  }
 }
