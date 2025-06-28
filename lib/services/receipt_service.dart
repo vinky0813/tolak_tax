@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'api_service.dart';
 import '../models/receipt_model.dart';
+import '../models/tax_classification_model.dart';
 import '../services/auth_service.dart';
-import 'package:provider/provider.dart';
 
 class ReceiptService with ChangeNotifier {
   final ApiService _apiService;
@@ -118,5 +118,95 @@ class ReceiptService with ChangeNotifier {
         .sort((a, b) => b.transactionDatetime.compareTo(a.transactionDatetime));
     // Return the most recent 5 receipts
     return _cachedReceipts.take(5).toList();
+  }
+
+  List<Receipt> getReceiptsByYear(int year) {
+    return _cachedReceipts.where((receipt) {
+      final date = DateTime.parse(receipt.transactionDatetime);
+      return date.year == year;
+    }).toList();
+  }
+
+  Map<String, dynamic> getYearlyTaxData(int year) {
+    List<Receipt> receipts = getReceiptsByYear(year);
+    double totalTaxSaved = 0.0;
+    double totalSpent = 0.0;
+    int totalClaimableItems = 0;
+    int totalNonClaimableItems = 0;
+
+    totalTaxSaved = calculateTaxSavedWithReliefLimits(receipts);
+
+    for (var receipt in receipts) {
+      totalSpent += receipt.totalAmount;
+      totalClaimableItems += receipt.taxSummary?.taxableItemsCount ?? 0;
+      totalNonClaimableItems += receipt.taxSummary?.exemptItemsCount ?? 0;
+    }
+
+    final taxEfficiencyRate =
+        totalSpent > 0 ? (totalTaxSaved / totalSpent * 100) : 0.0;
+
+    return {
+      'totalReceipts': receipts.length,
+      'totalTaxSaved': totalTaxSaved,
+      'totalSpent': totalSpent,
+      'totalClaimableItems': totalClaimableItems,
+      'totalNonClaimableItems': totalNonClaimableItems,
+      'taxEfficiencyRate': taxEfficiencyRate,
+    };
+  }
+
+  /// Calculates the total tax saved with relief limits applied per tax class
+  double calculateTaxSavedWithReliefLimits(List<Receipt> receipts) {
+    final taxClassification = TaxClassifcation();
+    final Map<String, double> taxClassSpending = {};
+    final Map<String, double> taxClassSavings = {};
+
+    // First, calculate total spending and savings per tax class
+    for (var receipt in receipts) {
+      for (var item in receipt.lineItems) {
+        if (item.taxLine != null &&
+            item.taxLine!.taxEligible &&
+            item.taxLine!.taxClass.isNotEmpty &&
+            item.taxLine!.taxClass != 'NA') {
+          final taxClass = item.taxLine!.taxClass;
+          final mainCategory = taxClassification.getMainCategory(taxClass);
+
+          // Accumulate spending by main category (to handle grouped limits)
+          taxClassSpending[mainCategory] =
+              (taxClassSpending[mainCategory] ?? 0.0) + item.totalPrice;
+
+          // Accumulate raw tax savings by main category
+          taxClassSavings[mainCategory] =
+              (taxClassSavings[mainCategory] ?? 0.0) + item.taxLine!.taxAmount;
+        }
+      }
+    }
+
+    // Apply relief limits to calculate actual claimable tax savings
+    double totalClaimableTaxSaved = 0.0;
+
+    for (var entry in taxClassSpending.entries) {
+      final taxClass = entry.key;
+      final spentAmount = entry.value;
+      final rawTaxSavings = taxClassSavings[taxClass] ?? 0.0;
+      final reliefLimit = taxClassification.getEffectiveReliefLimit(taxClass);
+
+      if (reliefLimit > 0) {
+        // Calculate tax rate for this category
+        final taxRate = spentAmount > 0 ? (rawTaxSavings / spentAmount) : 0.0;
+
+        // Apply relief limit - only spending up to the limit can generate tax savings
+        final claimableSpending =
+            spentAmount > reliefLimit ? reliefLimit.toDouble() : spentAmount;
+        final claimableTaxSavings = claimableSpending * taxRate;
+
+        totalClaimableTaxSaved += claimableTaxSavings;
+      } else {
+        // If no relief limit is set, use the full amount (this shouldn't happen normally)
+        totalClaimableTaxSaved += rawTaxSavings;
+      }
+    }
+
+    return totalClaimableTaxSaved;
   }
 }

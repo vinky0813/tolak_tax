@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class TaxClassifcation {
   final Map<String, String> taxReliefClasses = {
     '1': 'Self and dependent relatives.',
@@ -64,4 +66,136 @@ class TaxClassifcation {
     '21':
         'EV charging facility installation, rental, purchase, or subscription fees for own (non-business) vehicle.'
   };
+
+  final Map<String, int> reliefLimits = {
+    '1': 9000,
+    '2': 8000,
+    '3': 6000,
+    '4': 6000,
+    '5': 7000,
+    '5c': 2000,
+    '6': 10000,
+    '8': 4000,
+    '9': 2500,
+    '10': 500,
+    '11': 1000,
+    '12': 3000,
+    '13': 8000,
+    '14': 4000,
+    '15': 5000,
+    '16': 2000,
+    '16b_i': 2000,
+    '16b_ii': 8000,
+    '16c_i': 6000,
+    '16c_ii': 14000,
+    '17': 7000,
+    '18': 3000,
+    '19': 3000,
+    '20': 350,
+    '21': 2500,
+  };
+
+  int getEffectiveReliefLimit(String taxClass) {
+    if (reliefLimits.containsKey(taxClass)) {
+      return reliefLimits[taxClass]!;
+    }
+
+    if (['7', '6c', '6d', '7b'].contains(taxClass)) {
+      return 1000;
+    }
+
+    if (['7c'].contains(taxClass)) {
+      return reliefLimits['6'] ?? 0;
+    }
+
+    return 0;
+  }
+
+  String getMainCategory(String taxClass) {
+    if (['6', '6b', '6c', '6d', '7', '7b', '7c'].contains(taxClass)) {
+      return '6';
+    }
+
+    if (['5', '5b'].contains(taxClass)) {
+      return '5';
+    }
+
+    if (['2', '2b'].contains(taxClass)) {
+      return '2';
+    }
+
+    if (['8', '8b'].contains(taxClass)) {
+      return '8';
+    }
+
+    if (['9', '9b', '9c', '9d'].contains(taxClass)) {
+      return '9';
+    }
+
+    if (['10', '10b', '10c', '10d'].contains(taxClass)) {
+      return '10';
+    }
+
+    if (['17', '17b'].contains(taxClass)) {
+      return '17';
+    }
+
+    if (['16b_i', '16b_ii', '16c_i', '16c_ii'].contains(taxClass)) {
+      return taxClass;
+    }
+
+    return taxClass;
+  }
+
+  IconData getIconForTaxClass(String taxClass) {
+    final mainCategory = getMainCategory(taxClass);
+
+    switch (mainCategory) {
+      case '1':
+      case '14':
+      case '15':
+      case '16':
+      case '16b_i':
+      case '16b_ii':
+      case '16c_i':
+      case '16c_ii':
+        return Icons.family_restroom;
+
+      case '2':
+      case '6':
+      case '7':
+        return Icons.medical_services;
+
+      case '3':
+      case '4':
+        return Icons.accessible;
+
+      case '5':
+      case '8':
+      case '13':
+        return Icons.school;
+
+      case '9':
+        return Icons.devices;
+
+      case '10':
+        return Icons.fitness_center;
+
+      case '11':
+      case '12':
+        return Icons.child_care;
+
+      case '17':
+      case '18':
+      case '19':
+      case '20':
+        return Icons.savings;
+
+      case '21':
+        return Icons.electric_car;
+
+      default:
+        return Icons.receipt;
+    }
+  }
 }

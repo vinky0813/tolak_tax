@@ -17,6 +17,7 @@ import 'package:tolak_tax/widgets/section_container.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
 import 'package:tolak_tax/widgets/weekly_barchart.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:tolak_tax/widgets/bottom_scanned_file_sheet.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -26,8 +27,6 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-
-
   final List<String> _displayCategories =
       allCategories.where((c) => c != 'All').toList();
 
@@ -71,10 +70,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     // Dummy data for demo
     final int totalReceipts = receiptService.getCachedReceiptsCount();
     final double totalExpenses = receiptService.getTotalAmountSpent();
-    final double totalTax = receiptService.getCachedReceipts().fold(
-          0.0,
-          (sum, receipt) => sum + (receipt.taxAmount ?? 0.0),
-        );
+    final double totalTax =
+        receiptService.getYearlyTaxData(DateTime.now().year)['totalTaxSaved'];
 
     final recentReceipts = receiptService.getRecentReceipts();
 
@@ -225,22 +222,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               icon: Icons.camera_alt,
                               label: 'Scan Receipt',
                               onPressed: () {
-                                // TODO: Add scan logic
+                                showModalBottomSheet(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const BottomScannedFileSheet();
+                                    });
                               },
                             ),
                             QuickActionButton(
                               icon: Icons.receipt,
                               label: 'View Receipts',
                               onPressed: () {
-                                // TODO: Navigate to receipts list
+                                Navigator.pushNamed(context, '/expense-screen');
                               },
                             ),
                             QuickActionButton(
                               icon: Icons.calculate,
-                              label: 'Generate Report',
+                              label: 'Tax Report',
                               onPressed: () {
-                                Navigator.pushNamed(
-                                    context, '/generate-report');
+                                Navigator.pushNamed(context, '/tax-report');
                               },
                             ),
                           ],
@@ -254,10 +254,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           itemBuilder: (context, index, realIndex) {
                             final category = _displayCategories[index];
 
-                            final Map<String, double>? categorySpecificBudgetData = _budgets[category];
+                            final Map<String, double>?
+                                categorySpecificBudgetData = _budgets[category];
 
-                            final double budget = categorySpecificBudgetData?['budget'] ?? 0.0;
-                            final double spent = categorySpecificBudgetData?['spentAmount'] ?? 0.0;
+                            final double budget =
+                                categorySpecificBudgetData?['budget'] ?? 0.0;
+                            final double spent =
+                                categorySpecificBudgetData?['spentAmount'] ??
+                                    0.0;
 
                             final icon = CategoryHelper.getIcon(category);
                             final label =

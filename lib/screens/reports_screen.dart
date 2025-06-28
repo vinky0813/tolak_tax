@@ -191,10 +191,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
                               child: Center(
                                 child: QuickActionButton(
                                   icon: Icons.calculate,
-                                  label: 'Generate Report',
+                                  label: 'Tax Report',
                                   onPressed: () {
                                     Navigator.pushNamed(
-                                        context, '/generate-report');
+                                      context,
+                                      '/tax-report',
+                                    );
                                   },
                                 ),
                               ),
