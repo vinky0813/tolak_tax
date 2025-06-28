@@ -7,6 +7,7 @@ import 'package:tolak_tax/widgets/section_container.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
 import 'package:tolak_tax/widgets/tax_widgets/metric_card.dart';
 import 'package:tolak_tax/models/tax_classification_model.dart';
+import 'package:tolak_tax/widgets/tax_widgets/tax_relief_progress_widget.dart';
 
 class TaxReportScreen extends StatefulWidget {
   const TaxReportScreen({super.key});
@@ -94,12 +95,6 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
                       const SizedBox(height: 20),
 
                       // Tax Insights and Recommendations
-                      _buildTaxInsightsSection(
-                          theme, yearlyTaxData, yearReceipts),
-                      const SizedBox(height: 20),
-
-                      // Quick Actions
-                      _buildQuickActionsSection(theme),
                     ],
                   ),
                 ),
@@ -305,9 +300,27 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
   Widget _buildTaxReliefClassesSection(ThemeData theme, List<Receipt> receipts,
       Map<String, dynamic> yearlyData) {
     final taxReliefData = _calculateTaxReliefClassesBreakdown(receipts);
+    final taxClassification = TaxClassifcation();
+
+    // Get all available tax relief classes to show both used and unused ones
+    final allTaxClasses = taxClassification.reliefLimits.keys.toList();
+
+    // Define colors for different tax classes
+    final taxClassColors = {
+      'B': Colors.blue,
+      'C': Colors.purple,
+      'D': Colors.green,
+      'E': Colors.orange,
+      'F': Colors.red,
+      'G': Colors.teal,
+      'H': Colors.indigo,
+      'I': Colors.amber,
+      'J': Colors.cyan,
+      'K': Colors.pink,
+    };
 
     return SectionContainer(
-      title: 'Tax Relief Classes',
+      title: 'Tax Relief Progress',
       child: taxReliefData.isEmpty
           ? Container(
               padding: const EdgeInsets.all(20),
@@ -333,81 +346,66 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
               ),
             )
           : Column(
-              children: taxReliefData.entries.map((entry) {
-                final taxClass = entry.key;
-                final data = entry.value;
-                final description =
-                    TaxClassifcation().taxReliefClasses[taxClass] ??
-                        'Unknown tax class';
+              children: [
+                // Show used tax relief classes with progress row by row
+                ...taxReliefData.entries.map((entry) {
+                  final taxClass = entry.key;
+                  final description =
+                      taxClassification.taxReliefClasses[taxClass] ??
+                          'Unknown tax class';
+                  final reliefLimit =
+                      taxClassification.reliefLimits[taxClass] ?? 0;
+                  final spentAmount =
+                      _calculateSpentAmountForTaxClass(receipts, taxClass);
+                  final color = taxClassColors[taxClass] ?? Colors.blue;
 
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.blue.shade200),
+                  return TaxReliefProgressWidget(
+                    taxClass: taxClass,
+                    description: description,
+                    spentAmount: spentAmount,
+                    reliefLimit: reliefLimit.toDouble(),
+                    color: color,
+                  );
+                }).toList(),
+
+                // Show unused tax relief classes (optional - you can remove this if you don't want to show them)
+                const SizedBox(height: 16),
+                ExpansionTile(
+                  title: Text(
+                    'Available Tax Relief Classes',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.shade100,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          taxClass,
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            color: Colors.blue.shade700,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              description,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${data['receipts']} receipts • ${data['items']} items',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: Colors.blue.shade600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            'RM ${data['taxSaved'].toStringAsFixed(2)}',
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              color: Colors.blue.shade700,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            '${((data['taxSaved'] / yearlyData['totalTaxSaved']) * 100).toStringAsFixed(1)}%',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color:
-                                  theme.colorScheme.onSurface.withOpacity(0.7),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                  subtitle: Text(
+                    'Tap to see unused tax relief opportunities',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
                   ),
-                );
-              }).toList(),
+                  children: [
+                    ...allTaxClasses
+                        .where(
+                            (taxClass) => !taxReliefData.containsKey(taxClass))
+                        .map((taxClass) {
+                      final description =
+                          taxClassification.taxReliefClasses[taxClass] ??
+                              'Unknown tax class';
+                      final reliefLimit =
+                          taxClassification.reliefLimits[taxClass] ?? 0;
+                      final color = taxClassColors[taxClass] ?? Colors.grey;
+
+                      return TaxReliefProgressWidget(
+                        taxClass: taxClass,
+                        description: description,
+                        spentAmount: 0.0,
+                        reliefLimit: reliefLimit.toDouble(),
+                        color: color.withOpacity(0.5),
+                      );
+                    }).toList(),
+                  ],
+                ),
+              ],
             ),
     );
   }
@@ -555,158 +553,6 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
     );
   }
 
-  Widget _buildTaxInsightsSection(ThemeData theme,
-      Map<String, dynamic> yearlyData, List<Receipt> receipts) {
-    final insights = _generateYearlyInsights(yearlyData, receipts);
-
-    return SectionContainer(
-      title: 'Tax Insights & Recommendations',
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.primaryContainer,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.lightbulb,
-                  color: theme.colorScheme.onPrimaryContainer,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Smart Insights',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            ...insights.map((insight) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '• ',
-                        style: TextStyle(
-                          color: theme.colorScheme.onPrimaryContainer,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          insight,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onPrimaryContainer,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildQuickActionsSection(ThemeData theme) {
-    return SectionContainer(
-      title: 'Quick Actions',
-      child: Column(
-        children: [
-          _buildActionButton(
-            theme,
-            icon: Icons.download,
-            title: 'Export Tax Report',
-            subtitle: 'Download PDF report for $selectedYear',
-            onTap: () => _exportTaxReport(),
-          ),
-          const SizedBox(height: 12),
-          _buildActionButton(
-            theme,
-            icon: Icons.share,
-            title: 'Share Summary',
-            subtitle: 'Share tax summary with accountant',
-            onTap: () => _shareTaxSummary(),
-          ),
-          const SizedBox(height: 12),
-          _buildActionButton(
-            theme,
-            icon: Icons.analytics,
-            title: 'Generate Detailed Report',
-            subtitle: 'Create comprehensive tax breakdown',
-            onTap: () => Navigator.pushNamed(context, '/generate-report'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButton(
-    ThemeData theme, {
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: theme.colorScheme.onPrimaryContainer),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Map<String, Map<String, dynamic>> _calculateTaxReliefClassesBreakdown(
       List<Receipt> receipts) {
     final Map<String, Map<String, dynamic>> taxReliefData = {};
@@ -751,6 +597,25 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
     return Map.fromEntries(sortedEntries);
   }
 
+  /// Calculate the total spent amount for a specific tax classification
+  double _calculateSpentAmountForTaxClass(
+      List<Receipt> receipts, String taxClass) {
+    double totalSpent = 0.0;
+
+    for (var receipt in receipts) {
+      for (var item in receipt.lineItems) {
+        if (item.taxLine != null &&
+            item.taxLine!.taxEligible &&
+            item.taxLine!.taxClass == taxClass) {
+          // Add the item total price
+          totalSpent += item.totalPrice;
+        }
+      }
+    }
+
+    return totalSpent;
+  }
+
   // Helper methods for data calculation
   List<Receipt> _filterReceiptsByYear(List<Receipt> receipts, int year) {
     return receipts.where((receipt) {
@@ -783,78 +648,5 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
       'totalNonClaimableItems': totalNonClaimableItems,
       'taxEfficiencyRate': taxEfficiencyRate,
     };
-  }
-
-  List<String> _generateYearlyInsights(
-      Map<String, dynamic> yearlyData, List<Receipt> receipts) {
-    final insights = <String>[];
-
-    if (yearlyData['totalReceipts'] == 0) {
-      insights.add(
-          'No receipts found for $selectedYear. Start adding receipts to track your tax claims.');
-      return insights;
-    }
-
-    if (yearlyData['taxEfficiencyRate'] > 15) {
-      insights.add(
-          'Excellent! Your tax efficiency rate of ${yearlyData['taxEfficiencyRate'].toStringAsFixed(1)}% is above average.');
-    } else if (yearlyData['taxEfficiencyRate'] > 8) {
-      insights.add(
-          'Good tax planning! You\'re claiming ${yearlyData['taxEfficiencyRate'].toStringAsFixed(1)}% of your spending as tax relief.');
-    } else {
-      insights.add(
-          'Consider focusing more on tax-claimable purchases to increase your ${yearlyData['taxEfficiencyRate'].toStringAsFixed(1)}% efficiency rate.');
-    }
-
-    // Calculate monthly activity
-    final monthsWithReceipts = receipts
-        .map((r) => DateTime.parse(r.transactionDatetime).month)
-        .toSet()
-        .length;
-
-    if (monthsWithReceipts < 6) {
-      insights.add(
-          'You have receipts in only $monthsWithReceipts months. Regular receipt tracking throughout the year helps maximize tax benefits.');
-    }
-
-    if (yearlyData['totalClaimableItems'] >
-        yearlyData['totalNonClaimableItems']) {
-      insights.add(
-          'Great job! You have more tax-claimable items than non-claimable ones.');
-    }
-
-    // Calculate tax classes diversity
-    final taxClasses = receipts
-        .expand((receipt) => receipt.lineItems)
-        .where((item) =>
-            item.taxLine != null &&
-            item.taxLine!.taxClass.isNotEmpty &&
-            item.taxLine!.taxClass != 'NA')
-        .map((item) => item.taxLine!.taxClass)
-        .toSet();
-
-    if (taxClasses.length >= 5) {
-      insights.add(
-          'You\'re utilizing ${taxClasses.length} different tax relief classes - excellent diversification!');
-    } else if (taxClasses.length >= 3) {
-      insights.add(
-          'You\'re using ${taxClasses.length} tax relief classes. Consider exploring more categories for additional savings.');
-    }
-
-    return insights;
-  }
-
-  void _exportTaxReport() {
-    // Implementation for exporting tax report
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Export feature coming soon!')),
-    );
-  }
-
-  void _shareTaxSummary() {
-    // Implementation for sharing tax summary
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Share feature coming soon!')),
-    );
   }
 }

@@ -9,8 +9,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiService {
-  //final apiUrl = 'tolaktaxapi-291467312481.asia-east1.run.app';
-  final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
+  final apiUrl = 'tolaktaxapi-291467312481.asia-east1.run.app';
+  //final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
   //final apiUrl = '192.168.0.117:8000'; // kelvin's home at penang
   //final apiUrl = '10.3.226.75:8000'; // inti ip
 
