@@ -29,6 +29,10 @@ class ReceiptConfirmScreen extends StatefulWidget {
 
 class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
   bool isEditing = false;
+
+  late List<LineItem> _lineItems;
+  late List<OverallDiscount> _discounts;
+
   late TextEditingController merchantNameController;
   late TextEditingController merchantAddressController;
   late TextEditingController dateController;
@@ -41,6 +45,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
   late List<TextEditingController> lineItemDescriptionControllers;
   late List<TextEditingController> lineItemQuantityControllers;
   late List<TextEditingController> lineItemPriceControllers;
+  late List<TextEditingController> discountDescriptionControllers;
+  late List<TextEditingController> discountAmountControllers;
 
   @override
   void initState() {
@@ -80,24 +86,96 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     expenseCategoryController =
         TextEditingController(text: widget.receiptData?.expenseCategory ?? '');
 
-    lineItemDescriptionControllers = [];
-    lineItemQuantityControllers = [];
-    lineItemPriceControllers = [];
+    _lineItems = List.from(widget.receiptData?.lineItems ?? []);
+    _discounts = List.from(widget.receiptData?.overallDiscounts ?? []);
 
-    if (widget.receiptData?.lineItems != null) {
-      for (var item in widget.receiptData!.lineItems) {
-        lineItemDescriptionControllers.add(
-          TextEditingController(text: item.description),
-        );
-        lineItemQuantityControllers.add(
-          TextEditingController(text: item.quantity.toString()),
-        );
-        lineItemPriceControllers.add(
-          TextEditingController(
-              text: item.originalUnitPrice.toStringAsFixed(2)),
-        );
-      }
+
+    lineItemDescriptionControllers = _lineItems
+        .map((item) => TextEditingController(text: item.description))
+        .toList();
+    lineItemQuantityControllers = _lineItems
+        .map((item) => TextEditingController(text: item.quantity.toString()))
+        .toList();
+    lineItemPriceControllers = _lineItems
+        .map((item) =>
+        TextEditingController(text: item.originalUnitPrice.toStringAsFixed(2)))
+        .toList();
+
+    discountDescriptionControllers = _discounts
+        .map((discount) => TextEditingController(text: discount.description))
+        .toList();
+    discountAmountControllers = _discounts
+        .map((discount) => TextEditingController(text: discount.amount.toString()))
+        .toList();
+    _recalculateTotals();
+  }
+
+  void _recalculateTotals() {
+    double calculatedSubtotal = 0.0;
+
+    for (int i = 0; i < lineItemDescriptionControllers.length; i++) {
+      final quantity = double.tryParse(lineItemQuantityControllers[i].text) ?? 0.0;
+      final price = double.tryParse(lineItemPriceControllers[i].text) ?? 0.0;
+      calculatedSubtotal += (quantity * price);
     }
+
+    subtotalController.text = calculatedSubtotal.toStringAsFixed(2);
+
+    final tax = double.tryParse(taxAmountController.text) ?? 0.0;
+    double finalTotal = calculatedSubtotal + tax;
+
+    for (int i = 0; i < discountAmountControllers.length; i++) {
+      final discount = double.tryParse(discountAmountControllers[i].text) ?? 0.0;
+      finalTotal -= discount;
+    }
+
+    if (finalTotal < 0) {
+      finalTotal = 0;
+    }
+    totalAmountController.text = finalTotal.toStringAsFixed(2);
+  }
+
+  void _addLineItem() {
+    setState(() {
+      final newItem = LineItem(description: '', quantity: 1, originalUnitPrice: 0, totalPrice: 0);
+      _lineItems.add(newItem);
+      lineItemDescriptionControllers.add(TextEditingController());
+      lineItemQuantityControllers.add(TextEditingController(text: '1'));
+      lineItemPriceControllers.add(TextEditingController(text: '0.00'));
+    });
+  }
+
+  void _removeLineItem(int index) {
+    setState(() {
+      lineItemDescriptionControllers[index].dispose();
+      lineItemQuantityControllers[index].dispose();
+      lineItemPriceControllers[index].dispose();
+
+      _lineItems.removeAt(index);
+      lineItemDescriptionControllers.removeAt(index);
+      lineItemQuantityControllers.removeAt(index);
+      lineItemPriceControllers.removeAt(index);
+    });
+  }
+
+  void _addDiscount() {
+    setState(() {
+      final newDiscount = OverallDiscount(description: '', amount: 0);
+      _discounts.add(newDiscount);
+      discountDescriptionControllers.add(TextEditingController());
+      discountAmountControllers.add(TextEditingController(text: '0.00'));
+    });
+  }
+
+  void _removeDiscount(int index) {
+    setState(() {
+      discountDescriptionControllers[index].dispose();
+      discountAmountControllers[index].dispose();
+
+      _discounts.removeAt(index);
+      discountDescriptionControllers.removeAt(index);
+      discountAmountControllers.removeAt(index);
+    });
   }
 
   @override
@@ -120,9 +198,20 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     for (var controller in lineItemPriceControllers) {
       controller.dispose();
     }
+    for (var controller in discountDescriptionControllers) {
+      controller.dispose();
+    }
+    for (var controller in discountAmountControllers) {
+      controller.dispose();
+    }
+    discountDescriptionControllers.clear();
+    discountAmountControllers.clear();
     lineItemDescriptionControllers.clear();
     lineItemQuantityControllers.clear();
     lineItemPriceControllers.clear();
+
+    taxAmountController.removeListener(_recalculateTotals);
+
     super.dispose();
   }
 
@@ -172,7 +261,9 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                 Expanded(
                   flex: 2,
                   child: ElevatedButton.icon(
-                    onPressed: () async {
+                    onPressed: isEditing
+                        ? null
+                        : () async {
                       final achievementService =
                           context.read<AchievementService?>();
                       showDialog(
@@ -219,6 +310,11 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
               actions: [
                 IconButton(
                   onPressed: () {
+
+                    if (isEditing) {
+                      _recalculateTotals();
+                    }
+
                     setState(() {
                       isEditing = !isEditing;
                     });
@@ -285,11 +381,12 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                     // Line Items Card (if available)
                     if (widget.receiptData?.lineItems.isNotEmpty == true)
                       LineItemsCard(
-                        lineItems: widget.receiptData!.lineItems,
                         isEditing: isEditing,
                         descriptionControllers: lineItemDescriptionControllers,
                         quantityControllers: lineItemQuantityControllers,
                         priceControllers: lineItemPriceControllers,
+                        onAddItem: _addLineItem,
+                        onRemoveItem: _removeLineItem,
                       ),
                     const SizedBox(height: 16),
 
@@ -301,10 +398,13 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                     ),
 
                     // Discounts Card (if available)
-                    if (widget.receiptData?.overallDiscounts?.isNotEmpty ==
-                        true)
+                    if (isEditing || _discounts.isNotEmpty)
                       DiscountsCard(
-                        discounts: widget.receiptData!.overallDiscounts!,
+                        isEditing: isEditing,
+                        descriptionControllers: discountDescriptionControllers,
+                        amountControllers: discountAmountControllers,
+                        onAddDiscount: _addDiscount,
+                        onRemoveDiscount: _removeDiscount,
                       ),
                     const SizedBox(height: 16),
 
@@ -352,6 +452,19 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         originalUnitPrice: price,
         totalPrice: quantity * price,
       ));
+    }
+
+    final List<OverallDiscount> updatedDiscounts = [];
+    for (int i = 0; i < discountDescriptionControllers.length; i++) {
+      final description = discountDescriptionControllers[i].text.trim();
+      final amount = double.tryParse(discountAmountControllers[i].text) ?? 0.0;
+
+      if (description.isNotEmpty && amount > 0) {
+        updatedDiscounts.add(OverallDiscount(
+          description: description,
+          amount: amount,
+        ));
+      }
     }
 
     // Parse and validate amounts
@@ -413,8 +526,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
           ? paymentMethodController.text.trim()
           : null,
       expenseCategory: expenseCategoryController.text.trim(),
-      lineItems: widget.receiptData?.lineItems ?? [],
-      overallDiscounts: widget.receiptData?.overallDiscounts ?? [],
+      lineItems: updatedLineItems,
+      overallDiscounts: updatedDiscounts,
       imageUrl: '',
     );
 

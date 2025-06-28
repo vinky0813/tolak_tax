@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:tolak_tax/models/receipt_model.dart';
+import 'package:tolak_tax/widgets/reciept_confirm_page_widgets/editable_row.dart';
 
 class DiscountsCard extends StatelessWidget {
-  final List<OverallDiscount> discounts;
+  final bool isEditing;
+  final List<TextEditingController> descriptionControllers;
+  final List<TextEditingController> amountControllers;
+  final VoidCallback onAddDiscount;
+  final Function(int) onRemoveDiscount;
 
   const DiscountsCard({
     Key? key,
-    required this.discounts,
+    required this.isEditing,
+    required this.descriptionControllers,
+    required this.amountControllers,
+    required this.onAddDiscount,
+    required this.onRemoveDiscount,
   }) : super(key: key);
 
   @override
@@ -36,37 +45,32 @@ class DiscountsCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            ...discounts.map((discount) => _buildDiscountItem(discount, theme)),
+
+            if (descriptionControllers.isEmpty && !isEditing)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                child: Text('No discounts applied.'),
+              ),
+
+            for (int i = 0; i < descriptionControllers.length; i++)
+              EditableRow(
+                isEditing: isEditing,
+                descriptionController: descriptionControllers[i],
+                amountController: amountControllers[i],
+                descriptionLabel: 'Discount Description',
+                onRemove: () => onRemoveDiscount(i),
+              ),
+            if (isEditing)
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: onAddDiscount,
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add Discount'),
+                ),
+              ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildDiscountItem(OverallDiscount discount, ThemeData theme) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.red.withOpacity(0.3)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            discount.description,
-            style: theme.textTheme.bodyMedium,
-          ),
-          Text(
-            '-\$${discount.amount.toStringAsFixed(2)}',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.red,
-            ),
-          ),
-        ],
       ),
     );
   }
