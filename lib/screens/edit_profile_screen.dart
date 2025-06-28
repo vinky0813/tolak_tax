@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/data/avatar_options.dart';
+import 'package:tolak_tax/widgets/cached_network_svg.dart';
 import '../services/auth_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -90,9 +91,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     backgroundColor: colorScheme.surfaceVariant,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: SvgPicture.network(
-                        url,
-                        placeholderBuilder: (context) => const CircularProgressIndicator(),
+                      child: CachedNetworkSvg(
+                        url: url,
+                        placeholder: const CircularProgressIndicator(strokeWidth: 2.0),
+                        errorWidget: const Icon(Icons.error_outline, size: 24),
                       ),
                     ),
                   ),
@@ -160,7 +162,42 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _buildAvatarSelector(colorScheme),
+                      Center(
+                        child: Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 60,
+                              backgroundColor: colorScheme.primary.withOpacity(0.1),
+                              child: _selectedAvatarUrl != null && _selectedAvatarUrl!.isNotEmpty
+                                  ? Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: CachedNetworkSvg(
+                                  url: _selectedAvatarUrl!,
+                                  placeholder: const CircularProgressIndicator(),
+                                  errorWidget: Icon(Icons.error, color: colorScheme.error),
+                                ),
+                              )
+                                  : Icon(Icons.person, size: 60, color: colorScheme.primary),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: () => _showAvatarSelectionDialog(colorScheme),
+                                child: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.primary,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: colorScheme.surface, width: 3),
+                                  ),
+                                  child: Icon(Icons.edit, color: colorScheme.onPrimary, size: 20),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 32),
 
                       Text('Display Name', style: labelStyle),
@@ -228,44 +265,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ],
                   ),
                 ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAvatarSelector(ColorScheme colorScheme) {
-    return Center(
-      child: Stack(
-        children: [
-          CircleAvatar(
-            radius: 60,
-            backgroundColor: colorScheme.primary.withOpacity(0.1),
-            child: _selectedAvatarUrl != null && _selectedAvatarUrl!.isNotEmpty
-                ? Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: SvgPicture.network(
-                _selectedAvatarUrl!,
-                placeholderBuilder: (context) => const CircularProgressIndicator(),
-              ),
-            )
-                : Icon(Icons.person, size: 60, color: colorScheme.primary),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: GestureDetector(
-              onTap: () => _showAvatarSelectionDialog(colorScheme),
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: colorScheme.primary,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: colorScheme.surface, width: 3),
-                ),
-                child: Icon(Icons.edit, color: colorScheme.onPrimary, size: 20),
               ),
             ),
           ),

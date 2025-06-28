@@ -167,16 +167,6 @@ class ProfileScreen extends StatelessWidget {
                             arguments: budgets);
                       },
                     ),
-                    SettingsItem(
-                      icon: Icons.color_lens,
-                      title: 'Theme',
-                      onTap: () {},
-                    ),
-                    SettingsItem(
-                      icon: Icons.notifications,
-                      title: 'Notifications',
-                      onTap: () {},
-                    ),
                     const SizedBox(height: 24),
                     Divider(color: Colors.grey.shade300),
                     SettingsItem(
