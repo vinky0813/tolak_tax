@@ -25,10 +25,11 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final receiptService = Provider.of<ReceiptService>(context, listen: true);
+    final receiptService = Provider.of<ReceiptService?>(context, listen: true);
 
-    List<Receipt> yearReceipts = receiptService.getReceiptsByYear(selectedYear);
-    final yearlyTaxData = receiptService.getYearlyTaxData(selectedYear);
+    List<Receipt> yearReceipts =
+        receiptService?.getReceiptsByYear(selectedYear) ?? [];
+    final yearlyTaxData = receiptService?.getYearlyTaxData(selectedYear) ?? {};
 
     return Scaffold(
       backgroundColor: colorScheme.primary,

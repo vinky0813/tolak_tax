@@ -28,7 +28,6 @@ import 'package:tolak_tax/themes/app_theme.dart';
 import 'package:tolak_tax/utils/transitions.dart';
 import 'package:tolak_tax/screens/camera_page.dart';
 import 'package:tolak_tax/screens/receipt_confirm_screen.dart';
-import 'package:tolak_tax/screens/tax_details_screen.dart';
 
 import 'services/receipt_service.dart';
 import 'services/achievement_service.dart';
@@ -51,18 +50,26 @@ Future<void> main() async {
           create: (context) => context.read<AuthService>().authStateChanges,
           initialData: null,
         ),
-        ChangeNotifierProxyProvider<ApiService, ReceiptService>(
-          create: (context) => ReceiptService(
-            apiService: context.read<ApiService>(),
-            authService: context.read<AuthService>(),
-          ),
-          update: (context, apiService, previousReceiptService) {
-            // Return the existing service if it exists, otherwise create a new one
-            return previousReceiptService ??
-                ReceiptService(
-                  apiService: apiService,
-                  authService: context.read<AuthService>(),
-                );
+        ChangeNotifierProxyProvider2<User?, ApiService, ReceiptService?>(
+          create: (_) => null,
+          update: (context, user, apiService, previousReceiptService) {
+            if (user == null) {
+              // User logged out - clear any existing service
+              previousReceiptService?.clearCache();
+              return null;
+            }
+
+            // Check if we need to create a new service or if user changed
+            if (previousReceiptService == null) {
+              print('Creating ReceiptService for user: ${user.uid}');
+              final newService = ReceiptService(
+                apiService: apiService,
+                authService: context.read<AuthService>(),
+              );
+              return newService;
+            }
+
+            return previousReceiptService;
           },
         ),
         ChangeNotifierProxyProvider2<User?, ApiService, AchievementService?>(

@@ -79,7 +79,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final colorScheme = theme.colorScheme;
     final user = Provider.of<AuthService>(context, listen: false).currentUser;
     final String? photoUrl = user?.photoURL;
-    final receiptService = Provider.of<ReceiptService>(context, listen: true);
+    final receiptService = Provider.of<ReceiptService?>(context, listen: true);
     final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
     final achievementService = context.watch<AchievementService?>();
     final streakCount = achievementService?.currentScanStreak ?? 0;
@@ -87,12 +87,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final _budgets = budgetService?.budgets ?? {};
 
     // Dummy data for demo
-    final int totalReceipts = receiptService.getCachedReceiptsCount();
-    final double totalExpenses = receiptService.getTotalAmountSpent();
-    final double totalTax =
-        receiptService.getYearlyTaxData(DateTime.now().year)['totalTaxSaved'];
+    final int totalReceipts = receiptService?.getCachedReceiptsCount() ?? 0;
+    final double totalExpenses = receiptService?.getTotalAmountSpent() ?? 0.0;
+    final double totalTax = receiptService
+            ?.getYearlyTaxData(DateTime.now().year)['totalTaxSaved'] ??
+        {};
 
-    final recentReceipts = receiptService.getRecentReceipts();
+    final recentReceipts = receiptService?.getRecentReceipts() ?? <Receipt>[];
 
     final userName = Provider.of<AuthService>(context).currentUser?.displayName;
 

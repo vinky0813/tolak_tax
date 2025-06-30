@@ -41,7 +41,8 @@ class ReceiptDetailsScreen extends StatelessWidget {
               child: const Text('Delete'),
               onPressed: () async {
                 print('Receipt: Receipt id: ${receipt.receiptId}');
-                await Provider.of<ReceiptService>(context, listen: false).deleteReceipt(receipt.receiptId);
+                await Provider.of<ReceiptService?>(context, listen: false)
+                    ?.deleteReceipt(receipt.receiptId);
 
                 Navigator.of(ctx).pop();
                 Navigator.of(context).pop();
@@ -83,7 +84,8 @@ class ReceiptDetailsScreen extends StatelessWidget {
                     }
                   },
                   icon: Icon(Icons.more_vert, color: colorScheme.onPrimary),
-                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
                     PopupMenuItem<String>(
                       value: 'delete',
                       child: Row(

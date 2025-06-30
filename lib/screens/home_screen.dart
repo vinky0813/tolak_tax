@@ -44,10 +44,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final receiptService = Provider.of<ReceiptService>(context, listen: true);
+    final receiptService = Provider.of<ReceiptService?>(context, listen: true);
 
-    // Initialize receipts if not already done
-    if (!receiptService.hasInitialized && !receiptService.isLoading) {
+    // Initialize receipts if not already done and user is logged in
+    if (receiptService != null &&
+        !receiptService.hasInitialized &&
+        !receiptService.isLoading) {
       // Use a post-frame callback to avoid calling during build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         receiptService.initialize();
