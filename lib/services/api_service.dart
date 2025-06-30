@@ -17,7 +17,7 @@ class ApiService {
 
   Future<String?> getIdToken(BuildContext context) async {
     final String? token =
-        await Provider.of<AuthService>(context, listen: true).getIdToken();
+        await Provider.of<AuthService>(context, listen: false).getIdToken();
     return token;
   }
 
