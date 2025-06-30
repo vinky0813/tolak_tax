@@ -21,8 +21,21 @@ class ReceiptService with ChangeNotifier {
   static DateTime? _lastFetchTime;
   bool _isDeleting = false;
 
+  // Track which user's data we have cached
+  String? _lastUserId;
+
   // Cache duration - 5 minutes
   static const Duration _cacheDuration = Duration(minutes: 5);
+
+  // Method to clear cache when user logs out or changes
+  void clearCache() {
+    _cachedReceipts = [];
+    _hasInitialized = false;
+    _lastFetchTime = null;
+    _lastUserId = null;
+    print('ReceiptService: Cache cleared');
+    notifyListeners();
+  }
 
   Future<void> fetchReceipts([ApiService? apiService]) async {
     // Prevent multiple simultaneous calls
@@ -31,11 +44,24 @@ class ReceiptService with ChangeNotifier {
       return;
     }
 
-    // Check if we have recent cached data
+    // Get current user ID
+    final currentUserId = _authService.currentUser?.uid;
+
+    // Check if user changed - if so, clear cache
+    if (currentUserId != null &&
+        _lastUserId != null &&
+        _lastUserId != currentUserId) {
+      print(
+          'ReceiptService: User changed from $_lastUserId to $currentUserId, clearing cache');
+      clearCache();
+    }
+
+    // Check if we have recent cached data for the same user
     if (_hasInitialized &&
         _lastFetchTime != null &&
+        _lastUserId == currentUserId &&
         DateTime.now().difference(_lastFetchTime!) < _cacheDuration) {
-      print('ReceiptService: Using cached data');
+      print('ReceiptService: Using cached data for user $currentUserId');
       return;
     }
 
@@ -48,6 +74,7 @@ class ReceiptService with ChangeNotifier {
         print('Error: Could not retrieve ID token.');
         _cachedReceipts = [];
         _hasInitialized = true;
+        _lastUserId = currentUserId;
         notifyListeners();
         return;
       }
@@ -67,8 +94,10 @@ class ReceiptService with ChangeNotifier {
       _cachedReceipts = receipts;
       _hasInitialized = true;
       _lastFetchTime = DateTime.now();
+      _lastUserId = currentUserId;
 
-      print('ReceiptService: Fetched ${receipts.length} receipts');
+      print(
+          'ReceiptService: Fetched ${receipts.length} receipts for user $currentUserId');
       notifyListeners();
     } catch (e) {
       print('ReceiptService: Error fetching receipts: $e');
@@ -80,6 +109,7 @@ class ReceiptService with ChangeNotifier {
   // Method to force refresh (bypass cache)
   Future<void> refreshReceipts([ApiService? apiService]) async {
     _lastFetchTime = null;
+    _hasInitialized = false; // Force re-initialization
     await fetchReceipts(apiService);
   }
 
@@ -93,6 +123,7 @@ class ReceiptService with ChangeNotifier {
   // Getters
   bool get isLoading => _isLoading;
   bool get hasInitialized => _hasInitialized;
+  bool get isDeleting => _isDeleting;
 
   int getCachedReceiptsCount() {
     return _cachedReceipts.length;
@@ -175,13 +206,15 @@ class ReceiptService with ChangeNotifier {
       _cachedReceipts.removeWhere((receipt) => receipt.receiptId == receiptId);
 
       if (_cachedReceipts.length < originalLength) {
-        print('ReceiptService: Successfully deleted receipt $receiptId and removed it from local cache.');
+        print(
+            'ReceiptService: Successfully deleted receipt $receiptId and removed it from local cache.');
       } else {
-        print('ReceiptService Warning: API call succeeded, but receipt $receiptId was not found in local cache.');
+        print(
+            'ReceiptService Warning: API call succeeded, but receipt $receiptId was not found in local cache.');
       }
-
     } catch (e) {
-      print('ReceiptService: An error occurred while deleting receipt $receiptId. Error: $e');
+      print(
+          'ReceiptService: An error occurred while deleting receipt $receiptId. Error: $e');
       rethrow;
     } finally {
       _isDeleting = false;

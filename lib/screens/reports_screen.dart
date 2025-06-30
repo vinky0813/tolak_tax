@@ -51,9 +51,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final receiptService = Provider.of<ReceiptService>(context, listen: true);
+    final receiptService = Provider.of<ReceiptService?>(context, listen: true);
 
-    List<Receipt> receipts = receiptService.getCachedReceipts();
+    List<Receipt> receipts = receiptService?.getCachedReceipts() ?? [];
     List<Receipt> filteredReceipts = getfilteredReceipts(receipts);
 
     final groupedData = _groupReceipts(filteredReceipts);

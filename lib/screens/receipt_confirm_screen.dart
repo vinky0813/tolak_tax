@@ -89,7 +89,6 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     _lineItems = List.from(widget.receiptData?.lineItems ?? []);
     _discounts = List.from(widget.receiptData?.overallDiscounts ?? []);
 
-
     lineItemDescriptionControllers = _lineItems
         .map((item) => TextEditingController(text: item.description))
         .toList();
@@ -97,15 +96,16 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         .map((item) => TextEditingController(text: item.quantity.toString()))
         .toList();
     lineItemPriceControllers = _lineItems
-        .map((item) =>
-        TextEditingController(text: item.originalUnitPrice.toStringAsFixed(2)))
+        .map((item) => TextEditingController(
+            text: item.originalUnitPrice.toStringAsFixed(2)))
         .toList();
 
     discountDescriptionControllers = _discounts
         .map((discount) => TextEditingController(text: discount.description))
         .toList();
     discountAmountControllers = _discounts
-        .map((discount) => TextEditingController(text: discount.amount.toString()))
+        .map((discount) =>
+            TextEditingController(text: discount.amount.toString()))
         .toList();
     _recalculateTotals();
   }
@@ -114,7 +114,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     double calculatedSubtotal = 0.0;
 
     for (int i = 0; i < lineItemDescriptionControllers.length; i++) {
-      final quantity = double.tryParse(lineItemQuantityControllers[i].text) ?? 0.0;
+      final quantity =
+          double.tryParse(lineItemQuantityControllers[i].text) ?? 0.0;
       final price = double.tryParse(lineItemPriceControllers[i].text) ?? 0.0;
       calculatedSubtotal += (quantity * price);
     }
@@ -125,7 +126,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     double finalTotal = calculatedSubtotal + tax;
 
     for (int i = 0; i < discountAmountControllers.length; i++) {
-      final discount = double.tryParse(discountAmountControllers[i].text) ?? 0.0;
+      final discount =
+          double.tryParse(discountAmountControllers[i].text) ?? 0.0;
       finalTotal -= discount;
     }
 
@@ -137,7 +139,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
 
   void _addLineItem() {
     setState(() {
-      final newItem = LineItem(description: '', quantity: 1, originalUnitPrice: 0, totalPrice: 0);
+      final newItem = LineItem(
+          description: '', quantity: 1, originalUnitPrice: 0, totalPrice: 0);
       _lineItems.add(newItem);
       lineItemDescriptionControllers.add(TextEditingController());
       lineItemQuantityControllers.add(TextEditingController(text: '1'));
@@ -264,30 +267,30 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
                     onPressed: isEditing
                         ? null
                         : () async {
-                      final achievementService =
-                          context.read<AchievementService?>();
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (_) =>
-                            const Center(child: CircularProgressIndicator()),
-                      );
+                            final achievementService =
+                                context.read<AchievementService?>();
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (_) => const Center(
+                                  child: CircularProgressIndicator()),
+                            );
 
-                      try {
-                        await achievementService?.updateProgress(
-                          type: AchievementType.scanCount,
-                          incrementBy: 1,
-                        );
-                        await achievementService?.processDailyScan();
+                            try {
+                              await achievementService?.updateProgress(
+                                type: AchievementType.scanCount,
+                                incrementBy: 1,
+                              );
+                              await achievementService?.processDailyScan();
 
-                        _saveReceipt();
-                      } catch (e) {
-                        print("An error occurred during save: $e");
-                        if (Navigator.canPop(context)) {
-                          Navigator.of(context).pop();
-                        }
-                      }
-                    },
+                              _saveReceipt();
+                            } catch (e) {
+                              print("An error occurred during save: $e");
+                              if (Navigator.canPop(context)) {
+                                Navigator.of(context).pop();
+                              }
+                            }
+                          },
                     icon: const Icon(Icons.save),
                     label: const Text('Save Receipt'),
                     style: ElevatedButton.styleFrom(
@@ -310,7 +313,6 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
               actions: [
                 IconButton(
                   onPressed: () {
-
                     if (isEditing) {
                       _recalculateTotals();
                     }
@@ -533,7 +535,7 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     );
 
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final receiptService = Provider.of<ReceiptService>(context, listen: false);
+    final receiptService = Provider.of<ReceiptService?>(context, listen: false);
     final budgetService = Provider.of<BudgetService?>(context, listen: false);
 
     addReceipt(context, apiService, widget.receiptImagePath, receiptData)
@@ -550,7 +552,7 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
           );
         }
         _showSuccessSnackBar('Receipt saved successfully!');
-        receiptService.refreshReceipts(apiService);
+        receiptService?.refreshReceipts(apiService);
         Navigator.of(context).pop();
         if (mounted) {
           Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
