@@ -57,6 +57,7 @@ class OverallDiscount {
 }
 
 class Receipt {
+  String receiptId;
   String merchantName;
   String? merchantAddress;
   String transactionDatetime;
@@ -75,6 +76,7 @@ class Receipt {
   TaxSummary? taxSummary;
 
   Receipt({
+    required this.receiptId,
     required this.merchantName,
     this.merchantAddress,
     required this.transactionDatetime,
@@ -94,6 +96,7 @@ class Receipt {
   /// Factory to create a Receipt from a Map (e.g., from JSON or raw list)
   factory Receipt.fromMap(Map<String, dynamic> map) {
     return Receipt(
+        receiptId: map['receipt_id'] as String? ?? '',
         merchantName: map['merchant_name'] ?? map['title'] ?? '',
         merchantAddress: map['merchant_address'],
         transactionDatetime: map['transaction_datetime'] ??

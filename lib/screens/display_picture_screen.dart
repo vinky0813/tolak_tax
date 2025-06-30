@@ -32,8 +32,12 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
 
       final String response = await apiService.readReceipt(imagePath);
 
+      print("response $response");
+
       // Parse the JSON string response
       final Map<String, dynamic> receiptData = jsonDecode(response);
+
+      print("receiptData $receiptData");
 
       // Create Receipt object from the parsed data
       final Receipt receipt = Receipt.fromMap(receiptData);

@@ -10,9 +10,9 @@ import 'dart:convert';
 
 class ApiService {
   //final apiUrl = 'tolaktaxapi-291467312481.asia-east1.run.app';
-  //final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
+  final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
   //final apiUrl = '192.168.0.117:8000'; // kelvin's home at penang
-  final apiUrl = '192.168.0.6:8000'; // kelvin's home at sp
+  //final apiUrl = '192.168.0.6:8000'; // kelvin's home at sp
   //final apiUrl = '10.3.226.75:8000'; // inti ip
 
   Future<String?> getIdToken(BuildContext context) async {
@@ -74,6 +74,45 @@ class ApiService {
       return responseBody;
     } catch (e) {
       throw Exception('Error sending request to add receipt: $e');
+    }
+  }
+
+  Future<void> deleteReceipt({
+    required String? idToken,
+    required String receiptId,
+  }) async {
+    if (idToken == null || idToken.isEmpty) {
+      throw Exception('ID token is required to delete a receipt.');
+    }
+    var url = Uri.http(apiUrl, '/delete-receipt-by-id', {
+      'id_token': idToken,
+      'receipt_id': receiptId,
+    });
+
+    try {
+      print('ApiService: Calling DELETE ${url.toString()}');
+      final response = await http.delete(url);
+
+      if (response.statusCode == 200) {
+        // Successfully deleted
+        print(
+            'ApiService: Receipt deleted successfully. Response: ${response.body}');
+        return;
+      } else {
+        final errorBody = json.decode(response.body);
+        final errorMessage =
+            errorBody['detail'] ?? 'An unknown error occurred.';
+        print(
+            'ApiService Error: Failed to delete receipt. Status: ${response.statusCode}, Body: ${response.body}');
+        throw Exception('Failed to delete receipt: $errorMessage');
+      }
+    } on SocketException catch (e) {
+      print('ApiService Network Error on DELETE (SocketException): $e');
+      throw Exception('Could not connect to the server to delete the receipt.');
+    } catch (e) {
+      print('ApiService Error on DELETE: $e');
+      throw Exception(
+          'An unexpected error occurred while deleting the receipt.');
     }
   }
 

@@ -81,7 +81,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final String? photoUrl = user?.photoURL;
     final receiptService = Provider.of<ReceiptService>(context, listen: true);
     final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
-    final List<Receipt> dummyReceipts = dummyReceiptsData;
     final achievementService = context.watch<AchievementService?>();
     final streakCount = achievementService?.currentScanStreak ?? 0;
     final budgetService = Provider.of<BudgetService?>(context);
