@@ -10,14 +10,14 @@ import 'dart:convert';
 
 class ApiService {
   //final apiUrl = 'tolaktaxapi-291467312481.asia-east1.run.app';
-  //final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
+  final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
   //final apiUrl = '192.168.0.117:8000'; // kelvin's home at penang
-  final apiUrl = '192.168.0.6:8000'; // kelvin's home at sp
+  //final apiUrl = '192.168.0.6:8000'; // kelvin's home at sp
   //final apiUrl = '10.3.226.75:8000'; // inti ip
 
   Future<String?> getIdToken(BuildContext context) async {
     final String? token =
-        await Provider.of<AuthService>(context, listen: false).getIdToken();
+        await Provider.of<AuthService>(context, listen: true).getIdToken();
     return token;
   }
 
@@ -95,11 +95,13 @@ class ApiService {
 
       if (response.statusCode == 200) {
         // Successfully deleted
-        print('ApiService: Receipt deleted successfully. Response: ${response.body}');
+        print(
+            'ApiService: Receipt deleted successfully. Response: ${response.body}');
         return;
       } else {
         final errorBody = json.decode(response.body);
-        final errorMessage = errorBody['detail'] ?? 'An unknown error occurred.';
+        final errorMessage =
+            errorBody['detail'] ?? 'An unknown error occurred.';
         print(
             'ApiService Error: Failed to delete receipt. Status: ${response.statusCode}, Body: ${response.body}');
         throw Exception('Failed to delete receipt: $errorMessage');
@@ -109,7 +111,8 @@ class ApiService {
       throw Exception('Could not connect to the server to delete the receipt.');
     } catch (e) {
       print('ApiService Error on DELETE: $e');
-      throw Exception('An unexpected error occurred while deleting the receipt.');
+      throw Exception(
+          'An unexpected error occurred while deleting the receipt.');
     }
   }
 

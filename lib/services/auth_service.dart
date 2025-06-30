@@ -4,7 +4,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tolak_tax/services/auth_result.dart';
 
-class AuthService with ChangeNotifier{
+class AuthService with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
@@ -35,13 +35,22 @@ class AuthService with ChangeNotifier{
       email: email,
       password: password,
     );
+
+    // Refresh user to ensure ID token is available
+    if (userCredential.user != null) {
+      await userCredential.user!.reload();
+      _currentUser = _auth.currentUser;
+      notifyListeners();
+    }
+
     return AuthResult(
       user: userCredential.user,
       isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
     );
   }
 
-  Future<AuthResult> registerWithEmail(String email, String password, String name) async {
+  Future<AuthResult> registerWithEmail(
+      String email, String password, String name) async {
     final userCredential = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
@@ -52,8 +61,10 @@ class AuthService with ChangeNotifier{
     if (user != null) {
       await user.updateDisplayName(name);
       await user.reload();
-      final updatedUser = _auth.currentUser;
+      _currentUser = _auth.currentUser;
+      notifyListeners();
     }
+
     return AuthResult(
       user: userCredential.user,
       isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
@@ -88,6 +99,14 @@ class AuthService with ChangeNotifier{
 
       // Sign in to Firebase with the Google credential
       final userCredential = await _auth.signInWithCredential(credential);
+
+      // Refresh user to ensure ID token is available
+      if (userCredential.user != null) {
+        await userCredential.user!.reload();
+        _currentUser = _auth.currentUser;
+        notifyListeners();
+      }
+
       return AuthResult(
         user: userCredential.user,
         isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
@@ -135,11 +154,10 @@ class AuthService with ChangeNotifier{
     }
   }
 
-  Future<void> resendOtp({
-    required String phoneNumber,
-    required Function(String verificationId) onCodeSent,
-    required BuildContext context
-  }) async {
+  Future<void> resendOtp(
+      {required String phoneNumber,
+      required Function(String verificationId) onCodeSent,
+      required BuildContext context}) async {
     await _auth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       verificationCompleted: (PhoneAuthCredential credential) async {
@@ -155,8 +173,7 @@ class AuthService with ChangeNotifier{
       codeSent: (String verificationId, int? resendToken) {
         onCodeSent(verificationId);
       },
-      codeAutoRetrievalTimeout: (String verificationId) {
-      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
     );
   }
 
@@ -174,6 +191,14 @@ class AuthService with ChangeNotifier{
     );
 
     final userCredential = await _auth.signInWithCredential(credential);
+
+    // Refresh user to ensure ID token is available
+    if (userCredential.user != null) {
+      await userCredential.user!.reload();
+      _currentUser = _auth.currentUser;
+      notifyListeners();
+    }
+
     return AuthResult(
       user: userCredential.user,
       isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
@@ -185,10 +210,17 @@ class AuthService with ChangeNotifier{
       final LoginResult loginResult = await FacebookAuth.instance.login();
 
       if (loginResult.status == LoginStatus.success) {
-        final OAuthCredential credential =
-            FacebookAuthProvider.credential(
-                '${loginResult.accessToken?.tokenString}');
+        final OAuthCredential credential = FacebookAuthProvider.credential(
+            '${loginResult.accessToken?.tokenString}');
         final userCredential = await _auth.signInWithCredential(credential);
+
+        // Refresh user to ensure ID token is available
+        if (userCredential.user != null) {
+          await userCredential.user!.reload();
+          _currentUser = _auth.currentUser;
+          notifyListeners();
+        }
+
         return AuthResult(
           user: userCredential.user,
           isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
@@ -216,10 +248,10 @@ class AuthService with ChangeNotifier{
     await _auth.signOut();
   }
 
-  Future<String?> getIdToken() async {
+  Future<String?> getIdToken({bool forceRefresh = false}) async {
     final user = _auth.currentUser;
     if (user != null) {
-      return await user.getIdToken();
+      return await user.getIdToken(forceRefresh);
     }
     return null;
   }
