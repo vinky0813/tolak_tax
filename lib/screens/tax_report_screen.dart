@@ -6,6 +6,7 @@ import 'package:tolak_tax/widgets/tax_widgets/year_overview_header.dart';
 import 'package:tolak_tax/widgets/tax_widgets/tax_summary_section.dart';
 import 'package:tolak_tax/widgets/tax_widgets/tax_relief_classes_section.dart';
 import 'package:tolak_tax/widgets/tax_widgets/claimable_receipts_section.dart';
+import 'package:tolak_tax/widgets/year_dropdown.dart';
 
 class TaxReportScreen extends StatefulWidget {
   const TaxReportScreen({super.key});
@@ -53,8 +54,17 @@ class _TaxReportScreenState extends State<TaxReportScreen> {
                     ),
                   ),
                   const Spacer(),
-                  //TODO: FIX
-                  _buildYearSelector(theme),
+                  Expanded(
+                    child: YearDropdown(
+                      hideAllYears: true,
+                      selectedYear: selectedYear,
+                      onChanged: (int? newYear) {
+                        setState(() {
+                          selectedYear = newYear!;
+                        });
+                      },
+                    ),
+                  )
                 ],
               ),
             ),

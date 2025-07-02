@@ -55,6 +55,7 @@ dependencies:
   http: ^1.4.0
   another_flushbar: ^1.12.30
   image_picker: ^1.1.2
+  flutter_launcher_icons: ^0.14.4
 
 
 dev_dependencies:
