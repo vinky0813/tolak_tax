@@ -58,6 +58,7 @@ dependencies:
 
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter
 
@@ -106,3 +107,7 @@ flutter:
     - assets/icons/app_icon_with_circle_background.png
     - assets/icons/app_icon_without_background.png
 
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app_icon_without_background.png"

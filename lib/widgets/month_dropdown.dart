@@ -25,7 +25,8 @@ class MonthDropdown extends StatelessWidget {
         isExpanded: true,
         value: selectedMonth,
         decoration: InputDecoration(
-          labelText: 'Month',
+          filled: true,
+          fillColor: Colors.white,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
           ),

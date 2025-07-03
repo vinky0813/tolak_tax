@@ -18,7 +18,7 @@ class ProfileScreen extends StatelessWidget {
     final String? photoUrl = user?.photoURL;
     final bool hasAvatar = photoUrl != null && photoUrl.isNotEmpty;
     final budgetService = Provider.of<BudgetService?>(context, listen: false);
-    final budgets = budgetService!.budgets;
+    final budgets = budgetService?.budgets;
 
     final achievementService = context.watch<AchievementService?>();
 
@@ -155,16 +155,17 @@ class ProfileScreen extends StatelessWidget {
                       icon: Icons.edit,
                       title: 'Edit Profile',
                       onTap: () {
-                        Navigator.pushNamed(context, 'edit-profile',
-                            arguments: budgets);
+                        Navigator.pushNamed(context, 'edit-profile',);
                       },
                     ),
                     SettingsItem(
                       icon: Icons.account_balance_wallet,
                       title: 'Budget Settings',
                       onTap: () {
-                        Navigator.pushNamed(context, 'budget-settings',
-                            arguments: budgets);
+                        if (budgets != null ) {
+                          Navigator.pushNamed(context, 'budget-settings',
+                              arguments: budgets);
+                        }
                       },
                     ),
                     const SizedBox(height: 24),

@@ -21,7 +21,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:tolak_tax/widgets/bottom_scanned_file_sheet.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+
+  final VoidCallback onNavigateToExpense;
+
+  const DashboardScreen({super.key, required this.onNavigateToExpense});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -253,7 +256,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               icon: Icons.receipt,
                               label: 'View Receipts',
                               onPressed: () {
-                                Navigator.pushNamed(context, '/expense-screen');
+                                widget.onNavigateToExpense();
                               },
                             ),
                             QuickActionButton(

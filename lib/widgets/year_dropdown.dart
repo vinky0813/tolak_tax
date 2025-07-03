@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class YearDropdown extends StatelessWidget {
   final int? selectedYear;
   final ValueChanged<int?> onChanged;
+  final bool hideAllYears;
 
   const YearDropdown({
     super.key,
     required this.selectedYear,
     required this.onChanged,
+    this.hideAllYears = false,
   });
 
   @override
@@ -22,7 +24,8 @@ class YearDropdown extends StatelessWidget {
         isExpanded: true,
         value: selectedYear,
         decoration: InputDecoration(
-          labelText: 'Year',
+          filled: true,
+          fillColor: Colors.white,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -32,10 +35,11 @@ class YearDropdown extends StatelessWidget {
           ),
         ),
         items: [
-          const DropdownMenuItem<int?>(
-            value: null,
-            child: Text('All Years'),
-          ),
+          if (!hideAllYears)
+            const DropdownMenuItem<int?>(
+              value: null,
+              child: Text('All Years'),
+            ),
           ...List.generate(10, (index) {
             final year = DateTime.now().year - index;
             return DropdownMenuItem<int?>(
