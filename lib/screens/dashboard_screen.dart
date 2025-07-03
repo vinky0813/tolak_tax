@@ -14,6 +14,7 @@ import 'package:tolak_tax/widgets/cached_network_svg.dart';
 import 'package:tolak_tax/widgets/gamified_progress.dart';
 import 'package:tolak_tax/widgets/quick_actionbutton.dart';
 import 'package:tolak_tax/widgets/recent_receipts_list.dart';
+import 'package:tolak_tax/widgets/scan_streak_banner.dart';
 import 'package:tolak_tax/widgets/section_container.dart';
 import 'package:tolak_tax/widgets/summary_card.dart';
 import 'package:tolak_tax/widgets/weekly_barchart.dart';
@@ -41,6 +42,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showPendingAchievementBanners();
       _showPendingBudgetAlerts();
+      _showPendingScanStreakBanners();
+    });
+  }
+
+  void _showPendingScanStreakBanners() {
+    Future.delayed(Duration.zero, () {
+      if (!mounted) return;
+
+      final achievementService = context.read<AchievementService?>();
+      if (achievementService == null) return;
+
+      final bannersToShow = achievementService.processDailyScanBanner;
+      final streakCount = achievementService.currentScanStreak;
+
+      if (bannersToShow.isNotEmpty) {
+        for (final bannerType in bannersToShow) {
+          final status = bannerType == 'reset'
+              ? ScanStreakStatus.reset
+              : ScanStreakStatus.continued;
+
+          ScanStreakBanner.show(context, streakCount, status: status);
+        }
+
+        achievementService.clearProcessDailyScanBanner();
+      }
     });
   }
 
