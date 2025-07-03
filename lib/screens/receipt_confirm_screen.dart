@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolak_tax/models/achievement_model.dart';
@@ -218,7 +220,7 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     super.dispose();
   }
 
-  Future<bool?> addReceipt(BuildContext context, ApiService apiService,
+  Future<String?> addReceipt(BuildContext context, ApiService apiService,
       String imagePath, Receipt receiptData) async {
     try {
       final String? idToken = await apiService.getIdToken(context);
@@ -228,11 +230,13 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         return null;
       }
 
-      await apiService.uploadReceipt(idToken, imagePath, receiptData.toMap());
-      return true;
+      final responseBody = await apiService.uploadReceipt(idToken, imagePath, receiptData.toMap());
+
+      final receiptId = jsonDecode(responseBody)['receipt_id'];
+      return receiptId;
     } catch (e) {
       print('An error occurred: $e');
-      return false;
+      return null;
     }
   }
 
@@ -537,10 +541,13 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     final apiService = Provider.of<ApiService>(context, listen: false);
     final receiptService = Provider.of<ReceiptService?>(context, listen: false);
     final budgetService = Provider.of<BudgetService?>(context, listen: false);
+    final achievementService = context.read<AchievementService?>();
+
+    print('receiptData: $receiptData');
 
     addReceipt(context, apiService, widget.receiptImagePath, receiptData)
-        .then((success) async {
-      if (success == true) {
+        .then((receiptid) async {
+      if (receiptid != null) {
         print('totalAmount: $totalAmount');
         print('expenseCategory: ${expenseCategoryController.text.trim()}');
         if (totalAmount != null &&
@@ -552,7 +559,18 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
           );
         }
         _showSuccessSnackBar('Receipt saved successfully!');
-        receiptService?.refreshReceipts(apiService);
+        await receiptService?.refreshReceipts(apiService);
+
+        final tempReceipt = receiptService?.getReceiptById(receiptid);
+
+        print('tempReceipts: $tempReceipt');
+        if(tempReceipt?.taxSummary != null && tempReceipt?.taxSummary?.totalTaxSaved != null) {
+          await achievementService?.updateProgress(
+            type: AchievementType.totalSavings,
+            incrementBy: tempReceipt!.taxSummary!.totalTaxSaved,
+          );
+        }
+
         Navigator.of(context).pop();
         if (mounted) {
           Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);

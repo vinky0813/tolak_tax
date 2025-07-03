@@ -15,12 +15,14 @@ class AchievementService with ChangeNotifier {
 
   int _currentScanStreak = 0;
   DateTime? _lastScanTimestamp;
+  final List<String> _processDailyScanBanner = [];
 
   // getter for these private variables
   int get totalPoints => _totalPoints;
   Map<String, AchievementProgress> get userAchievements => _userAchievements;
   bool get isInitialized => _isInitialized;
   int get currentScanStreak => _currentScanStreak;
+  List<String> get processDailyScanBanner => _processDailyScanBanner;
 
   AchievementService({
     required ApiService apiService,
@@ -212,10 +214,16 @@ class AchievementService with ChangeNotifier {
         return;
       } else if (lastScanDate == yesterdayDate) {
         _currentScanStreak++;
+        await updateProgress(
+          type: AchievementType.totalPoints,
+          incrementBy: 40,
+        );
+        _processDailyScanBanner.add("You're on a $_currentScanStreak-day scan streak!");
         print("Consecutive day scan! Streak is now $_currentScanStreak.");
       } else {
         print("Missed a day. Resetting streak to 1.");
         _currentScanStreak = 1;
+        _processDailyScanBanner.add('reset');
       }
     }
     _lastScanTimestamp = now;
@@ -223,5 +231,9 @@ class AchievementService with ChangeNotifier {
       type: AchievementType.scanStreak,
       setAs: _currentScanStreak.toDouble(),
     );
+  }
+
+  void clearProcessDailyScanBanner() {
+    _processDailyScanBanner.clear();
   }
 }
