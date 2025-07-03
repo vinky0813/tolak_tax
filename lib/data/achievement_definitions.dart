@@ -8,7 +8,7 @@ final List<AchievementDefinition> allAchievementDefinitions = [
     title: 'Savvy Saver',
     subtitle: 'Reach RM 1,000 in total savings',
     goal: 1000,
-    pointsReward: 50,
+    pointsReward: 500,
     type: AchievementType.totalSavings,
   ),
   AchievementDefinition(
@@ -26,7 +26,7 @@ final List<AchievementDefinition> allAchievementDefinitions = [
     subtitle: 'Reach the Bronze rank with 700 points',
     icon: Icons.military_tech,
     goal: 700,
-    pointsReward: 50,
+    pointsReward: 100,
     type: AchievementType.totalPoints,
   ),
   AchievementDefinition(
@@ -35,7 +35,7 @@ final List<AchievementDefinition> allAchievementDefinitions = [
     subtitle: 'Reach the Silver rank with 1,000 points',
     icon: Icons.star_half,
     goal: 1000,
-    pointsReward: 100,
+    pointsReward: 200,
     type: AchievementType.totalPoints,
   ),
   AchievementDefinition(
@@ -44,7 +44,7 @@ final List<AchievementDefinition> allAchievementDefinitions = [
     subtitle: 'Reach the Gold rank with 1,500 points',
     icon: Icons.emoji_events_outlined,
     goal: 1500,
-    pointsReward: 250,
+    pointsReward: 300,
     type: AchievementType.totalPoints,
   ),
   AchievementDefinition(
@@ -53,7 +53,7 @@ final List<AchievementDefinition> allAchievementDefinitions = [
     subtitle: 'Scan your first receipt',
     icon: Icons.receipt_long,
     goal: 1,
-    pointsReward: 10,
+    pointsReward: 100,
     type: AchievementType.scanCount,
   ),
 
@@ -63,7 +63,7 @@ final List<AchievementDefinition> allAchievementDefinitions = [
     subtitle: 'Scan 10 receipts',
     icon: Icons.receipt_long,
     goal: 10,
-    pointsReward: 30,
+    pointsReward: 300,
     type: AchievementType.scanCount,
   ),
   AchievementDefinition(
@@ -72,7 +72,7 @@ final List<AchievementDefinition> allAchievementDefinitions = [
     subtitle: 'Scan 50 receipts',
     icon: Icons.receipt_long,
     goal: 50,
-    pointsReward: 75,
+    pointsReward: 750,
     type: AchievementType.scanCount,
   ),
 ];

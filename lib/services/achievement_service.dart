@@ -212,6 +212,10 @@ class AchievementService with ChangeNotifier {
         return;
       } else if (lastScanDate == yesterdayDate) {
         _currentScanStreak++;
+        await updateProgress(
+          type: AchievementType.totalPoints,
+          incrementBy: 40,
+        );
         print("Consecutive day scan! Streak is now $_currentScanStreak.");
       } else {
         print("Missed a day. Resetting streak to 1.");

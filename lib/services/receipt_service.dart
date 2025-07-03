@@ -276,4 +276,10 @@ class ReceiptService with ChangeNotifier {
 
     return totalClaimableTaxSaved;
   }
+
+  Receipt? getReceiptById(String id) {
+    return _cachedReceipts.firstWhere(
+          (receipt) => receipt.receiptId == id,
+    );
+  }
 }
