@@ -109,7 +109,34 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         .map((discount) =>
             TextEditingController(text: discount.amount.toString()))
         .toList();
+    _addListeners();
     _recalculateTotals();
+  }
+
+  void _addListeners() {
+    taxAmountController.addListener(_recalculateTotals);
+    for (var controller in lineItemQuantityControllers) {
+      controller.addListener(_recalculateTotals);
+    }
+    for (var controller in lineItemPriceControllers) {
+      controller.addListener(_recalculateTotals);
+    }
+    for (var controller in discountAmountControllers) {
+      controller.addListener(_recalculateTotals);
+    }
+  }
+
+  void _removeListeners() {
+    taxAmountController.removeListener(_recalculateTotals);
+    for (var controller in lineItemQuantityControllers) {
+      controller.removeListener(_recalculateTotals);
+    }
+    for (var controller in lineItemPriceControllers) {
+      controller.removeListener(_recalculateTotals);
+    }
+    for (var controller in discountAmountControllers) {
+      controller.removeListener(_recalculateTotals);
+    }
   }
 
   void _recalculateTotals() {
@@ -145,13 +172,19 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
           description: '', quantity: 1, originalUnitPrice: 0, totalPrice: 0);
       _lineItems.add(newItem);
       lineItemDescriptionControllers.add(TextEditingController());
-      lineItemQuantityControllers.add(TextEditingController(text: '1'));
-      lineItemPriceControllers.add(TextEditingController(text: '0.00'));
+      final quantityController = TextEditingController(text: '1');
+      quantityController.addListener(_recalculateTotals);
+      lineItemQuantityControllers.add(quantityController);
+      final priceController = TextEditingController(text: '0.00');
+      priceController.addListener(_recalculateTotals);
+      lineItemPriceControllers.add(priceController);
     });
   }
 
   void _removeLineItem(int index) {
     setState(() {
+      lineItemQuantityControllers[index].removeListener(_recalculateTotals);
+      lineItemPriceControllers[index].removeListener(_recalculateTotals);
       lineItemDescriptionControllers[index].dispose();
       lineItemQuantityControllers[index].dispose();
       lineItemPriceControllers[index].dispose();
@@ -168,12 +201,15 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
       final newDiscount = OverallDiscount(description: '', amount: 0);
       _discounts.add(newDiscount);
       discountDescriptionControllers.add(TextEditingController());
-      discountAmountControllers.add(TextEditingController(text: '0.00'));
+      final amountController = TextEditingController(text: '0.00');
+      amountController.addListener(_recalculateTotals);
+      discountAmountControllers.add(amountController);
     });
   }
 
   void _removeDiscount(int index) {
     setState(() {
+      discountAmountControllers[index].removeListener(_recalculateTotals);
       discountDescriptionControllers[index].dispose();
       discountAmountControllers[index].dispose();
 
@@ -185,6 +221,7 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
 
   @override
   void dispose() {
+    _removeListeners();
     merchantNameController.dispose();
     merchantAddressController.dispose();
     dateController.dispose();
@@ -215,8 +252,6 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
     lineItemQuantityControllers.clear();
     lineItemPriceControllers.clear();
 
-    taxAmountController.removeListener(_recalculateTotals);
-
     super.dispose();
   }
 
@@ -230,7 +265,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         return null;
       }
 
-      final responseBody = await apiService.uploadReceipt(idToken, imagePath, receiptData.toMap());
+      final responseBody = await apiService.uploadReceipt(
+          idToken, imagePath, receiptData.toMap());
 
       final receiptId = jsonDecode(responseBody)['receipt_id'];
       return receiptId;
@@ -317,10 +353,6 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
               actions: [
                 IconButton(
                   onPressed: () {
-                    if (isEditing) {
-                      _recalculateTotals();
-                    }
-
                     setState(() {
                       isEditing = !isEditing;
                     });
@@ -564,7 +596,8 @@ class ReceiptConfirmScreenState extends State<ReceiptConfirmScreen> {
         final tempReceipt = receiptService?.getReceiptById(receiptid);
 
         print('tempReceipts: $tempReceipt');
-        if(tempReceipt?.taxSummary != null && tempReceipt?.taxSummary?.totalTaxSaved != null) {
+        if (tempReceipt?.taxSummary != null &&
+            tempReceipt?.taxSummary?.totalTaxSaved != null) {
           await achievementService?.updateProgress(
             type: AchievementType.totalSavings,
             incrementBy: tempReceipt!.taxSummary!.totalTaxSaved,
