@@ -15,18 +15,13 @@ class TaxCalculationDetails extends StatelessWidget {
   }
 
   List<Widget> _buildTaxCalculationDetails() {
-    // Calculate subtotal from line items before tax
     final subtotal = receipt.lineItems.fold(
         0.0,
         (sum, item) =>
             sum + (item.totalPrice - (item.taxLine?.taxAmount ?? 0.0)));
-
-    // Calculate tax amount from tax lines
     final taxAmount = receipt.lineItems
         .where((item) => item.taxLine != null)
         .fold(0.0, (sum, item) => sum + (item.taxLine?.taxAmount ?? 0.0));
-
-    // Calculate total from line items
     final total =
         receipt.lineItems.fold(0.0, (sum, item) => sum + item.totalPrice);
 
