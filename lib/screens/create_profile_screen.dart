@@ -87,6 +87,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
       await user.updatePhotoURL(avatarUrl);
 
       await user.reload();
+      _authService.refreshUser();
 
       if (kDebugMode) {
         final updatedUser = _authService.currentUser;
