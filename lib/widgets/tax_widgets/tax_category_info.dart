@@ -16,7 +16,7 @@ class TaxCategoryInfo extends StatelessWidget {
     final totalItems = taxableCount + exemptCount;
     final taxSaved = receipt.taxSummary?.totalTaxSaved ?? 0.0;
 
-    final isOverallGood = exemptCount >= taxableCount || taxSaved > 0;
+    final isOverallGood = taxableCount >= exemptCount || taxSaved > 0;
 
     return Container(
       padding: const EdgeInsets.all(12),

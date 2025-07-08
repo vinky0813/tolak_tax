@@ -9,10 +9,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiService {
-  //final apiUrl = 'tolaktaxapi-291467312481.asia-east1.run.app';
+  final apiUrl = 'tolaktaxapi-291467312481.asia-southeast1.run.app';
   //final apiUrl = '10.0.2.2:8000'; // For Android emulator, use localhost
   //final apiUrl = '192.168.0.117:8000'; // kelvin's home at penang
-  final apiUrl = '192.168.0.6:8000'; // kelvin's home at sp
+  //final apiUrl = '192.168.0.6:8000'; // kelvin's home at sp
   //final apiUrl = '10.3.226.75:8000'; // inti ip
 
   Future<String?> getIdToken(BuildContext context) async {
@@ -22,8 +22,8 @@ class ApiService {
   }
 
   Future<String> getUserReciepts(String? idToken) async {
-    var url =
-        Uri.http(apiUrl, '/get-receipts-by-user/', {'id_token': idToken ?? ''});
+    var url = Uri.https(
+        apiUrl, '/get-receipts-by-user/', {'id_token': idToken ?? ''});
 
     var response = await http.get(url);
 
@@ -41,7 +41,7 @@ class ApiService {
     }
 
     // Send both id_token and receipt as query parameters with proper JSON encoding
-    var url = Uri.http(apiUrl, '/add-receipt/', {
+    var url = Uri.https(apiUrl, '/add-receipt/', {
       'id_token': idToken,
       'receipt': jsonEncode(receipt),
     });
@@ -62,7 +62,7 @@ class ApiService {
 
   Future<String> readReceipt(String imagePath) async {
     // Send id_token as a query parameter
-    var url = Uri.http(apiUrl, '/read-receipt-image/');
+    var url = Uri.https(apiUrl, '/read-receipt-image/');
     var request = http.MultipartRequest('POST', url);
 
     var multipartFile = await http.MultipartFile.fromPath('file', imagePath);
@@ -84,7 +84,7 @@ class ApiService {
     if (idToken == null || idToken.isEmpty) {
       throw Exception('ID token is required to delete a receipt.');
     }
-    var url = Uri.http(apiUrl, '/delete-receipt-by-id', {
+    var url = Uri.https(apiUrl, '/delete-receipt-by-id', {
       'id_token': idToken,
       'receipt_id': receiptId,
     });
@@ -122,7 +122,7 @@ class ApiService {
     }
 
     var url =
-        Uri.http(apiUrl, '/get-achievements-by-user', {'id_token': idToken});
+        Uri.https(apiUrl, '/get-achievements-by-user', {'id_token': idToken});
 
     try {
       print('ApiService: Calling GET ${url.toString()}');
@@ -163,7 +163,7 @@ class ApiService {
     };
 
     var url =
-        Uri.http(apiUrl, '/save-achievements-by-user', {'id_token': idToken});
+        Uri.https(apiUrl, '/save-achievements-by-user', {'id_token': idToken});
 
     try {
       print('ApiService: Calling POST ${url.toString()}');
@@ -192,7 +192,7 @@ class ApiService {
       throw Exception('ID token is required to fetch budgets.');
     }
 
-    var url = Uri.http(apiUrl, '/get-budgets-by-user', {'id_token': idToken});
+    var url = Uri.https(apiUrl, '/get-budgets-by-user', {'id_token': idToken});
 
     print('ApiService: Calling GET ${url.toString()}');
     var response = await http.get(url);
@@ -233,7 +233,7 @@ class ApiService {
       payload['budgetPeriod'] = budgetPeriod;
     }
 
-    var url = Uri.http(apiUrl, '/save-budgets-by-user', {'id_token': idToken});
+    var url = Uri.https(apiUrl, '/save-budgets-by-user', {'id_token': idToken});
 
     print('payload: $payload');
     try {
