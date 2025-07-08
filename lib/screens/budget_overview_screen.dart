@@ -33,7 +33,7 @@ class _BudgetOverviewScreenState extends State<BudgetOverviewScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final budgetService = Provider.of<BudgetService?>(context, listen: false);
+    final budgetService = Provider.of<BudgetService?>(context, listen: true);
     final budgets = budgetService!.budgets;
     final _categoryKeys = budgets.keys.toList();
 
