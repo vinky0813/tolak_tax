@@ -7,7 +7,7 @@ Flutter-based mobile application that uses Artificial Intelligence to automatica
 
 | Dashboard                                      | Expense List                                       | Budget Overview                                   |
 |------------------------------------------------|----------------------------------------------------|---------------------------------------------------|
-| ![Dashboard](assets/screenshots/dashboard.png) | ![Expense](assets/screenshots/expenses%20screen.png) | ![Budget](assets/screenshots/budget%20overview.png) |
+| ![Dashboard](assets/screenshots/dashboard.png) | ![Expense](assets/screenshots/expense%20screen.png) | ![Budget](assets/screenshots/budget%20overview.png) |
 
 | Achievement                                        | Tax Report                                   | Login                                  |
 |----------------------------------------------------|----------------------------------------------|----------------------------------------|
